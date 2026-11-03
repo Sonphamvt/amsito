@@ -35,7 +35,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-xs text-slate-400">Quản lý tài sản chuyên sâu: Tách biệt Tang & Cáp, Lịch sử dạng bảng Ngày tháng / Sự kiện</p>
+                <p class="text-xs text-slate-400">Đã cập nhật toàn bộ danh sách thiết bị thực tế từ Master_list.xlsx</p>
             </div>
         </div>
         
@@ -235,34 +235,41 @@
             Containers_Units: [
                 ["CONT_HL_1", "25H08527", "HLHV PACKAGE CONTAINER", "LOC002", "2027-04-19", "2027-10-19", "Offshore"],
                 ["CONT_HL_2", "AMS-R26", "PCE FRAME", "LOC002", "2026-12-26", "2027-06-26", "Offshore"],
-                ["BOX_DRUM_01", "BOX-DRUM-99", "DRUM STORAGE BOX (Hộp đựng tang)", "LOC001", "2028-01-01", "2028-01-01", "Base"],
-                ["CONT_JVP1_3", "101373", "ASEP WIRELINE UNIT CONTAINER 6T", "LOC003", "2026-12-16", "2028-06-21", "Offshore"],
-                ["CONT_JVP1_4", "L 690665-V02", "MAINFRAME PCE", "LOC003", "2027-06-22", "2027-07-05", "Offshore"]
+                ["BOX_DRUM_01", "AMS-D21", "DRUM STORAGE BOX (Hộp đựng tang)", "LOC001", "2028-01-01", "2028-01-01", "Base"],
+                ["BOX_DRUM_02", "AMS-D17", "DRUM STORAGE BOX (Hộp đựng tang)", "LOC001", "2028-01-01", "2028-01-01", "Base"],
+                ["CONT_C23", "AMS - C23", "WIRELINE TOOL CONTAINER 5T", "LOC003", "2027-05-15", "2027-11-15", "Offshore"],
+                ["CONT_C16", "AMS - C16", "WIRELINE CONTAINER 5T", "LOC004", "2027-06-20", "2027-12-20", "Offshore"]
             ],
             Slickline_Units_Mast: [
-                ["UNIT001", "ASEP Slickline Winch Unit", "25H08527", "Diesel / 6T", "LOC002", "2027-10-19", "Active"],
-                ["UNIT002", "Flyline Winch Unit Frame", "103358-F", "Electro-Hydraulic", "LOC003", "2026-11-08", "Active"],
-                ["MAST001", "Offshore Telescopic Mast", "MAST-VSP-01", "15 ft", "LOC002", "2027-06-15", "Active"]
+                ["UNIT001", "ASEP WIRELINE UNIT", "25H08527", "Diesel / 6T", "LOC002", "2027-10-19", "Active"],
+                ["UNIT002", "ASEP WIRELINE UNIT", "104346", "6T", "LOC002", "2027-06-24", "Active"],
+                ["UNIT003", "ASEP WIRELINE UNIT", "101373", "6T (3.34x1.35x2.35)", "LOC003", "2028-06-21", "Active"],
+                ["MAST001", "70ft wireline Mast", "L 6901031666V01-025", "70 ft", "LOC002", "2027-06-15", "Active"],
+                ["MAST002", "70ft wireline Mast", "L 6901031666V01-032", "70 ft", "LOC003", "2027-06-15", "Active"]
             ],
             Slickline_Drums: [
                 ["DRUM001", "Standard Wire Drum A1", "DRUM-SN-881", "UNIT001", "LOC002", "Mounted on Unit"],
                 ["DRUM002", "Standard Wire Drum A2", "DRUM-SN-882", "UNIT001", "LOC002", "Mounted on Unit"],
                 ["DRUM003", "Spare Drum B1", "DRUM-SN-901", "BOX_DRUM_01", "LOC001", "In Drum Box (Base)"],
-                ["DRUM004", "Spare Drum B2", "DRUM-SN-902", "LOC001", "LOC001", "At Base Warehouse"]
+                ["DRUM004", "Spare Drum c/w 0.16\" wire", "AMS-25", "LOC001", "LOC001", "At Base Warehouse"]
             ],
             Slickline_Wires: [
                 ["WIRE001", "SUPRA 75", "0.125\"", "W-2025-089", "22500 lbs", "21800 ft", "DRUM001", JSON.stringify([["2025-06-15", "Đảo đầu dây lần 1"], ["2025-10-15", "Cắt đầu cáp 200ft, kiểm tra lực kéo OK"]]), "In Use"],
                 ["WIRE002", "316L Stainless", "0.108\"", "W-2024-112", "18500 lbs", "17500 ft", "DRUM002", JSON.stringify([["2024-11-10", "Quấn mới lên tang DRUM002"]]), "Ready"],
-                ["WIRE003", "MP35N", "0.160\"", "W-2026-004", "28000 lbs", "25000 ft", "DRUM003", JSON.stringify([["2026-01-10", "Nhập kho Base, cất trong hộp đựng tang"]]), "Ready"]
+                ["WIRE003", "MP35N", "0.160\"", "W-2026-004", "28000 lbs", "25000 ft", "DRUM004", JSON.stringify([["2026-01-10", "Nhập kho Base, quấn sẵn trên tang AMS-25"]]), "Ready"]
             ],
             PCE_Equipment: [
-                ["PCE001", "BOP 10K", "BOP-10K-001", "10000", "H2S", "4-1/16 Bowen", "CONT_HL_2", "LOC002", "2027-06-26", "In Use"]
+                ["PCE001", "BOP 4.00\" (Elmar)", "L-972488", "10000", "H2S", "6.125\" Pin/Box", "CONT_HL_2", "LOC002", "2027-06-26", "In Use"],
+                ["PCE002", "Lubricator 4.0\" ID x 10ft", "L-9701971846L100", "10000", "H2S", "6.125\" Pin/Box", "CONT_HL_2", "LOC002", "2027-07-05", "In Use"],
+                ["PCE003", "Hydraulic Wireline BOP 5\" ID", "BOP-001L", "10000", "H2S", "9\"-4 Acme", "CONT_HL_1", "LOC002", "2027-06-26", "In Use"]
             ],
             Mechanical_Tools: [
-                ["DHT001", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT_JVP1_4", "LOC003", "In Use"]
+                ["DHT001", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT_C23", "LOC003", "In Use"],
+                ["DHT002", "Tool Catcher 3\" ID", "EFE15N20", "3.00\"", "10K WP", "CONT_C16", "LOC004", "Ready"]
             ],
             Electronic_Logging_Tools: [
-                ["ELT001", "MPLT (Memory Production Logging Tool)", "MPLT-AMS-01", "1.375\"", "Firmware v2.4", "Calibrated (Valid)", "CONT_HL_1", "LOC002", "Ready"]
+                ["ELT001", "MPLT (Memory Production Logging Tool)", "MPLT-AMS-01", "1.375\"", "Firmware v2.4", "Calibrated (Valid)", "CONT_HL_1", "LOC002", "Ready"],
+                ["ELT002", "PPS Memory Pressure/Temp Gauge", "PPS-9000-12", "1.250\"", "High Temp Battery Pack", "Calibrated (Valid)", "CONT_HL_1", "LOC002", "Ready"]
             ]
         };
 
@@ -289,7 +296,7 @@
         }
 
         function initData() {
-            const saved = localStorage.getItem("slickline_asset_master_v13");
+            const saved = localStorage.getItem("slickline_asset_master_v14");
             if (saved) {
                 try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
             }
@@ -299,7 +306,7 @@
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_asset_master_v13", JSON.stringify(appData));
+            localStorage.setItem("slickline_asset_master_v14", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
             checkExpiringCerts();
@@ -394,7 +401,6 @@
                     row.forEach((cell, cellIdx) => {
                         let displayVal = cell;
 
-                        // Nếu là cột lịch sử (ở bảng Wires, index 7) thì trích xuất sự kiện mới nhất hiển thị ra bảng
                         if (tabName === "Slickline_Wires" && cellIdx === 7) {
                             try {
                                 const historyArr = JSON.parse(cell);
@@ -411,7 +417,7 @@
 
                         const locIndices = {
                             Containers_Units: 3,
-                            Slickline_Units_Mast: 5,
+                            Slickline_Units_Mast: 4,
                             Slickline_Drums: 4,
                             PCE_Equipment: 7,
                             Mechanical_Tools: 6,
@@ -518,7 +524,7 @@
                 row[3] = destId;
                 const parentUnit = (appData.Slickline_Units_Mast || []).find(u => u[0] === destId);
                 const parentBox = (appData.Containers_Units || []).find(c => c[0] === destId);
-                if (parentUnit) row[4] = parentUnit[5];
+                if (parentUnit) row[4] = parentUnit[4];
                 else if (parentBox) row[4] = parentBox[3];
                 else if (destId.startsWith("LOC")) row[4] = destId;
             } else if (tabName === "Slickline_Wires") row[6] = destId;
@@ -569,7 +575,7 @@
                         <div class="flex items-center justify-between text-sky-300 bg-slate-900/50 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Slickline_Units_Mast', '${u[0]}', '${u[1]}')">
                             <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('UNIT', '${u[0]}')">
                                 <i class="fa-solid fa-truck-monster text-xs"></i>
-                                <span class="truncate font-medium">${u[1]}</span>
+                                <span class="truncate font-medium">${u[1]} (${u[2]})</span>
                             </div>
                             <button onclick="openEditModal('Slickline_Units_Mast', '${u[0]}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
                         </div>`;
@@ -698,7 +704,6 @@
             document.getElementById("equipment-modal").classList.add("hidden");
         }
 
-        // --- Các hàm thao tác với Bảng Lịch Sử động trong Modal ---
         function addHistoryRow(dateVal = "", eventVal = "") {
             const tbody = document.getElementById("history-table-body");
             if (!tbody) return;
@@ -706,7 +711,7 @@
             tr.className = "border-b border-slate-800";
             tr.innerHTML = `
                 <td class="p-2"><input type="date" class="hist-date w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white" value="${dateVal}"></td>
-                <td class="p-2"><input type="text" class="hist-event w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white" placeholder="Nội dung sự kiện (VD: Cắt đầu cáp 50ft, đảo đầu...)" value="${eventVal}"></td>
+                <td class="p-2"><input type="text" class="hist-event w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white" placeholder="Nội dung sự kiện..." value="${eventVal}"></td>
                 <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button></td>
             `;
             tbody.appendChild(tr);
@@ -742,7 +747,7 @@
                     <div><label class="block text-xs text-slate-300 mb-1">Equipment Name</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Power / Capacity</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f4" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Recert Expiry</label><input type="date" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f6" value="${val(6, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
@@ -770,7 +775,6 @@
                     <div><label class="block text-xs text-slate-300 mb-1">Actual Length (ft)</label><input type="text" id="wire-f5" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Parent Drum ID</label><input type="text" id="wire-f6" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
                     
-                    <!-- Bảng Lịch sử động theo Ngày tháng & Sự kiện -->
                     <div class="border border-slate-700 rounded-xl p-3 bg-slate-900/50 space-y-2">
                         <div class="flex justify-between items-center">
                             <label class="text-xs font-semibold text-sky-400 uppercase"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Bảng Lịch Sử Vận Hành & Bảo Dưỡng</label>
@@ -827,7 +831,6 @@
                 const f6 = document.getElementById("wire-f6").value;
                 const f8 = document.getElementById("wire-f8").value;
 
-                // Thu thập dữ liệu từ Bảng Lịch Sử động
                 let historyList = [];
                 document.querySelectorAll("#history-table-body tr").forEach(tr => {
                     const date = tr.querySelector(".hist-date").value;
@@ -870,7 +873,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_v13_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `slickline_master_v14_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
