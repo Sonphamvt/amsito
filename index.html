@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slickline Asset & Equipment Management Dashboard</title>
+    <title>AMSITO Slickline Asset & Equipment Management Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,8 +33,8 @@
                 <i class="fa-solid fa-oil-well text-accent text-2xl"></i>
             </div>
             <div>
-                <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Asset Manager</h1>
-                <p class="text-xs text-slate-400">Hệ thống quản lý thiết bị, container & vị trí giếng khoan offshore</p>
+                <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
+                <p class="text-xs text-slate-400">Đồng bộ từ AMS-OPS-03-F8 Master Maintenance Record Check List</p>
             </div>
         </div>
         
@@ -94,7 +94,7 @@
                         <i class="fa-solid fa-circle-notch mr-1"></i> Cuộn Dây Wire
                     </button>
                     <button onclick="switchTab('Downhole_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Downhole_Tools">
-                        <i class="fa-solid fa-screwdriver-wrench mr-1"></i> Downhole Tools
+                        <i class="fa-solid fa-screwdriver-wrench mr-1"></i> Downhole Tools & Acc
                     </button>
                 </div>
 
@@ -159,57 +159,60 @@
         </div>
     </div>
 
-    <!-- Script Logic & Google Sheet API Sync -->
+    <!-- Script Logic & Master Data from Excel -->
     <script>
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz74oqQLBfubvtNcHKL2QOyO0Y7qfQZMjH8ps-0Y4nmcUocbr22m7gElvgGgR2YgiWa/exec";
 
+        // Dữ liệu Master được bóc tách tự động từ file AMS-OPS-03-F8 của ông chủ
         let appData = {
             Locations_Clients: [
                 ["LOC001", "Base", "Amsito", "Vung Tau Base (Cảng Vietsovpetro)", "Active"],
-                ["LOC002", "Offshore Platform", "Vietsovpetro", "Giàn MSP-1", "Active"],
-                ["LOC003", "Offshore Platform", "Vietsovpetro", "Giàn BK-14", "Active"],
-                ["LOC004", "Offshore Platform", "Murphy Oil", "Giàn Lac Su Vang", "Active"],
-                ["LOC005", "Offshore Platform", "JVPC", "Giàn Rang Dong WHP-1", "Active"]
+                ["LOC002", "Offshore Platform", "Vietsovpetro", "Giàn HL / Offshore", "Active"],
+                ["LOC003", "Offshore Platform", "JVPC", "Giàn JVPC Package", "Active"],
+                ["LOC004", "Offshore Platform", "Braided Line Client", "Braided Line Area", "Active"],
+                ["LOC005", "Offshore Platform", "Phu Quoc POC", "Phu Quoc POC Platform", "Active"]
             ],
             Containers_Units: [
-                ["CONT001", "AMS-MCE-01", "MCE Container", "LOC002", "2026-11-15", "2026-11-15", "Offshore"],
-                ["CONT002", "AMS-PCE-02", "PCE Transport Frame", "LOC001", "2026-12-01", "2026-12-01", "At Base"],
-                ["CONT003", "AMS-TB-05", "Tool Box Container", "LOC002", "2026-10-20", "2026-10-20", "Offshore"],
-                ["CONT004", "AMS-RACK-01", "Storage Rack", "LOC001", "2027-05-10", "2027-05-10", "At Base"]
+                ["CONT_HL_1", "25H08527", "HLHV PACKAGE / ASEP UNIT", "LOC002", "2027-04-19", "2027-10-19", "Offshore"],
+                ["CONT_HL_2", "AMS-R26", "PCE FRAME", "LOC002", "2026-12-26", "2027-06-26", "Offshore"],
+                ["CONT_JVP1_3", "101373", "ASEP WIRELINE UNIT 6T", "LOC003", "2026-12-16", "2028-06-21", "Offshore"],
+                ["CONT_JVP1_4", "L 690665-V02", "MAINFRAME PCE", "LOC003", "2027-06-22", "2027-07-05", "Offshore"],
+                ["CONT_JVP2_5", "103358-F", "FLYLINE WINCH UNIT FRAME", "LOC003", "2026-10-11", "2026-11-08", "Offshore"],
+                ["CONT_BL_6", "AMS-C16", "WIRELINE CONTAINER", "LOC004", "2026-10-13", "2026-10-30", "Offshore"],
+                ["CONT_OTHER_7", "AMS-R32", "PCE FRAME", "LOC005", "2027-03-07", "2027-09-07", "Offshore"]
             ],
             PCE_Equipment: [
-                ["PCE001", "BOP", "BOP-10K-001", "10000", "H2S", "4-1/16 Bowen Quick Union", "CONT002", "LOC001", "2026-12-15", "Ready"],
-                ["PCE002", "Stuffing Box", "SB-5K-042", "5000", "Standard", "3-1/16 Bowen Quick Union", "CONT001", "LOC002", "2026-11-30", "In Use"],
-                ["PCE003", "Lubricator 8ft", "LUB-10K-08A", "10000", "H2S", "4-1/16 Bowen Quick Union", "CONT002", "LOC001", "2027-03-10", "Ready"],
-                ["PCE004", "Tool Catcher", "TC-10K-01", "10000", "H2S", "4-1/16 Bowen Quick Union", "CONT001", "LOC002", "2026-10-15", "In Use"]
+                ["PCE001", "BOP 10K", "BOP-10K-001", "10000", "H2S", "4-1/16 Bowen", "CONT_HL_2", "LOC002", "2027-06-26", "In Use"],
+                ["PCE002", "Stuffing Box", "SB-5K-42", "5000", "Standard", "3-1/16 Bowen", "CONT_JVP1_4", "LOC003", "2027-07-05", "In Use"],
+                ["PCE003", "Lubricator 8ft", "LUB-10K-8", "10000", "H2S", "4-1/16 Bowen", "CONT_BL_6", "LOC004", "2026-10-30", "In Use"]
             ],
             Slickline_Reels: [
-                ["REEL001", "SUPRA 75", "0.125\"", "W-2025-089", "22500", "Cut 500ft on 2026-09-12 (Jarring job)", "CONT001", "LOC002", "In Use"],
-                ["REEL002", "316L Stainless Steel", "0.108\"", "W-2024-112", "18000", "Cut 200ft on 2026-08-05", "CONT004", "LOC001", "Standby"],
-                ["REEL003", "MP35N", "0.160\"", "W-2026-004", "25000", "New reel - No cut", "CONT004", "LOC001", "Ready"]
+                ["REEL001", "SUPRA 75", "0.125\"", "W-2025-089", "22500", "Master reel from offshore unit", "CONT_HL_1", "LOC002", "In Use"],
+                ["REEL002", "316L Stainless", "0.108\"", "W-2024-112", "18000", "Base standby", "CONT_BL_6", "LOC004", "Standby"]
             ],
             Downhole_Tools: [
-                ["DHT001", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT003", "LOC002", "In Use"],
-                ["DHT002", "Mechanical Jar", "1.500\"", "JAR-150-03", "15/16\" Sucker Rod", "CONT003", "LOC002", "In Use"],
-                ["DHT003", "Stem Heavy Weight", "1.875\"", "STM-1875-12", "15/16\" Sucker Rod", "CONT004", "LOC001", "Ready"],
-                ["DHT004", "MA Plug Body", "2.125\"", "MAP-2125-01", "1-1/16\" Sucker Rod", "CONT004", "LOC001", "Ready"],
-                ["DHT005", "Rope Socket", "1.500\"", "RS-150-18", "15/16\" Sucker Rod", "CONT003", "LOC002", "In Use"]
+                ["DHT001", "Sling", "1.875\"", "555960/1", "15/16\" Sucker Rod", "CONT_HL_1", "LOC002", "In Use"],
+                ["DHT002", "Shackles", "1.875\"", "60/1A-1D", "15/16\" Sucker Rod", "CONT_HL_1", "LOC002", "In Use"],
+                ["DHT003", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT_JVP1_4", "LOC003", "In Use"],
+                ["DHT004", "Mechanical Jar", "1.500\"", "JAR-150-03", "15/16\" Sucker Rod", "CONT_JVP1_4", "LOC003", "In Use"],
+                ["DHT005", "Sling", "1.875\"", "GVC 3531", "15/16\" Sucker Rod", "CONT_JVP2_5", "LOC003", "In Use"],
+                ["DHT006", "Shackles", "1.875\"", "31-(1,2,3,4)", "15/16\" Sucker Rod", "CONT_JVP2_5", "LOC003", "In Use"]
             ]
         };
 
         const tableHeaders = {
             Locations_Clients: ["Location ID", "Category", "Client Name", "Location Name", "Status"],
-            Containers_Units: ["Container ID", "Serial No", "Type", "Current Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
+            Containers_Units: ["Container ID", "Asset / Serial No", "Type / Equipment", "Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
             PCE_Equipment: ["PCE ID", "Equipment Type", "Serial No", "WP (PSI)", "Service", "Connection", "Parent Container", "Location ID", "Recert Expiry", "Status"],
-            Slickline_Reels: ["Reel ID", "Wire Type", "Wire Size", "Serial No", "Length (ft)", "Cut History", "Parent Container", "Location ID", "Status"],
-            Downhole_Tools: ["Tool ID", "Category", "OD Size", "Serial No", "Connection Thread", "Parent Container", "Location ID", "Status"]
+            Slickline_Reels: ["Reel ID", "Wire Type", "Wire Size", "Serial No", "Length (ft)", "Notes", "Parent Container", "Location ID", "Status"],
+            Downhole_Tools: ["Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location ID", "Status"]
         };
 
         let currentActiveTab = "Locations_Clients";
-        let editingItemId = null; // Biến đánh dấu đang sửa ID nào (nếu null là đang Thêm mới)
+        let editingItemId = null;
 
         function initData() {
-            const saved = localStorage.getItem("slickline_asset_data");
+            const saved = localStorage.getItem("slickline_asset_master_data");
             if (saved) {
                 try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
             }
@@ -219,7 +222,7 @@
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_asset_data", JSON.stringify(appData));
+            localStorage.setItem("slickline_asset_master_data", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
             checkExpiringCerts();
@@ -228,13 +231,7 @@
         async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
             if (!GOOGLE_SHEET_API_URL) return;
             try {
-                const payload = {
-                    action: action,     // "append", "update", "delete"
-                    sheetName: sheetName,
-                    row: rowData,
-                    id: itemId
-                };
-                
+                const payload = { action: action, sheetName: sheetName, row: rowData, id: itemId };
                 const indicator = document.getElementById("sync-status");
                 indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Syncing...`;
 
@@ -250,7 +247,6 @@
                 }, 1000);
             } catch (error) {
                 console.error("Lỗi đồng bộ Google Sheet:", error);
-                document.getElementById("sync-status").innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-400"></i> Sync Error`;
             }
         }
 
@@ -277,7 +273,7 @@
 
             let bodyHtml = "";
             if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu thiết bị trong mục này.</td></tr>`;
+                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
             } else {
                 rows.forEach((row) => {
                     bodyHtml += `<tr class="hover:bg-slate-800/40 transition border-b border-slate-800/60">`;
@@ -320,7 +316,6 @@
                     <div class="flex items-center gap-1.5 font-semibold text-white bg-slate-800/60 p-1.5 rounded">
                         <i class="fa-solid ${locCat === 'Base' ? 'fa-warehouse text-emerald-400' : 'fa-oil-well text-amber-400'} text-xs"></i>
                         <span class="truncate">${locName}</span>
-                        <span class="ml-auto text-[10px] bg-slate-900 px-1.5 py-0.5 rounded text-slate-400">${locCat}</span>
                     </div>`;
 
                 childContainers.forEach(cont => {
@@ -378,7 +373,6 @@
             });
         }
 
-        // Mở Modal để Thêm mới
         function openAddModal() {
             editingItemId = null;
             document.getElementById("modal-title").innerText = "Thêm Mới Thiết Bị / Vị Trí";
@@ -391,7 +385,6 @@
             renderFormFields();
         }
 
-        // Mở Modal để Chỉnh sửa thông tin có sẵn
         function openEditModal(tabName, itemId) {
             editingItemId = itemId;
             const targetRow = appData[tabName].find(r => r[0] === itemId);
@@ -400,7 +393,7 @@
             document.getElementById("modal-title").innerText = `Chỉnh Sửa Bản Ghi: ${itemId}`;
             document.getElementById("submit-btn").innerText = "Cập Nhật & Đồng Bộ Sheet";
             document.getElementById("form-target-tab").value = tabName;
-            document.getElementById("form-target-tab").disabled = true; // Không đổi tab khi đang edit
+            document.getElementById("form-target-tab").disabled = true;
 
             document.getElementById("equipment-modal").classList.remove("hidden");
             document.getElementById("equipment-modal").classList.add("flex");
@@ -412,7 +405,6 @@
             document.getElementById("equipment-modal").classList.add("hidden");
         }
 
-        // Sinh ô nhập liệu và điền dữ liệu sẵn nếu đang Edit
         function renderFormFields(rowData = null) {
             const tab = document.getElementById("form-target-tab").value;
             const container = document.getElementById("dynamic-fields-container");
@@ -421,63 +413,62 @@
 
             if (tab === "Locations_Clients") {
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (VD: LOC006)</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Category (Base / Offshore Platform / Rig)</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1, 'Offshore Platform')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Client Name (VD: Vietsovpetro, Murphy Oil)</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location Name (VD: Giàn MSP-9)</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Category</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Client Name</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location Name</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f4" value="${val(4, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
             } else if (tab === "Containers_Units") {
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Container ID (VD: CONT005)</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Type (MCE Container / PCE Frame / Tool Box)</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Current Location ID (VD: LOC001)</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3, 'LOC001')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">MPI Cert Expiry</label><input type="date" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Container ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Asset / Serial No</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Type / Equipment</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">MPI Expiry</label><input type="date" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Load Test Expiry</label><input type="date" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f6" value="${val(6, 'At Base')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f6" value="${val(6, 'Offshore')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
             } else if (tab === "PCE_Equipment") {
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">PCE ID (VD: PCE005)</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Type (BOP, Stuffing Box, Lubricator...)</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">PCE ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Type</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Working Pressure PSI (VD: 10000)</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3, '10000')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Service Rating (Standard / H2S)</label><input type="text" name="f4" value="${val(4, 'H2S')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Connection Type (VD: 4-1/16 Bowen Quick Union)</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container ID (VD: CONT002)</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (VD: LOC001)</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(7)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Recert Expiry Date</label><input type="date" name="f8" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(8)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">WP (PSI)</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3, '10000')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Service</label><input type="text" name="f4" value="${val(4, 'H2S')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Connection</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(7)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Recert Expiry</label><input type="date" name="f8" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(8)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f9" value="${val(9, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
             } else if (tab === "Slickline_Reels") {
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Reel ID (VD: REEL004)</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Wire Type (SUPRA 75, 316L, MP35N...)</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1, 'SUPRA 75')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Wire Size (VD: 0.125")</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2, '0.125&quot;')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Reel ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Wire Type</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Wire Size</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Current Length (ft)</label><input type="text" name="f4" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4, '25000')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Cut History / Notes</label><input type="text" name="f5" value="${val(5, 'New reel')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container ID</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(7, 'LOC001')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Length (ft)</label><input type="text" name="f4" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Notes</label><input type="text" name="f5" value="${val(5)}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(7)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f8" value="${val(8, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
             } else if (tab === "Downhole_Tools") {
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Tool ID (VD: DHT006)</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Category (Pulling Tool, Jar, Stem, GLV...)</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">OD Size (VD: 1.875")</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2, '1.875&quot;')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Connection Thread (VD: 15/16" Sucker Rod)</label><input type="text" name="f4" value="${val(4, '15/16&quot; Sucker Rod')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container ID</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6, 'LOC001')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Tool ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Category</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">OD Size</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Asset / Serial No</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Connection Thread</label><input type="text" name="f4" value="${val(4)}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f7" value="${val(7, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
             }
             container.innerHTML = html;
         }
 
-        // Xử lý gửi Form (Phân biệt Thêm mới vs Cập nhật)
         function handleFormSubmit(event) {
             event.preventDefault();
             const tab = document.getElementById("form-target-tab").value;
@@ -486,20 +477,18 @@
             formInputs.forEach(input => rowData.push(input.value));
 
             if (editingItemId) {
-                // Xử lý CẬP NHẬT (UPDATE)
                 const index = appData[tab].findIndex(r => r[0] === editingItemId);
                 if (index !== -1) {
                     appData[tab][index] = rowData;
                 }
                 saveDataLocal();
                 syncToGoogleSheet("update", tab, rowData, editingItemId);
-                alert(`Đã cập nhật bản ghi [${editingItemId}] thành công và đồng bộ Google Sheet!`);
+                alert(`Đã cập nhật bản ghi [${editingItemId}] thành công!`);
             } else {
-                // Xử lý THÊM MỚI (APPEND)
                 appData[tab].push(rowData);
                 saveDataLocal();
                 syncToGoogleSheet("append", tab, rowData);
-                alert("Đã thêm mới thành công và đang đồng bộ lên Google Sheet!");
+                alert("Đã thêm mới thành công!");
             }
 
             closeModal();
@@ -510,7 +499,6 @@
             if (!confirm(`Bạn có chắc muốn xóa bản ghi [${id}] này không?`)) return;
             appData[tabName] = appData[tabName].filter(row => row[0] !== id);
             saveDataLocal();
-            
             syncToGoogleSheet("delete", tabName, [], id);
         }
 
@@ -518,7 +506,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_backup_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `slickline_master_backup_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -550,7 +538,6 @@
             renderTable("PCE_Equipment", filtered);
         }
 
-        // Initialize on load
         window.onload = initData;
     </script>
 </body>
