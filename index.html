@@ -35,7 +35,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-xs text-slate-400">Phân cấp tách biệt Tang cáp (Drum) & Sợi cáp (Wire) kèm thông số kỹ thuật chi tiết</p>
+                <p class="text-xs text-slate-400">Quản lý tài sản chuyên sâu: Tách biệt Tang & Cáp, Lịch sử dạng bảng Ngày tháng / Sự kiện</p>
             </div>
         </div>
         
@@ -160,7 +160,7 @@
 
     <!-- Modal Form Thêm / Sửa Thiết Bị -->
     <div id="equipment-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl">
+        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 id="modal-title" class="font-bold text-base text-white">Thêm Mới Thiết Bị / Vị Trí</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -251,13 +251,12 @@
                 ["DRUM004", "Spare Drum B2", "DRUM-SN-902", "LOC001", "LOC001", "At Base Warehouse"]
             ],
             Slickline_Wires: [
-                ["WIRE001", "SUPRA 75", "0.125\"", "W-2025-089", "22500 lbs", "21800 ft", "DRUM001", "Đang sử dụng tốt, cắt đầu 200ft ngày 15/10", "In Use"],
-                ["WIRE002", "316L Stainless", "0.108\"", "W-2024-112", "18500 lbs", "17500 ft", "DRUM002", "Cáp dự phòng quấn trên tang 2", "Ready"],
-                ["WIRE003", "MP35N", "0.160\"", "W-2026-004", "28000 lbs", "25000 ft", "DRUM003", "Mới nhận, cất trong hộp tang ở Base", "Ready"]
+                ["WIRE001", "SUPRA 75", "0.125\"", "W-2025-089", "22500 lbs", "21800 ft", "DRUM001", JSON.stringify([["2025-06-15", "Đảo đầu dây lần 1"], ["2025-10-15", "Cắt đầu cáp 200ft, kiểm tra lực kéo OK"]]), "In Use"],
+                ["WIRE002", "316L Stainless", "0.108\"", "W-2024-112", "18500 lbs", "17500 ft", "DRUM002", JSON.stringify([["2024-11-10", "Quấn mới lên tang DRUM002"]]), "Ready"],
+                ["WIRE003", "MP35N", "0.160\"", "W-2026-004", "28000 lbs", "25000 ft", "DRUM003", JSON.stringify([["2026-01-10", "Nhập kho Base, cất trong hộp đựng tang"]]), "Ready"]
             ],
             PCE_Equipment: [
-                ["PCE001", "BOP 10K", "BOP-10K-001", "10000", "H2S", "4-1/16 Bowen", "CONT_HL_2", "LOC002", "2027-06-26", "In Use"],
-                ["PCE002", "Stuffing Box", "SB-5K-42", "5000", "Standard", "3-1/16 Bowen", "CONT_JVP1_4", "LOC003", "2027-07-05", "In Use"]
+                ["PCE001", "BOP 10K", "BOP-10K-001", "10000", "H2S", "4-1/16 Bowen", "CONT_HL_2", "LOC002", "2027-06-26", "In Use"]
             ],
             Mechanical_Tools: [
                 ["DHT001", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT_JVP1_4", "LOC003", "In Use"]
@@ -272,7 +271,7 @@
             Containers_Units: ["STT", "Container ID", "Asset / Serial No", "Type / Equipment", "Location Name", "MPI Expiry", "Load Test Expiry", "Status"],
             Slickline_Units_Mast: ["STT", "Unit ID", "Equipment Name", "Serial No", "Power / Capacity", "Location Name", "Recert Expiry", "Status"],
             Slickline_Drums: ["STT", "Drum ID", "Drum Name", "Serial No", "Parent Container / Unit", "Location Name", "Status / Notes"],
-            Slickline_Wires: ["STT", "Wire ID", "Wire Type", "Wire Size", "Serial No", "Breaking Strength", "Actual Length (ft)", "Parent Drum ID", "History & Notes", "Status"],
+            Slickline_Wires: ["STT", "Wire ID", "Wire Type", "Wire Size", "Serial No", "Breaking Strength", "Actual Length (ft)", "Parent Drum ID", "Lịch sử sử dụng (Gần nhất)", "Status"],
             PCE_Equipment: ["STT", "PCE ID", "Equipment Type", "Serial No", "WP (PSI)", "Service", "Connection", "Parent Container", "Location Name", "Recert Expiry", "Status"],
             Mechanical_Tools: ["STT", "Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location Name", "Status"],
             Electronic_Logging_Tools: ["STT", "Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location Name", "Status"]
@@ -290,7 +289,7 @@
         }
 
         function initData() {
-            const saved = localStorage.getItem("slickline_asset_master_v12");
+            const saved = localStorage.getItem("slickline_asset_master_v13");
             if (saved) {
                 try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
             }
@@ -300,7 +299,7 @@
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_asset_master_v12", JSON.stringify(appData));
+            localStorage.setItem("slickline_asset_master_v13", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
             checkExpiringCerts();
@@ -395,7 +394,21 @@
                     row.forEach((cell, cellIdx) => {
                         let displayVal = cell;
 
-                        // Hiển thị tên Location Name đầy đủ
+                        // Nếu là cột lịch sử (ở bảng Wires, index 7) thì trích xuất sự kiện mới nhất hiển thị ra bảng
+                        if (tabName === "Slickline_Wires" && cellIdx === 7) {
+                            try {
+                                const historyArr = JSON.parse(cell);
+                                if (Array.isArray(historyArr) && historyArr.length > 0) {
+                                    const latest = historyArr[historyArr.length - 1];
+                                    displayVal = `📅 [${latest[0]}]: ${latest[1]} (${historyArr.length} sự kiện)`;
+                                } else {
+                                    displayVal = "Chưa có lịch sử";
+                                }
+                            } catch (e) {
+                                displayVal = cell;
+                            }
+                        }
+
                         const locIndices = {
                             Containers_Units: 3,
                             Slickline_Units_Mast: 5,
@@ -408,7 +421,7 @@
                             displayVal = getLocationName(cell);
                         }
 
-                        bodyHtml += `<td class="px-4 py-3 text-slate-300">${displayVal}</td>`;
+                        bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${displayVal}</td>`;
                     });
 
                     bodyHtml += `<td class="px-4 py-3 text-right space-x-2">
@@ -426,9 +439,7 @@
             if (highlightId) {
                 setTimeout(() => {
                     const targetRow = document.getElementById(`row-${highlightId}`);
-                    if (targetRow) {
-                        targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
+                    if (targetRow) targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }, 100);
             }
         }
@@ -448,9 +459,7 @@
 
         function hideContextMenu() {
             const menu = document.getElementById("custom-context-menu");
-            if (!menu.classList.contains("hidden")) {
-                menu.classList.add("hidden");
-            }
+            if (!menu.classList.contains("hidden")) menu.classList.add("hidden");
         }
 
         function ctxAction(action) {
@@ -504,18 +513,15 @@
             const row = appData[tabName].find(r => r[0] === itemId);
             if (!row) return;
 
-            if (tabName === "Containers_Units") {
-                row[3] = destId;
-            } else if (tabName === "Slickline_Drums") {
+            if (tabName === "Containers_Units") row[3] = destId;
+            else if (tabName === "Slickline_Drums") {
                 row[3] = destId;
                 const parentUnit = (appData.Slickline_Units_Mast || []).find(u => u[0] === destId);
                 const parentBox = (appData.Containers_Units || []).find(c => c[0] === destId);
                 if (parentUnit) row[4] = parentUnit[5];
                 else if (parentBox) row[4] = parentBox[3];
                 else if (destId.startsWith("LOC")) row[4] = destId;
-            } else if (tabName === "Slickline_Wires") {
-                row[6] = destId; // Parent Drum
-            }
+            } else if (tabName === "Slickline_Wires") row[6] = destId;
 
             saveDataLocal();
             syncToGoogleSheet("update", tabName, row, itemId);
@@ -523,7 +529,6 @@
             alert(`Đã di chuyển thành công [${itemId}] đến đích mới!`);
         }
 
-        // Render Cây phân cấp phân tách Tang (Drum) và Sợi cáp (Wire)
         function renderTree() {
             const container = document.getElementById("tree-container");
             let html = "";
@@ -536,7 +541,7 @@
             const wires = appData.Slickline_Wires || [];
             const pce = appData.PCE_Equipment || [];
 
-            Locations.forEach(loc => {
+            locations.forEach(loc => {
                 totalNodes++;
                 const locId = loc[0];
                 const locName = loc[3];
@@ -556,7 +561,6 @@
                         <button onclick="openEditModal('Locations_Clients', '${locId}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
                     </div>`;
 
-                // Render Units tại Location này
                 childUnits.forEach(u => {
                     totalNodes++;
                     const unitDrums = drums.filter(d => d[3] === u[0]);
@@ -578,7 +582,6 @@
                     html += `</div>`;
                 });
 
-                // Render Containers & Drum Boxes tại Location này
                 childContainers.forEach(cont => {
                     totalNodes++;
                     const contId = cont[0];
@@ -610,7 +613,6 @@
                     html += `</div>`;
                 });
 
-                // Render Tang trực tiếp tại Base
                 childDrumsDirect.forEach(drum => {
                     totalNodes++;
                     html += `<div class="ml-3">` + renderDrumTreeBranch(drum, wires) + `</div>`;
@@ -646,7 +648,7 @@
                     <div class="ml-4 flex items-center justify-between text-sky-400 text-[11px] py-0.5 group">
                         <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="openEditModal('Slickline_Wires', '${wire[0]}')">
                             <i class="fa-solid fa-circle-notch text-[10px]"></i>
-                            <span>Cáp: ${wire[1]} (${wire[2]} - ${wire[5]}) - Dài: ${wire[5]}</span>
+                            <span>Cáp: ${wire[1]} (${wire[2]}) - Dài: ${wire[5]}</span>
                         </div>
                         <button onclick="openEditModal('Slickline_Wires', '${wire[0]}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
                     </div>`;
@@ -696,6 +698,20 @@
             document.getElementById("equipment-modal").classList.add("hidden");
         }
 
+        // --- Các hàm thao tác với Bảng Lịch Sử động trong Modal ---
+        function addHistoryRow(dateVal = "", eventVal = "") {
+            const tbody = document.getElementById("history-table-body");
+            if (!tbody) return;
+            const tr = document.createElement("tr");
+            tr.className = "border-b border-slate-800";
+            tr.innerHTML = `
+                <td class="p-2"><input type="date" class="hist-date w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white" value="${dateVal}"></td>
+                <td class="p-2"><input type="text" class="hist-event w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white" placeholder="Nội dung sự kiện (VD: Cắt đầu cáp 50ft, đảo đầu...)" value="${eventVal}"></td>
+                <td class="p-2 text-center"><button type="button" onclick="this.closest('tr').remove()" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-trash"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
         function renderFormFields(rowData = null) {
             const tab = document.getElementById("form-target-tab").value;
             const container = document.getElementById("dynamic-fields-container");
@@ -714,7 +730,7 @@
                 html = `
                     <div><label class="block text-xs text-slate-300 mb-1">Container / Box ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Asset / Serial No</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Type / Description (VD: Drum Storage Box)</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Type / Description</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">MPI Expiry</label><input type="date" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Load Test Expiry</label><input type="date" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
@@ -735,57 +751,62 @@
                     <div><label class="block text-xs text-slate-300 mb-1">Drum ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Drum Name</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container / Unit ID (Nơi tang đang đặt)</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container / Unit ID</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f4" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status / Notes</label><input type="text" name="f5" value="${val(5, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
             } else if (tab === "Slickline_Wires") {
+                let existingHistory = [];
+                try {
+                    if (rowData && rowData[7]) existingHistory = JSON.parse(rowData[7]);
+                } catch(e) { existingHistory = []; }
+
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Wire ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Wire Type (Loại cáp: Supra, 316L, MP35N...)</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Wire Size (Kích thước: 0.108\", 0.125\", 0.160\"...)</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial No / Batch No</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Breaking Strength (Lực đứt - VD: 22500 lbs)</label><input type="text" name="f4" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Actual Length (Chiều dài thực tế - ft)</label><input type="text" name="f5" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent Drum ID (Tang chứa sợi cáp này)</label><input type="text" name="f6" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">History & Notes (Lịch sử sử dụng, cắt đầu, bảo dưỡng)</label><input type="text" name="f7" value="${val(7)}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f8" value="${val(8, 'In Use')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Wire ID</label><input type="text" id="wire-f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Wire Type</label><input type="text" id="wire-f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Wire Size</label><input type="text" id="wire-f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Serial No / Batch No</label><input type="text" id="wire-f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Breaking Strength</label><input type="text" id="wire-f4" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Actual Length (ft)</label><input type="text" id="wire-f5" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent Drum ID</label><input type="text" id="wire-f6" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
+                    
+                    <!-- Bảng Lịch sử động theo Ngày tháng & Sự kiện -->
+                    <div class="border border-slate-700 rounded-xl p-3 bg-slate-900/50 space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-semibold text-sky-400 uppercase"><i class="fa-solid fa-clock-rotate-left mr-1"></i> Bảng Lịch Sử Vận Hành & Bảo Dưỡng</label>
+                            <button type="button" onclick="addHistoryRow()" class="px-2.5 py-1 bg-accent/20 hover:bg-accent text-sky-300 hover:text-white rounded text-xs transition flex items-center gap-1">
+                                <i class="fa-solid fa-plus"></i> Thêm mốc lịch sử
+                            </button>
+                        </div>
+                        <div class="max-h-40 overflow-y-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="text-slate-400 border-b border-slate-800">
+                                    <tr>
+                                        <th class="p-2 w-1/3">Ngày Tháng</th>
+                                        <th class="p-2">Sự Kiện / Ghi Chú</th>
+                                        <th class="p-2 w-10 text-center">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" id="wire-f8" value="${val(8, 'In Use')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
-            } else if (tab === "PCE_Equipment") {
+
+                setTimeout(() => {
+                    existingHistory.forEach(h => addHistoryRow(h[0], h[1]));
+                    if (existingHistory.length === 0) addHistoryRow(new Date().toISOString().slice(0, 10), "Khởi tạo thông tin cáp mới");
+                }, 50);
+
+            } else {
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">PCE ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Type</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Name / Type</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">WP (PSI)</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3, '10000')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Service</label><input type="text" name="f4" value="${val(4, 'H2S')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Connection</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(7)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Recert Expiry</label><input type="date" name="f8" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(8)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f9" value="${val(9, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
-                `;
-            } else if (tab === "Mechanical_Tools") {
-                html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Tool ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Category</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">OD Size</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Asset / Serial No</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Connection Thread</label><input type="text" name="f4" value="${val(4)}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f7" value="${val(7, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
-                `;
-            } else if (tab === "Electronic_Logging_Tools") {
-                html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Tool ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">OD Size</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Firmware / Specs</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Calibration Status</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(7)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f8" value="${val(8, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f4" value="${val(4, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
             }
             container.innerHTML = html;
@@ -794,10 +815,31 @@
         function handleFormSubmit(event) {
             event.preventDefault();
             const tab = document.getElementById("form-target-tab").value;
-            
-            const formElements = document.querySelectorAll("#dynamic-fields-container input, #dynamic-fields-container select");
             let rowData = [];
-            formElements.forEach(el => rowData.push(el.value));
+
+            if (tab === "Slickline_Wires") {
+                const f0 = document.getElementById("wire-f0").value;
+                const f1 = document.getElementById("wire-f1").value;
+                const f2 = document.getElementById("wire-f2").value;
+                const f3 = document.getElementById("wire-f3").value;
+                const f4 = document.getElementById("wire-f4").value;
+                const f5 = document.getElementById("wire-f5").value;
+                const f6 = document.getElementById("wire-f6").value;
+                const f8 = document.getElementById("wire-f8").value;
+
+                // Thu thập dữ liệu từ Bảng Lịch Sử động
+                let historyList = [];
+                document.querySelectorAll("#history-table-body tr").forEach(tr => {
+                    const date = tr.querySelector(".hist-date").value;
+                    const eventText = tr.querySelector(".hist-event").value;
+                    if (date && eventText) historyList.push([date, eventText]);
+                });
+
+                rowData = [f0, f1, f2, f3, f4, f5, f6, JSON.stringify(historyList), f8];
+            } else {
+                const formElements = document.querySelectorAll("#dynamic-fields-container input, #dynamic-fields-container select");
+                formElements.forEach(el => rowData.push(el.value));
+            }
 
             if (editingItemId) {
                 const index = appData[tab].findIndex(r => r[0] === editingItemId);
@@ -828,7 +870,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_v12_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `slickline_master_v13_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
