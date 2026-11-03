@@ -371,7 +371,6 @@
             renderTable(tabName);
         }
 
-        // --- CẬP NHẬT: XỬ LÝ CLICK CÁC MỤC TRÊN CÂY PHÂN CẤP BÊN TRÁI ---
         function filterByTreeNode(type, id) {
             const badge = document.getElementById("tree-filter-badge");
             badge.classList.remove("hidden");
@@ -380,19 +379,15 @@
             let filtered = [];
 
             if (type === 'LOC') {
-                // Khi click vào Vị trí/Giàn (VD: LOC002), hiển thị tất cả Container thuộc vị trí đó
                 targetTab = 'Containers_Units';
                 filtered = (appData.Containers_Units || []).filter(c => c[3] === id);
             } else if (type === 'CONT') {
-                // Khi click vào Container, hiển thị các Tang cáp hoặc thiết bị con thuộc container đó
                 targetTab = 'Slickline_Drums';
                 filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
             } else if (type === 'UNIT') {
-                // Khi click vào Winch Unit, hiển thị Tang cáp gắn trên unit đó
                 targetTab = 'Slickline_Drums';
                 filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
             } else if (type === 'DRUM') {
-                // Khi click vào Tang cáp, hiển thị sợi cáp đang quấn trên tang đó
                 targetTab = 'Slickline_Wires';
                 filtered = (appData.Slickline_Wires || []).filter(w => w[6] === id);
             }
@@ -654,21 +649,27 @@
             document.getElementById("move-modal").classList.add("hidden");
         }
 
+        // --- ĐÃ BỔ SUNG ĐẦY ĐỦ LOGIC MOVE CHO TẤT CẢ CÁC TAB ---
         function confirmMove() {
             const destId = document.getElementById("move-destination-select").value;
             const { tabName, itemId } = movingItem;
             const row = appData[tabName].find(r => r[0] === itemId);
             if (!row) return;
 
-            if (tabName === "Containers_Units") row[3] = destId;
-            else if (tabName === "Slickline_Drums") {
+            if (tabName === "Containers_Units") {
+                row[3] = destId;
+            } else if (tabName === "Slickline_Units_Mast") {
+                row[4] = destId; // Cập nhật Location ID cho Winch Unit
+            } else if (tabName === "Slickline_Drums") {
                 row[3] = destId;
                 const parentUnit = (appData.Slickline_Units_Mast || []).find(u => u[0] === destId);
                 const parentBox = (appData.Containers_Units || []).find(c => c[0] === destId);
                 if (parentUnit) row[4] = parentUnit[4];
                 else if (parentBox) row[4] = parentBox[3];
                 else if (destId.startsWith("LOC")) row[4] = destId;
-            } else if (tabName === "Slickline_Wires") row[6] = destId;
+            } else if (tabName === "Slickline_Wires") {
+                row[6] = destId; // Cập nhật Parent Drum ID cho sợi cáp
+            }
 
             saveDataLocal();
             syncToGoogleSheet("update", tabName, row, itemId);
@@ -700,7 +701,6 @@
 
                 html += `
                 <div class="border-l-2 border-accent/40 pl-2 py-1 space-y-1">
-                    <!-- Click vào Vị trí (Giàn Offshore / Base) -->
                     <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700/65 transition group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Locations_Clients', '${locId}', '${locName}')">
                         <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('LOC', '${locId}')" title="Click để xem các Container/Thiết bị tại ${locName}">
                             <i class="fa-solid ${locCat === 'Base' ? 'fa-warehouse text-emerald-400' : 'fa-oil-well text-amber-400'} text-xs"></i>
@@ -714,7 +714,6 @@
                     const unitDrums = drums.filter(d => d[3] === u[0]);
                     html += `
                     <div class="ml-3 border-l-2 border-slate-700 pl-2 py-1 space-y-1">
-                        <!-- Click vào Winch Unit -->
                         <div class="flex items-center justify-between text-sky-300 bg-slate-900/50 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Slickline_Units_Mast', '${u[0]}', '${u[1]}')">
                             <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('UNIT', '${u[0]}')" title="Click để xem Tang cáp thuộc Unit này">
                                 <i class="fa-solid fa-truck-monster text-xs"></i>
@@ -741,7 +740,6 @@
 
                     html += `
                     <div class="ml-3 border-l-2 border-slate-700 pl-2 py-1 space-y-1">
-                        <!-- Click vào Container / Box -->
                         <div class="flex items-center justify-between text-slate-300 bg-slate-900/50 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Containers_Units', '${contId}', '${contName}')">
                             <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('CONT', '${contId}')" title="Click để xem thiết bị bên trong Container này">
                                 <i class="fa-solid fa-box text-sky-400 text-xs"></i>
@@ -782,7 +780,6 @@
 
             let branch = `
             <div class="ml-3 border-l-2 border-amber-500/30 pl-2 py-1 space-y-1">
-                <!-- Click vào Tang Cáp -->
                 <div class="flex items-center justify-between text-amber-300 bg-slate-900/40 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Slickline_Drums', '${drumId}', '${drumName}')">
                     <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('DRUM', '${drumId}')" title="Click để xem sợi cáp trên tang này">
                         <i class="fa-solid fa-dharmachakra text-xs text-amber-400"></i>
