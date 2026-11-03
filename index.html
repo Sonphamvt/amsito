@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMSITO Slickline Asset & Equipment Management Dashboard</title>
+    <title>AMSITO Slickline Master Asset & Equipment Dashboard</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -17,7 +17,8 @@
                         accent: '#0ea5e9',
                         warning: '#f59e0b',
                         danger: '#ef4444',
-                        success: '#10b981'
+                        success: '#10b981',
+                        electronic: '#8b5cf6'
                     }
                 }
             }
@@ -34,7 +35,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-xs text-slate-400">Đồng bộ từ AMS-OPS-03-F8 Master Maintenance Record Check List</p>
+                <p class="text-xs text-slate-400">Quản lý Unit, Mast liên kết trực tiếp Cuộn dây cáp (Wire Drum), PCE, Tool</p>
             </div>
         </div>
         
@@ -54,7 +55,7 @@
     <!-- Main Dashboard Container -->
     <main class="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
         
-        <!-- Sidebar: Hierarchy Tree (Gia Phả Vị Trí & Container) -->
+        <!-- Sidebar: Hierarchy Tree -->
         <aside class="lg:col-span-1 bg-cardbg border border-slate-700/60 rounded-xl p-4 shadow-xl flex flex-col h-[75vh]">
             <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-3">
                 <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
@@ -82,25 +83,31 @@
             <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md flex flex-wrap gap-2 items-center justify-between">
                 <div class="flex flex-wrap gap-1.5" id="tab-buttons">
                     <button onclick="switchTab('Locations_Clients')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations_Clients">
-                        <i class="fa-solid fa-location-dot mr-1"></i> Vị Trí & Khách Hàng
+                        <i class="fa-solid fa-location-dot mr-1"></i> Vị Trí
                     </button>
                     <button onclick="switchTab('Containers_Units')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Containers_Units">
-                        <i class="fa-solid fa-box mr-1"></i> Container & Rack
+                        <i class="fa-solid fa-box mr-1"></i> Container
+                    </button>
+                    <button onclick="switchTab('Slickline_Units_Mast')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Slickline_Units_Mast">
+                        <i class="fa-solid fa-truck-monster mr-1"></i> Unit & Mast (Có Cáp)
                     </button>
                     <button onclick="switchTab('PCE_Equipment')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="PCE_Equipment">
-                        <i class="fa-solid fa-shield-halved mr-1"></i> PCE Equipment
+                        <i class="fa-solid fa-shield-halved mr-1"></i> PCE
                     </button>
                     <button onclick="switchTab('Slickline_Reels')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Slickline_Reels">
-                        <i class="fa-solid fa-circle-notch mr-1"></i> Cuộn Dây Wire
+                        <i class="fa-solid fa-circle-notch mr-1"></i> Cuộn Dây
                     </button>
-                    <button onclick="switchTab('Downhole_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Downhole_Tools">
-                        <i class="fa-solid fa-screwdriver-wrench mr-1"></i> Downhole Tools & Acc
+                    <button onclick="switchTab('Mechanical_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Mechanical_Tools">
+                        <i class="fa-solid fa-screwdriver-wrench mr-1"></i> Cơ Khí
+                    </button>
+                    <button onclick="switchTab('Electronic_Logging_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Electronic_Logging_Tools">
+                        <i class="fa-solid fa-microchip mr-1 text-purple-400"></i> Điện Tử & Logging
                     </button>
                 </div>
 
                 <div class="flex items-center gap-2">
                     <span id="cert-warning-indicator" class="hidden text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg items-center gap-1.5 cursor-pointer" onclick="filterExpiringCerts()">
-                        <i class="fa-solid fa-triangle-exclamation"></i> <span id="expiring-count">0</span> Hết hạn kiểm định
+                        <i class="fa-solid fa-triangle-exclamation"></i> <span id="expiring-count">0</span> Hết hạn
                     </span>
                 </div>
             </div>
@@ -108,7 +115,7 @@
             <!-- Table Display Container -->
             <div class="bg-cardbg border border-slate-700/60 rounded-xl shadow-xl flex-1 flex flex-col overflow-hidden">
                 <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
-                    <h3 id="current-table-title" class="font-semibold text-sm text-white uppercase tracking-wide">Danh sách Vị Trí & Khách Hàng</h3>
+                    <h3 id="current-table-title" class="font-semibold text-sm text-white uppercase tracking-wide">Danh sách</h3>
                     <div class="text-xs text-slate-400" id="record-count">0 bản ghi</div>
                 </div>
 
@@ -139,11 +146,13 @@
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Chọn Nhóm Quản Lý (Tab mục tiêu)</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
-                        <option value="Locations_Clients">1. Vị Trí & Khách Hàng (Locations_Clients)</option>
-                        <option value="Containers_Units">2. Container & Rack (Containers_Units)</option>
-                        <option value="PCE_Equipment">3. PCE Equipment (PCE_Equipment)</option>
-                        <option value="Slickline_Reels">4. Cuộn Dây Slickline (Slickline_Reels)</option>
-                        <option value="Downhole_Tools">5. Dụng Cụ Thả Giếng (Downhole_Tools)</option>
+                        <option value="Locations_Clients">1. Vị Trí & Khách Hàng</option>
+                        <option value="Containers_Units">2. Container & Khung Cẩu</option>
+                        <option value="Slickline_Units_Mast">3. Slickline Unit & Mast (Có gắn Cuộn cáp)</option>
+                        <option value="PCE_Equipment">4. PCE Equipment (BOP, Lubricator...)</option>
+                        <option value="Slickline_Reels">5. Cuộn Dây Slickline (Wire Reels)</option>
+                        <option value="Mechanical_Tools">6. Dụng Cụ Cơ Khí Thả Giếng</option>
+                        <option value="Electronic_Logging_Tools">7. Thiết Bị Điện Tử & Logging (MPLT, PPS, ART...)</option>
                     </select>
                 </div>
 
@@ -159,11 +168,10 @@
         </div>
     </div>
 
-    <!-- Script Logic & Master Data from Excel -->
+    <!-- Script Logic -->
     <script>
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbz74oqQLBfubvtNcHKL2QOyO0Y7qfQZMjH8ps-0Y4nmcUocbr22m7gElvgGgR2YgiWa/exec";
 
-        // Dữ liệu Master được bóc tách tự động từ file AMS-OPS-03-F8 của ông chủ
         let appData = {
             Locations_Clients: [
                 ["LOC001", "Base", "Amsito", "Vung Tau Base (Cảng Vietsovpetro)", "Active"],
@@ -173,13 +181,17 @@
                 ["LOC005", "Offshore Platform", "Phu Quoc POC", "Phu Quoc POC Platform", "Active"]
             ],
             Containers_Units: [
-                ["CONT_HL_1", "25H08527", "HLHV PACKAGE / ASEP UNIT", "LOC002", "2027-04-19", "2027-10-19", "Offshore"],
+                ["CONT_HL_1", "25H08527", "HLHV PACKAGE CONTAINER", "LOC002", "2027-04-19", "2027-10-19", "Offshore"],
                 ["CONT_HL_2", "AMS-R26", "PCE FRAME", "LOC002", "2026-12-26", "2027-06-26", "Offshore"],
-                ["CONT_JVP1_3", "101373", "ASEP WIRELINE UNIT 6T", "LOC003", "2026-12-16", "2028-06-21", "Offshore"],
+                ["CONT_JVP1_3", "101373", "ASEP WIRELINE UNIT CONTAINER 6T", "LOC003", "2026-12-16", "2028-06-21", "Offshore"],
                 ["CONT_JVP1_4", "L 690665-V02", "MAINFRAME PCE", "LOC003", "2027-06-22", "2027-07-05", "Offshore"],
                 ["CONT_JVP2_5", "103358-F", "FLYLINE WINCH UNIT FRAME", "LOC003", "2026-10-11", "2026-11-08", "Offshore"],
-                ["CONT_BL_6", "AMS-C16", "WIRELINE CONTAINER", "LOC004", "2026-10-13", "2026-10-30", "Offshore"],
-                ["CONT_OTHER_7", "AMS-R32", "PCE FRAME", "LOC005", "2027-03-07", "2027-09-07", "Offshore"]
+                ["CONT_BL_6", "AMS-C16", "WIRELINE CONTAINER", "LOC004", "2026-10-13", "2026-10-30", "Offshore"]
+            ],
+            Slickline_Units_Mast: [
+                ["UNIT001", "ASEP Slickline Winch Unit", "25H08527", "REEL001 (SUPRA 75 - 0.125\")", "Diesel / 6T", "LOC002", "2027-10-19", "Active"],
+                ["UNIT002", "Flyline Winch Unit Frame", "103358-F", "REEL003 (MP35N - 0.160\")", "Electro-Hydraulic", "LOC003", "2026-11-08", "Active"],
+                ["MAST001", "Offshore Telescopic Mast", "MAST-VSP-01", "N/A (Cần cẩu giếng)", "15 ft", "LOC002", "2027-06-15", "Active"]
             ],
             PCE_Equipment: [
                 ["PCE001", "BOP 10K", "BOP-10K-001", "10000", "H2S", "4-1/16 Bowen", "CONT_HL_2", "LOC002", "2027-06-26", "In Use"],
@@ -187,32 +199,39 @@
                 ["PCE003", "Lubricator 8ft", "LUB-10K-8", "10000", "H2S", "4-1/16 Bowen", "CONT_BL_6", "LOC004", "2026-10-30", "In Use"]
             ],
             Slickline_Reels: [
-                ["REEL001", "SUPRA 75", "0.125\"", "W-2025-089", "22500", "Master reel from offshore unit", "CONT_HL_1", "LOC002", "In Use"],
-                ["REEL002", "316L Stainless", "0.108\"", "W-2024-112", "18000", "Base standby", "CONT_BL_6", "LOC004", "Standby"]
+                ["REEL001", "SUPRA 75", "0.125\"", "W-2025-089", "22500", "Lắp trên UNIT001", "CONT_HL_1", "LOC002", "In Use"],
+                ["REEL002", "316L Stainless", "0.108\"", "W-2024-112", "18000", "Base standby reel", "CONT_BL_6", "LOC004", "Standby"],
+                ["REEL003", "MP35N", "0.160\"", "W-2026-004", "25000", "Lắp trên UNIT002", "CONT_JVP2_5", "LOC003", "In Use"]
             ],
-            Downhole_Tools: [
-                ["DHT001", "Sling", "1.875\"", "555960/1", "15/16\" Sucker Rod", "CONT_HL_1", "LOC002", "In Use"],
-                ["DHT002", "Shackles", "1.875\"", "60/1A-1D", "15/16\" Sucker Rod", "CONT_HL_1", "LOC002", "In Use"],
-                ["DHT003", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT_JVP1_4", "LOC003", "In Use"],
-                ["DHT004", "Mechanical Jar", "1.500\"", "JAR-150-03", "15/16\" Sucker Rod", "CONT_JVP1_4", "LOC003", "In Use"],
-                ["DHT005", "Sling", "1.875\"", "GVC 3531", "15/16\" Sucker Rod", "CONT_JVP2_5", "LOC003", "In Use"],
-                ["DHT006", "Shackles", "1.875\"", "31-(1,2,3,4)", "15/16\" Sucker Rod", "CONT_JVP2_5", "LOC003", "In Use"]
+            Mechanical_Tools: [
+                ["DHT001", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT_JVP1_4", "LOC003", "In Use"],
+                ["DHT002", "Mechanical Jar", "1.500\"", "JAR-150-03", "15/16\" Sucker Rod", "CONT_JVP1_4", "LOC003", "In Use"],
+                ["DHT003", "Rope Socket", "1.500\"", "RS-150-18", "15/16\" Sucker Rod", "CONT_HL_1", "LOC002", "In Use"]
+            ],
+            Electronic_Logging_Tools: [
+                ["ELT001", "MPLT (Memory Production Logging Tool)", "MPLT-AMS-01", "1.375\"", "Firmware v2.4", "Calibrated (Valid)", "CONT_HL_1", "LOC002", "Ready"],
+                ["ELT002", "PPS Memory Pressure/Temp Gauge", "PPS-9000-12", "1.250\"", "High Temp Battery Pack", "Calibrated (Valid)", "CONT_HL_1", "LOC002", "Ready"],
+                ["ELT003", "ART Tool (Acoustic Release)", "ART-1875-02", "1.875\"", "Standard Battery", "Ready Test", "CONT_JVP1_4", "LOC003", "In Use"],
+                ["ELT004", "Surface Control Panel & Readout Unit", "SCP-AMS-05", "N/A", "Software v4.1", "Tested OK", "CONT_HL_1", "LOC002", "Ready"],
+                ["ELT005", "Cement Dump Bailer", "CDB-2125-01", "2.125\"", "Mechanical/Electronic", "Ready", "CONT_BL_6", "LOC004", "Standby"]
             ]
         };
 
         const tableHeaders = {
             Locations_Clients: ["Location ID", "Category", "Client Name", "Location Name", "Status"],
             Containers_Units: ["Container ID", "Asset / Serial No", "Type / Equipment", "Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
+            Slickline_Units_Mast: ["Unit ID", "Equipment Name", "Serial No", "Cuộn Cáp Đang Lắp (Wire Reel)", "Power / Capacity", "Location ID", "Recert Expiry", "Status"],
             PCE_Equipment: ["PCE ID", "Equipment Type", "Serial No", "WP (PSI)", "Service", "Connection", "Parent Container", "Location ID", "Recert Expiry", "Status"],
             Slickline_Reels: ["Reel ID", "Wire Type", "Wire Size", "Serial No", "Length (ft)", "Notes", "Parent Container", "Location ID", "Status"],
-            Downhole_Tools: ["Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location ID", "Status"]
+            Mechanical_Tools: ["Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location ID", "Status"],
+            Electronic_Logging_Tools: ["Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location ID", "Status"]
         };
 
         let currentActiveTab = "Locations_Clients";
         let editingItemId = null;
 
         function initData() {
-            const saved = localStorage.getItem("slickline_asset_master_data");
+            const saved = localStorage.getItem("slickline_asset_master_v3");
             if (saved) {
                 try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
             }
@@ -222,7 +241,7 @@
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_asset_master_data", JSON.stringify(appData));
+            localStorage.setItem("slickline_asset_master_v3", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
             checkExpiringCerts();
@@ -288,7 +307,7 @@
                 });
             }
             document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace('_', ' ')}`;
+            document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
             document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
         }
 
@@ -299,9 +318,11 @@
 
             const locations = appData.Locations_Clients || [];
             const containers = appData.Containers_Units || [];
+            const units = appData.Slickline_Units_Mast || [];
             const pce = appData.PCE_Equipment || [];
             const reels = appData.Slickline_Reels || [];
-            const tools = appData.Downhole_Tools || [];
+            const mechTools = appData.Mechanical_Tools || [];
+            const elTools = appData.Electronic_Logging_Tools || [];
 
             locations.forEach(loc => {
                 totalNodes++;
@@ -310,6 +331,7 @@
                 const locCat = loc[1];
 
                 const childContainers = containers.filter(c => c[3] === locId);
+                const childUnits = units.filter(u => u[5] === locId);
 
                 html += `
                 <div class="border-l-2 border-accent/40 pl-2 py-1 space-y-1">
@@ -317,6 +339,21 @@
                         <i class="fa-solid ${locCat === 'Base' ? 'fa-warehouse text-emerald-400' : 'fa-oil-well text-amber-400'} text-xs"></i>
                         <span class="truncate">${locName}</span>
                     </div>`;
+
+                childUnits.forEach(u => {
+                    totalNodes++;
+                    html += `
+                    <div class="ml-3 border-l-2 border-slate-700 pl-2 py-1 space-y-1">
+                        <div class="flex items-center gap-1.5 text-sky-300 bg-slate-900/50 p-1 rounded">
+                            <i class="fa-solid fa-truck-monster text-xs"></i>
+                            <span class="truncate font-medium">${u[1]} (${u[2]})</span>
+                        </div>
+                        <div class="ml-4 flex items-center gap-1.5 text-purple-400 text-[11px] py-0.5">
+                            <i class="fa-solid fa-circle-notch text-[10px]"></i>
+                            <span>Cáp trên tang: ${u[3]}</span>
+                        </div>
+                    </div>`;
+                });
 
                 childContainers.forEach(cont => {
                     totalNodes++;
@@ -326,7 +363,8 @@
 
                     const inPCE = pce.filter(p => p[6] === contId);
                     const inReels = reels.filter(r => r[6] === contId);
-                    const inTools = tools.filter(t => t[5] === contId);
+                    const inMech = mechTools.filter(t => t[5] === contId);
+                    const inEl = elTools.filter(e => e[6] === contId);
 
                     html += `
                     <div class="ml-3 border-l-2 border-slate-700 pl-2 py-1 space-y-1">
@@ -337,7 +375,8 @@
 
                         inPCE.forEach(item => { totalNodes++; html += renderTreeNodeItem('PCE', item[1], item[2]); });
                         inReels.forEach(item => { totalNodes++; html += renderTreeNodeItem('Wire', item[1], item[3]); });
-                        inTools.forEach(item => { totalNodes++; html += renderTreeNodeItem('Tool', item[1], item[3]); });
+                        inMech.forEach(item => { totalNodes++; html += renderTreeNodeItem('Mech', item[1], item[3]); });
+                        inEl.forEach(item => { totalNodes++; html += renderTreeNodeItem('Electro', item[1], item[2]); });
 
                     html += `</div>`;
                 });
@@ -352,7 +391,8 @@
         function renderTreeNodeItem(type, label, serial) {
             let icon = "fa-shield-halved text-emerald-400";
             if (type === 'Wire') icon = "fa-circle-notch text-purple-400";
-            if (type === 'Tool') icon = "fa-screwdriver-wrench text-amber-400";
+            if (type === 'Mech') icon = "fa-screwdriver-wrench text-amber-400";
+            if (type === 'Electro') icon = "fa-microchip text-purple-400";
 
             return `
             <div class="ml-4 flex items-center gap-1.5 text-slate-400 text-[11px] py-0.5">
@@ -429,6 +469,17 @@
                     <div><label class="block text-xs text-slate-300 mb-1">Load Test Expiry</label><input type="date" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f6" value="${val(6, 'Offshore')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
+            } else if (tab === "Slickline_Units_Mast") {
+                html = `
+                    <div><label class="block text-xs text-slate-300 mb-1">Unit ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name (Slickline Unit / Mast)</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Serial No / Asset No</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Cuộn Cáp Đang Lắp (VD: REEL001 - SUPRA 75)</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Power / Capacity (Diesel / 6T...)</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Recert Expiry Date</label><input type="date" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f7" value="${val(7, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                `;
             } else if (tab === "PCE_Equipment") {
                 html = `
                     <div><label class="block text-xs text-slate-300 mb-1">PCE ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
@@ -454,16 +505,28 @@
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(7)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f8" value="${val(8, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
-            } else if (tab === "Downhole_Tools") {
+            } else if (tab === "Mechanical_Tools") {
                 html = `
                     <div><label class="block text-xs text-slate-300 mb-1">Tool ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Category</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Category (Pulling Tool, Jar, Stem...)</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">OD Size</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Asset / Serial No</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Connection Thread</label><input type="text" name="f4" value="${val(4)}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Connection Thread</label><input type="text" name="f4" value="${val(4, '15/16\" Sucker Rod')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f7" value="${val(7, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
+                `;
+            } else if (tab === "Electronic_Logging_Tools") {
+                html = `
+                    <div><label class="block text-xs text-slate-300 mb-1">Tool ID</label><input type="text" name="f0" required ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name (MPLT, PPS Gauge, ART, Panel...)</label><input type="text" name="f1" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">OD Size</label><input type="text" name="f3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(3, '1.375\"')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Firmware / Battery Specs</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Calibration Status</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(5, 'Calibrated')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white" value="${val(7)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f8" value="${val(8, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>
                 `;
             }
             container.innerHTML = html;
@@ -506,7 +569,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_backup_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `slickline_master_v3_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
