@@ -35,7 +35,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-xs text-slate-400">Quản lý Unit (Kiểm tra chống trùng cuộn cáp), Mast, PCE, Tools</p>
+                <p class="text-xs text-slate-400">Quản lý Unit, Mast, Cuộn cáp (STT & Tên Location đầy đủ), PCE, Tools</p>
             </div>
         </div>
         
@@ -245,21 +245,28 @@
         };
 
         const tableHeaders = {
-            Locations_Clients: ["Location ID", "Category", "Client Name", "Location Name", "Status"],
-            Containers_Units: ["Container ID", "Asset / Serial No", "Type / Equipment", "Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
-            Slickline_Units_Mast: ["Unit ID", "Equipment Name", "Serial No", "Cuộn Cáp Trước", "Cuộn Cáp Sau", "Power / Capacity", "Location ID", "Recert Expiry", "Status"],
-            PCE_Equipment: ["PCE ID", "Equipment Type", "Serial No", "WP (PSI)", "Service", "Connection", "Parent Container", "Location ID", "Recert Expiry", "Status"],
-            Slickline_Reels: ["Reel ID", "Wire Type", "Wire Size", "Serial No", "Length (ft)", "Notes", "Parent Container / Unit", "Location ID", "Status"],
-            Mechanical_Tools: ["Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location ID", "Status"],
-            Electronic_Logging_Tools: ["Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location ID", "Status"]
+            Locations_Clients: ["STT", "Location ID", "Category", "Client Name", "Location Name", "Status"],
+            Containers_Units: ["STT", "Container ID", "Asset / Serial No", "Type / Equipment", "Location Name", "MPI Expiry", "Load Test Expiry", "Status"],
+            Slickline_Units_Mast: ["STT", "Unit ID", "Equipment Name", "Serial No", "Cuộn Cáp Trước", "Cuộn Cáp Sau", "Power / Capacity", "Location Name", "Recert Expiry", "Status"],
+            PCE_Equipment: ["STT", "PCE ID", "Equipment Type", "Serial No", "WP (PSI)", "Service", "Connection", "Parent Container", "Location Name", "Recert Expiry", "Status"],
+            Slickline_Reels: ["STT", "Reel ID", "Wire Type", "Wire Size", "Serial No", "Length (ft)", "Notes", "Parent Container / Unit", "Location Name", "Status"],
+            Mechanical_Tools: ["STT", "Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location Name", "Status"],
+            Electronic_Logging_Tools: ["STT", "Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location Name", "Status"]
         };
 
         let currentActiveTab = "Locations_Clients";
         let editingItemId = null;
         let movingItem = { tabName: null, itemId: null };
 
+        // Hàm hỗ trợ tra cứu tên Location đầy đủ
+        function getLocationName(locId) {
+            if (!locId) return "N/A";
+            const found = (appData.Locations_Clients || []).find(l => l[0] === locId);
+            return found ? `${locId} (${found[3]})` : locId;
+        }
+
         function initData() {
-            const saved = localStorage.getItem("slickline_asset_master_v7");
+            const saved = localStorage.getItem("slickline_asset_master_v8");
             if (saved) {
                 try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
             }
@@ -269,7 +276,7 @@
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_asset_master_v7", JSON.stringify(appData));
+            localStorage.setItem("slickline_asset_master_v8", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
             checkExpiringCerts();
@@ -322,16 +329,37 @@
             if (rows.length === 0) {
                 bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
             } else {
-                rows.forEach((row) => {
+                rows.forEach((row, index) => {
                     bodyHtml += `<tr class="hover:bg-slate-800/40 transition border-b border-slate-800/60">`;
-                    row.forEach(cell => {
+                    
+                    // Cột STT
+                    bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
+
+                    row.forEach((cell, cellIdx) => {
                         let displayVal = cell;
+                        
+                        // Hiển thị tên Cuộn Cáp kèm thông số nếu đang ở bảng Unit
                         if (tabName === "Slickline_Units_Mast" && cell && cell !== "N/A" && cell.startsWith("REEL")) {
                             const reelObj = (appData.Slickline_Reels || []).find(r => r[0] === cell);
                             if (reelObj) displayVal = `${cell} (${reelObj[1]} - ${reelObj[2]})`;
                         }
+
+                        // Hiển thị tên Location Name đầy đủ cho các cột Location ID
+                        const locIndices = {
+                            Containers_Units: 3,
+                            Slickline_Units_Mast: 6,
+                            PCE_Equipment: 7,
+                            Slickline_Reels: 7,
+                            Mechanical_Tools: 6,
+                            Electronic_Logging_Tools: 7
+                        };
+                        if (locIndices[tabName] !== undefined && cellIdx === locIndices[tabName]) {
+                            displayVal = getLocationName(cell);
+                        }
+
                         bodyHtml += `<td class="px-4 py-3 text-slate-300">${displayVal}</td>`;
                     });
+
                     bodyHtml += `<td class="px-4 py-3 text-right space-x-2">
                         <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
                         <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -676,12 +704,10 @@
             let rowData = [];
             formElements.forEach(el => rowData.push(el.value));
 
-            // Validation kiểm tra trùng cuộn cáp
             if (tab === "Slickline_Units_Mast") {
                 const frontReelId = rowData[3];
                 const backReelId = rowData[4];
 
-                // Báo lỗi nếu chọn trùng 1 cuộn cáp ở cả 2 vị trí trước & sau trên cùng 1 Unit
                 if (frontReelId !== "N/A" && backReelId !== "N/A" && frontReelId === backReelId) {
                     alert(`⚠️ Lỗi: Cuộn cáp [${frontReelId}] không thể lắp ở cả 2 vị trí Cuộn cáp trước và Cuộn cáp sau trên cùng một Unit!`);
                     return;
@@ -690,7 +716,6 @@
                 const unitId = rowData[0];
                 const unitLocation = rowData[6];
 
-                // Nếu cuộn cáp được chọn đã nằm ở các Unit khác, gỡ nó khỏi Unit khác đó
                 (appData.Slickline_Units_Mast || []).forEach(u => {
                     if (u[0] !== unitId) {
                         if (u[3] === frontReelId || u[3] === backReelId) u[3] = "N/A";
@@ -698,7 +723,6 @@
                     }
                 });
 
-                // Cập nhật quan hệ ngược lại bảng Reels
                 (appData.Slickline_Reels || []).forEach(r => {
                     if (r[6] === unitId && r[0] !== frontReelId && r[0] !== backReelId) {
                         r[6] = "LOC001";
@@ -753,7 +777,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_v7_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `slickline_master_v8_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
