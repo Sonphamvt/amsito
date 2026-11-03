@@ -372,29 +372,37 @@
         }
 
         function filterByTreeNode(type, id) {
-            const badge = document.getElementById("tree-filter-badge");
-            badge.classList.remove("hidden");
+    const badge = document.getElementById("tree-filter-badge");
+    badge.classList.remove("hidden");
 
-            let targetTab = 'Containers_Units';
-            let filtered = [];
+    let targetTab = 'Containers_Units';
+    let filtered = [];
 
-            if (type === 'LOC') {
-                targetTab = 'Containers_Units';
-                filtered = (appData.Containers_Units || []).filter(c => c[3] === id);
-            } else if (type === 'CONT') {
-                targetTab = 'Slickline_Drums';
-                filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
-            } else if (type === 'UNIT') {
-                targetTab = 'Slickline_Drums';
-                filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
-            } else if (type === 'DRUM') {
-                targetTab = 'Slickline_Wires';
-                filtered = (appData.Slickline_Wires || []).filter(w => w[6] === id);
-            }
-
-            switchTab(targetTab);
-            renderTable(targetTab, filtered, id);
+    if (type === 'LOC') {
+        // Khi click vào Vị trí: Hiển thị thông tin chính của vị trí đó trong tab Vị trí, 
+        // hoặc tự động quét tất cả Container & Unit thuộc vị trí này
+        targetTab = 'Containers_Units';
+        filtered = (appData.Containers_Units || []).filter(c => c[3] === id);
+        
+        // Nếu không có container trực thuộc, thử tìm trong Unit & Mast hoặc chuyển về tab Locations
+        if (filtered.length === 0) {
+            targetTab = 'Locations_Clients';
+            filtered = (appData.Locations_Clients || []).filter(l => l[0] === id);
         }
+    } else if (type === 'CONT') {
+        targetTab = 'Slickline_Drums';
+        filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
+    } else if (type === 'UNIT') {
+        targetTab = 'Slickline_Drums';
+        filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
+    } else if (type === 'DRUM') {
+        targetTab = 'Slickline_Wires';
+        filtered = (appData.Slickline_Wires || []).filter(w => w[6] === id);
+    }
+
+    switchTab(targetTab);
+    renderTable(targetTab, filtered, id);
+}
 
         function resetTreeFilter() {
             document.getElementById("tree-filter-badge").classList.add("hidden");
