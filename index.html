@@ -25,7 +25,7 @@
         }
     </script>
 </head>
-<body class="bg-darkbg text-slate-100 min-h-screen font-sans">
+<body class="bg-darkbg text-slate-100 min-h-screen font-sans" onclick="hideContextMenu()">
 
     <!-- Header -->
     <header class="bg-cardbg border-b border-slate-700 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
@@ -35,7 +35,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-xs text-slate-400">Tự động cuộn đến thiết bị & Quản lý vị trí, số thứ tự, thông số</p>
+                <p class="text-xs text-slate-400">Tích hợp Nhấp Chuột Phải (Right Click Context Menu) trên Cây phân cấp</p>
             </div>
         </div>
         
@@ -51,6 +51,22 @@
             </button>
         </div>
     </header>
+
+    <!-- Custom Right Click Context Menu -->
+    <div id="custom-context-menu" class="hidden fixed bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-1.5 z-50 text-xs w-48 divide-y divide-slate-800">
+        <div class="px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase bg-slate-800/50 truncate" id="ctx-menu-title">Tùy chọn</div>
+        <div class="py-1">
+            <button onclick="ctxAction('edit')" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2 transition">
+                <i class="fa-solid fa-pen text-sky-400"></i> Chỉnh sửa / Đổi tên
+            </button>
+            <button onclick="ctxAction('move')" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-emerald-600 hover:text-white flex items-center gap-2 transition">
+                <i class="fa-solid fa-right-left text-emerald-400"></i> Di chuyển vị trí (Move)
+            </button>
+            <button onclick="ctxAction('delete')" class="w-full text-left px-3 py-1.5 text-red-400 hover:bg-red-600 hover:text-white flex items-center gap-2 transition">
+                <i class="fa-solid fa-trash-can"></i> Xóa thiết bị
+            </button>
+        </div>
+    </div>
 
     <!-- Main Dashboard Container -->
     <main class="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -263,6 +279,9 @@
         let editingItemId = null;
         let movingItem = { tabName: null, itemId: null };
 
+        // Quản lý trạng thái Context Menu đang chọn item nào
+        let contextTarget = { tabName: null, itemId: null };
+
         function getLocationName(locId) {
             if (!locId) return "N/A";
             const found = (appData.Locations_Clients || []).find(l => l[0] === locId);
@@ -270,7 +289,7 @@
         }
 
         function initData() {
-            const saved = localStorage.getItem("slickline_asset_master_v10");
+            const saved = localStorage.getItem("slickline_asset_master_v11");
             if (saved) {
                 try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
             }
@@ -280,7 +299,7 @@
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_asset_master_v10", JSON.stringify(appData));
+            localStorage.setItem("slickline_asset_master_v11", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
             checkExpiringCerts();
@@ -321,7 +340,6 @@
             renderTable(tabName);
         }
 
-        // Click trên cây phân cấp: Lọc bảng VÀ tự động cuộn đến đúng dòng thiết bị
         function filterByTreeNode(type, id) {
             const badge = document.getElementById("tree-filter-badge");
             badge.classList.remove("hidden");
@@ -404,7 +422,6 @@
             document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
             document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
 
-            // Tự động cuộn đến dòng được chọn nếu có highlightId
             if (highlightId) {
                 setTimeout(() => {
                     const targetRow = document.getElementById(`row-${highlightId}`);
@@ -412,6 +429,42 @@
                         targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                 }, 100);
+            }
+        }
+
+        // Xử lý sự kiện Nhấp Chuột Phải (Right Click) trên Cây phân cấp
+        function showContextMenu(event, tabName, itemId, itemName) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            contextTarget = { tabName, itemId };
+
+            const menu = document.getElementById("custom-context-menu");
+            document.getElementById("ctx-menu-title").innerText = itemName || itemId;
+
+            menu.style.top = `${event.clientY}px`;
+            menu.style.left = `${event.clientX}px`;
+            menu.classList.remove("hidden");
+        }
+
+        function hideContextMenu() {
+            const menu = document.getElementById("custom-context-menu");
+            if (!menu.classList.contains("hidden")) {
+                menu.classList.add("hidden");
+            }
+        }
+
+        function ctxAction(action) {
+            hideContextMenu();
+            const { tabName, itemId } = contextTarget;
+            if (!itemId) return;
+
+            if (action === 'edit') {
+                openEditModal(tabName, itemId);
+            } else if (action === 'move') {
+                openMoveModal(tabName, itemId);
+            } else if (action === 'delete') {
+                deleteItem(tabName, itemId);
             }
         }
 
@@ -510,7 +563,7 @@
 
                 html += `
                 <div class="border-l-2 border-accent/40 pl-2 py-1 space-y-1">
-                    <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700/60 transition group">
+                    <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700/60 transition group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Locations_Clients', '${locId}', '${locName}')">
                         <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('LOC', '${locId}')">
                             <i class="fa-solid ${locCat === 'Base' ? 'fa-warehouse text-emerald-400' : 'fa-oil-well text-amber-400'} text-xs"></i>
                             <span class="truncate" title="${locName}">${locName}</span>
@@ -524,7 +577,7 @@
                     totalNodes++;
                     html += `
                     <div class="ml-3 border-l-2 border-slate-700 pl-2 py-1 space-y-1">
-                        <div class="flex items-center justify-between text-sky-300 bg-slate-900/50 p-1 rounded hover:bg-slate-800/50 transition group">
+                        <div class="flex items-center justify-between text-sky-300 bg-slate-900/50 p-1 rounded hover:bg-slate-800/50 transition group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Slickline_Units_Mast', '${u[0]}', '${u[1]}')">
                             <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('UNIT', '${u[0]}')">
                                 <i class="fa-solid fa-truck-monster text-xs"></i>
                                 <span class="truncate font-medium">${u[1]} (${u[2]})</span>
@@ -555,7 +608,7 @@
 
                     html += `
                     <div class="ml-3 border-l-2 border-slate-700 pl-2 py-1 space-y-1">
-                        <div class="flex items-center justify-between text-slate-300 bg-slate-900/50 p-1 rounded hover:bg-slate-800/50 transition group">
+                        <div class="flex items-center justify-between text-slate-300 bg-slate-900/50 p-1 rounded hover:bg-slate-800/50 transition group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Containers_Units', '${contId}', '${contName}')">
                             <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('CONT', '${contId}')">
                                 <i class="fa-solid fa-box text-sky-400 text-xs"></i>
                                 <span class="truncate font-medium">${contName} (${contType})</span>
@@ -587,7 +640,7 @@
             if (type === 'Electro') icon = "fa-microchip text-purple-400";
 
             return `
-            <div class="ml-4 flex items-center justify-between text-slate-400 text-[11px] py-0.5 hover:text-slate-200 group">
+            <div class="ml-4 flex items-center justify-between text-slate-400 text-[11px] py-0.5 hover:text-slate-200 group cursor-context-menu" oncontextmenu="showContextMenu(event, '${tabName}', '${itemId}', '${label}')">
                 <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="openEditModal('${tabName}', '${itemId}')">
                     <i class="fa-solid ${icon} text-[10px]"></i>
                     <span class="truncate">${label}</span>
@@ -839,7 +892,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_v10_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `slickline_master_v11_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
