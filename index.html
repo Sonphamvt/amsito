@@ -401,7 +401,7 @@
             renderTable(currentActiveTab);
         }
 
-        // --- TÍNH NĂNG MỚI: MỞ MODAL XEM CHI TIẾT THIẾT BỊ ---
+        // --- MỞ MODAL XEM CHI TIẾT THIẾT BỊ & THÔNG TIN SỢI CÁP TRÊN TANG ---
         function openDetailModal(tabName, itemId) {
             const row = (appData[tabName] || []).find(r => r[0] === itemId);
             if (!row) return;
@@ -417,13 +417,10 @@
             `;
 
             row.forEach((val, idx) => {
-                if (idx === 0) return; // Bỏ qua STT hoặc ID chính ở đầu
+                if (idx === 0) return;
                 const headerName = headers[idx] || `Thuộc tính ${idx}`;
                 
-                // Nếu là trường lịch sử cáp (đối với Slickline Wires)
-                if (tabName === "Slickline_Wires" && idx === 7) {
-                    return; // Xử lý hiển thị riêng ở phần dưới
-                }
+                if (tabName === "Slickline_Wires" && idx === 7) return;
 
                 let displayVal = val;
                 const locIndices = { Containers_Units: 3, Slickline_Units_Mast: 4, Slickline_Drums: 4, PCE_Equipment: 7, Mechanical_Tools: 6, Electronic_Logging_Tools: 7 };
@@ -441,7 +438,38 @@
 
             contentHtml += `</div></div>`;
 
-            // Nếu là Sợi Cáp (Slickline Wires), hiển thị thêm Bảng Lịch Sử Hoạt Động chi tiết
+            // --- BỔ SUNG: NẾU LÀ TANG CÁP (SLICKLINE DRUMS), HIỂN THỊ THÔNG TIN SỢI CÁP ĐANG QUẤN TRÊN TANG ---
+            if (tabName === "Slickline_Drums") {
+                const mountedWires = (appData.Slickline_Wires || []).filter(w => w[6] === itemId);
+                contentHtml += `
+                    <div class="space-y-2 pt-2 border-t border-slate-800">
+                        <h4 class="text-xs font-bold text-amber-400 uppercase tracking-wide flex items-center gap-1.5">
+                            <i class="fa-solid fa-circle-notch"></i> Sợi Cáp Đang Quấn Trên Tang Này (${mountedWires.length} sợi)
+                        </h4>
+                `;
+                if (mountedWires.length === 0) {
+                    contentHtml += `<div class="bg-slate-900/40 border border-slate-800 p-3 rounded-lg text-slate-500 text-xs italic text-center">Tang trống - Hiện chưa có sợi cáp nào được gán trên tang này.</div>`;
+                } else {
+                    mountedWires.forEach(wire => {
+                        contentHtml += `
+                            <div class="bg-slate-900/80 border border-amber-500/30 p-3.5 rounded-xl space-y-2 text-xs">
+                                <div class="flex justify-between items-center text-sky-300 font-semibold">
+                                    <span><i class="fa-solid fa-barcode mr-1"></i> ID: ${wire[0]} - ${wire[1]} (${wire[2]})</span>
+                                    <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 text-[10px] border border-sky-500/30">${wire[8]}</span>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 pt-1 text-[11px]">
+                                    <div class="bg-slate-800/80 p-2 rounded border border-slate-700"><span class="text-slate-400 block">Serial / Batch:</span> <span class="text-white font-medium">${wire[3]}</span></div>
+                                    <div class="bg-slate-800/80 p-2 rounded border border-slate-700"><span class="text-slate-400 block">Lực đứt (MBS):</span> <span class="text-amber-300 font-medium">${wire[4]}</span></div>
+                                    <div class="bg-slate-800/80 p-2 rounded border border-slate-700"><span class="text-slate-400 block">Chiều dài:</span> <span class="text-emerald-300 font-medium">${wire[5]}</span></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                contentHtml += `</div>`;
+            }
+
+            // Nếu là Sợi Cáp, hiển thị bảng lịch sử vận hành
             if (tabName === "Slickline_Wires" && row[7]) {
                 try {
                     const historyArr = JSON.parse(row[7]);
@@ -504,7 +532,6 @@
                     const rowBg = isHighlight ? 'bg-sky-500/20 border-sky-400' : 'hover:bg-slate-800/40 border-slate-800/60';
                     const rowIdAttr = `row-${row[0]}`;
 
-                    // Click vào dòng bất kỳ trên bảng để xem chi tiết
                     bodyHtml += `<tr id="${rowIdAttr}" class="${rowBg} transition border-b cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')" title="Click để xem chi tiết thiết bị">`;
                     bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
 
@@ -540,7 +567,6 @@
                         bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${displayVal}</td>`;
                     });
 
-                    // Chặn sự kiện nổi bọt khi click vào các nút hành động riêng biệt
                     bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
                         <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
                         <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
