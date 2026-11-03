@@ -35,7 +35,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-xs text-slate-400">Tương tác trực tiếp: Click Cây phân cấp để lọc danh sách & Đổi tên nhanh</p>
+                <p class="text-xs text-slate-400">Tự động cuộn đến thiết bị & Quản lý vị trí, số thứ tự, thông số</p>
             </div>
         </div>
         
@@ -124,9 +124,9 @@
                     <div class="text-xs text-slate-400" id="record-count">0 bản ghi</div>
                 </div>
 
-                <div class="overflow-x-auto flex-1">
+                <div class="overflow-x-auto flex-1 max-h-[60vh] overflow-y-auto">
                     <table class="w-full text-left border-collapse text-xs">
-                        <thead id="table-head" class="bg-slate-900/80 text-slate-400 uppercase font-medium border-b border-slate-700">
+                        <thead id="table-head" class="bg-slate-900/90 text-slate-400 uppercase font-medium border-b border-slate-700 sticky top-0 z-10">
                             <!-- Injected by JS -->
                         </thead>
                         <tbody id="table-body" class="divide-y divide-slate-800">
@@ -270,7 +270,7 @@
         }
 
         function initData() {
-            const saved = localStorage.getItem("slickline_asset_master_v9");
+            const saved = localStorage.getItem("slickline_asset_master_v10");
             if (saved) {
                 try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
             }
@@ -280,7 +280,7 @@
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_asset_master_v9", JSON.stringify(appData));
+            localStorage.setItem("slickline_asset_master_v10", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
             checkExpiringCerts();
@@ -321,30 +321,27 @@
             renderTable(tabName);
         }
 
-        // Lọc hiển thị danh sách khi người dùng nhấp chọn trên Cây phân cấp
+        // Click trên cây phân cấp: Lọc bảng VÀ tự động cuộn đến đúng dòng thiết bị
         function filterByTreeNode(type, id) {
             const badge = document.getElementById("tree-filter-badge");
             badge.classList.remove("hidden");
 
+            let targetTab = 'Containers_Units';
+            let filtered = [];
+
             if (type === 'LOC') {
-                // Click Vị Trí: Chuyển sang Tab Containers & lọc hiển thị theo Location này
-                switchTab('Containers_Units');
-                badge.classList.remove("hidden");
-                const filtered = (appData.Containers_Units || []).filter(c => c[3] === id);
-                renderTable('Containers_Units', filtered);
+                targetTab = 'Containers_Units';
+                filtered = (appData.Containers_Units || []).filter(c => c[3] === id);
             } else if (type === 'CONT') {
-                // Click Container: Chuyển sang Tab PCE & lọc hiển thị theo Parent Container này
-                switchTab('PCE_Equipment');
-                badge.classList.remove("hidden");
-                const filtered = (appData.PCE_Equipment || []).filter(p => p[6] === id);
-                renderTable('PCE_Equipment', filtered);
+                targetTab = 'PCE_Equipment';
+                filtered = (appData.PCE_Equipment || []).filter(p => p[6] === id);
             } else if (type === 'UNIT') {
-                // Click Unit: Chuyển sang Tab Unit & lọc hiển thị riêng Unit này
-                switchTab('Slickline_Units_Mast');
-                badge.classList.remove("hidden");
-                const filtered = (appData.Slickline_Units_Mast || []).filter(u => u[0] === id);
-                renderTable('Slickline_Units_Mast', filtered);
+                targetTab = 'Slickline_Units_Mast';
+                filtered = (appData.Slickline_Units_Mast || []).filter(u => u[0] === id);
             }
+
+            switchTab(targetTab);
+            renderTable(targetTab, filtered, id);
         }
 
         function resetTreeFilter() {
@@ -352,7 +349,7 @@
             renderTable(currentActiveTab);
         }
 
-        function renderTable(tabName, customRows = null) {
+        function renderTable(tabName, customRows = null, highlightId = null) {
             const headers = tableHeaders[tabName];
             const rows = customRows || appData[tabName] || [];
 
@@ -366,7 +363,11 @@
                 bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
             } else {
                 rows.forEach((row, index) => {
-                    bodyHtml += `<tr class="hover:bg-slate-800/40 transition border-b border-slate-800/60">`;
+                    const isHighlight = (row[0] === highlightId);
+                    const rowBg = isHighlight ? 'bg-sky-500/20 border-sky-400' : 'hover:bg-slate-800/40 border-slate-800/60';
+                    const rowIdAttr = `row-${row[0]}`;
+
+                    bodyHtml += `<tr id="${rowIdAttr}" class="${rowBg} transition border-b">`;
                     bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
 
                     row.forEach((cell, cellIdx) => {
@@ -402,6 +403,16 @@
             document.getElementById("table-body").innerHTML = bodyHtml;
             document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
             document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
+
+            // Tự động cuộn đến dòng được chọn nếu có highlightId
+            if (highlightId) {
+                setTimeout(() => {
+                    const targetRow = document.getElementById(`row-${highlightId}`);
+                    if (targetRow) {
+                        targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            }
         }
 
         function openMoveModal(tabName, itemId) {
@@ -475,7 +486,6 @@
             alert(`Đã di chuyển thành công thiết bị [${itemId}] đến đích mới!`);
         }
 
-        // Render Cây Phân Cấp có gắn link Click chọn lọc và nút Edit nhanh
         function renderTree() {
             const container = document.getElementById("tree-container");
             let html = "";
@@ -829,7 +839,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_v9_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `slickline_master_v10_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
