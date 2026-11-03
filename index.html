@@ -371,25 +371,23 @@
             renderTable(tabName);
         }
 
-        function filterByTreeNode(type, id) {
+       function filterByTreeNode(type, id) {
     const badge = document.getElementById("tree-filter-badge");
     badge.classList.remove("hidden");
+
+    if (type === 'LOC') {
+        // Khi click vào Vị trí (Base / Giàn): Gom tất cả thiết bị thuộc vị trí này hiển thị qua các tab tương ứng
+        // Mặc định hiển thị tab Containers_Units chứa các container/box thuộc vị trí này
+        let filteredContainers = (appData.Containers_Units || []).filter(c => c[3] === id);
+        switchTab('Containers_Units');
+        renderTable('Containers_Units', filteredContainers, id);
+        return;
+    }
 
     let targetTab = 'Containers_Units';
     let filtered = [];
 
-    if (type === 'LOC') {
-        // Khi click vào Vị trí: Hiển thị thông tin chính của vị trí đó trong tab Vị trí, 
-        // hoặc tự động quét tất cả Container & Unit thuộc vị trí này
-        targetTab = 'Containers_Units';
-        filtered = (appData.Containers_Units || []).filter(c => c[3] === id);
-        
-        // Nếu không có container trực thuộc, thử tìm trong Unit & Mast hoặc chuyển về tab Locations
-        if (filtered.length === 0) {
-            targetTab = 'Locations_Clients';
-            filtered = (appData.Locations_Clients || []).filter(l => l[0] === id);
-        }
-    } else if (type === 'CONT') {
+    if (type === 'CONT') {
         targetTab = 'Slickline_Drums';
         filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
     } else if (type === 'UNIT') {
@@ -403,7 +401,6 @@
     switchTab(targetTab);
     renderTable(targetTab, filtered, id);
 }
-
         function resetTreeFilter() {
             document.getElementById("tree-filter-badge").classList.add("hidden");
             renderTable(currentActiveTab);
