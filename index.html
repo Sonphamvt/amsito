@@ -62,9 +62,6 @@
             <button onclick="ctxAction('edit')" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2 transition">
                 <i class="fa-solid fa-pen text-sky-400"></i> Chỉnh sửa / Đổi tên
             </button>
-            <button onclick="ctxAction('move')" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-emerald-600 hover:text-white flex items-center gap-2 transition">
-                <i class="fa-solid fa-right-left text-emerald-400"></i> Di chuyển vị trí (Move)
-            </button>
             <button onclick="ctxAction('delete')" class="w-full text-left px-3 py-1.5 text-red-400 hover:bg-red-600 hover:text-white flex items-center gap-2 transition">
                 <i class="fa-solid fa-trash-can"></i> Xóa thiết bị
             </button>
@@ -170,7 +167,7 @@
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Chọn Nhóm Quản Lý (Tab mục tiêu)</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
-                        <option value="Locations">1. Locations (Locations)</option>
+                        <option value="Locations">1. Locations (Vị Trí Phân Cấp)</option>
                         <option value="Slickline_Toolstrings">2. Slickline Tools</option>
                         <option value="Containers_Units">3. Container & Box</option>
                         <option value="Slickline_Units_Mast">4. Slickline Unit & Mast</option>
@@ -192,16 +189,44 @@
         </div>
     </div>
 
+    <!-- Modal Chi Tiết -->
+    <div id="detail-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl">
+            <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
+                <h3 class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-sky-400"></i> Thông Tin Chi Tiết Thiết Bị
+                </h3>
+                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="detail-modal-content"></div>
+
+            <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
+                <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Đóng</button>
+                <button type="button" id="detail-edit-btn" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Chỉnh Sửa Thiết Bị</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script Logic -->
     <script>
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwVok8qThyXH-98fJq3rQ7uVzdTSn2BDiJEbupXphhfpjNzJnKQsF36UsIsGdwyXtoB/exec";
 
         let appData = {
             Locations: [
-                ["LOC001", "Kho", "AMSITO", "Kho số 1 (Vũng Tàu Base)", "", "Active"],
-                ["LOC001_R1", "Giá Kệ Kho", "AMSITO", "Kho số 1 - Giá kệ A1", "LOC001", "Active"],
-                ["CONT_07", "Container", "AMSITO", "Container số 7", "LOC001", "Active"],
-                ["DRAWER_03", "Ngăn kéo", "AMSITO", "Ngăn kéo số 3", "CONT_07", "Active"]
+                ["LOC_BASE", "Base / Kho / Xưởng", "AMSITO", "Kho / Xưởng Vũng Tàu Base", "", "Active"],
+                ["LOC_BOAT_01", "Supply Boat", "Vietsovpetro", "Tàu Dịch Vụ PTSC 01", "", "Active"],
+                ["LOC_PLAT_HL", "Platform (Giàn khoan)", "Vietsovpetro", "Giàn HL / Offshore Platform", "", "Active"],
+                ["CONT_07", "Container", "AMSITO", "Container số 7", "LOC_PLAT_HL", "Active"],
+                ["UNIT_01", "Winch Unit (Máy tời)", "AMSITO", "Máy tời Slickline Unit 01", "LOC_PLAT_HL", "Active"],
+                ["BASKET_01", "Mast Basket", "AMSITO", "Basket chứa Mast & Phụ kiện", "LOC_BASE", "Active"],
+                ["DRUMBOX_01", "Drum Box", "AMSITO", "Thùng chứa Drum Cáp AMS-D21", "LOC_BASE", "Active"],
+                ["DRAWER_01", "Ngăn Kéo", "AMSITO", "Ngăn kéo số 1", "CONT_07", "Active"],
+                ["WINCH_FRONT", "Vị trí Cáp Phía Trước (Winch Front)", "AMSITO", "Tang cáp phía trước tời 01", "UNIT_01", "Active"],
+                ["WINCH_REAR", "Vị trí Cáp Phía Sau (Winch Rear)", "AMSITO", "Tang cáp phía sau tời 01", "UNIT_01", "Active"],
+                ["TOOLBOX_01", "Tool Box", "AMSITO", "Hộp Handtool số 1", "CONT_07", "Active"],
+                ["PCE_RACK_04", "PCE Rack", "AMSITO", "Rack PCE số 4", "LOC_PLAT_HL", "Active"],
+                ["PCE_SLOT_02", "PCE Slot / Ngăn Rack", "AMSITO", "Ngăn số 2 thuộc Rack PCE 4", "PCE_RACK_04", "Active"]
             ],
             Slickline_Toolstrings: [],
             Containers_Units: [],
@@ -227,17 +252,75 @@
 
         let currentActiveTab = "Locations";
         let editingItemId = null;
+        let contextTarget = { tabName: null, itemId: null };
+
         function hideContextMenu() {
-    const menu = document.getElementById("custom-context-menu");
-    if (menu && !menu.classList.contains("hidden")) {
-        menu.classList.add("hidden");
-    }
-}
+            const menu = document.getElementById("custom-context-menu");
+            if (menu && !menu.classList.contains("hidden")) {
+                menu.classList.add("hidden");
+            }
+        }
+
+        function showContextMenu(event, tabName, itemId, itemName) {
+            event.preventDefault();
+            event.stopPropagation();
+            contextTarget = { tabName, itemId };
+            const menu = document.getElementById("custom-context-menu");
+            document.getElementById("ctx-menu-title").innerText = itemName || itemId;
+            menu.style.top = `${event.clientY}px`;
+            menu.style.left = `${event.clientX}px`;
+            menu.classList.remove("hidden");
+        }
+
+        function ctxAction(action) {
+            hideContextMenu();
+            const { tabName, itemId } = contextTarget;
+            if (!itemId) return;
+            if (action === 'view') openDetailModal(tabName, itemId);
+            else if (action === 'edit') openEditModal(tabName, itemId);
+            else if (action === 'delete') deleteItem(tabName, itemId);
+        }
 
         function getLocationName(locId) {
             if (!locId) return "N/A";
             const found = (appData.Locations || []).find(l => l[0] === locId);
             return found ? `${locId} (${found[3]})` : locId;
+        }
+
+        function getLocationPath(locId) {
+            if (!locId || locId === "N/A") return "Vị trí không xác định (N/A)";
+            const locs = appData.Locations || [];
+            let path = [];
+            let currId = locId;
+            let visited = new Set();
+
+            while (currId && !visited.has(currId)) {
+                visited.add(currId);
+                const found = locs.find(l => l[0] === currId);
+                if (found) {
+                    path.unshift(found[3] || found[0]);
+                    currId = found[4]; // Nhảy lên Parent ID
+                } else {
+                    path.unshift(currId);
+                    break;
+                }
+            }
+            return path.join(" ➔ ");
+        }
+
+        function getLocIcon(type) {
+            if (!type) return "fa-solid fa-location-dot";
+            const t = type.toLowerCase();
+            if (t.includes("base") || t.includes("kho") || t.includes("xưởng")) return "fa-solid fa-warehouse";
+            if (t.includes("boat") || t.includes("tàu")) return "fa-solid fa-ship";
+            if (t.includes("platform") || t.includes("giàn")) return "fa-solid fa-tower-observation";
+            if (t.includes("container")) return "fa-solid fa-box";
+            if (t.includes("winch") || t.includes("tời")) return "fa-solid fa-truck-monster";
+            if (t.includes("basket") || t.includes("mast")) return "fa-solid fa-layer-group";
+            if (t.includes("drum")) return "fa-solid fa-dharmachakra";
+            if (t.includes("toolbox") || t.includes("hộp")) return "fa-solid fa-toolbox";
+            if (t.includes("rack") || t.includes("kệ")) return "fa-solid fa-bars-staggered";
+            return "fa-solid fa-folder-tree";
         }
 
         async function initData() {
@@ -250,8 +333,13 @@
                     const response = await fetch(GOOGLE_SHEET_API_URL);
                     const data = await response.json();
                     
-                    if (data && data.Locations && data.Locations.length > 0) {
-                        appData = data;
+                    if (data && typeof data === "object" && Object.keys(data).length > 0) {
+                        // Merge fetched keys with fallback default structure
+                        Object.keys(data).forEach(key => {
+                            if (Array.isArray(data[key])) {
+                                appData[key] = data[key];
+                            }
+                        });
                         loadedFromServer = true;
                         indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
                     }
@@ -260,17 +348,15 @@
                 }
             }
 
-            // Nếu không tải được từ server, tự động khôi phục từ bộ nhớ tạm của trình duyệt
             if (!loadedFromServer) {
                 const saved = localStorage.getItem("slickline_asset_master_v18");
                 if (saved) {
                     try { 
                         appData = JSON.parse(saved); 
-                        indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode (Local)`;
+                        indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode (Local Cache)`;
                     } catch (err) { console.error(err); }
                 }
             } else {
-                // Lưu lại bản mới nhất từ Sheet vào localStorage để dự phòng
                 localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
             }
 
@@ -325,7 +411,6 @@
             renderLocationCombinedTable(locId);
         }
 
-        // Đệ quy dựng cây thư mục hiển thị phân cấp vị trí trên Sidebar
         function renderTree() {
             const container = document.getElementById("tree-container");
             const locs = appData.Locations || [];
@@ -336,11 +421,12 @@
                 if (children.length === 0) return "";
                 let html = '<div class="pl-3 space-y-1 border-l border-slate-700/60 mt-1">';
                 children.forEach(child => {
+                    const icon = getLocIcon(child[1]);
                     html += `
                         <div>
                             <div class="flex items-center justify-between text-slate-200 bg-slate-800/40 hover:bg-slate-700/60 p-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${child[0]}')">
                                 <div class="flex items-center gap-1.5 truncate">
-                                    <i class="fa-solid fa-folder-tree text-accent text-xs"></i>
+                                    <i class="${icon} text-accent text-xs"></i>
                                     <span class="truncate font-medium">${child[0]} - ${child[3]}</span>
                                 </div>
                             </div>
@@ -352,15 +438,15 @@
                 return html;
             }
 
-            // Lấy các node gốc (không có parent hoặc parent trống)
             const roots = locs.filter(l => !l[4]);
             let rootHtml = "";
             roots.forEach(root => {
+                const icon = getLocIcon(root[1]);
                 rootHtml += `
                     <div class="mb-2">
                         <div class="flex items-center justify-between text-white bg-slate-800/80 hover:bg-slate-700 p-2 rounded transition cursor-pointer font-semibold" onclick="filterByTreeNode('${root[0]}')">
                             <div class="flex items-center gap-1.5 truncate">
-                                <i class="fa-solid fa-warehouse text-emerald-400 text-xs"></i>
+                                <i class="${icon} text-emerald-400 text-xs"></i>
                                 <span class="truncate">${root[0]} - ${root[3]}</span>
                             </div>
                         </div>
@@ -377,7 +463,6 @@
             const locName = getLocationName(locId);
             document.getElementById("current-table-title").innerText = `THIẾT BỊ TẠI VỊ TRÍ: ${locName.toUpperCase()}`;
             
-            // Gom tất cả các con cháu bên trong vị trí này
             let validLocIds = [locId];
             function findChildren(pId) {
                 (appData.Locations || []).forEach(l => {
@@ -390,14 +475,13 @@
             findChildren(locId);
 
             const combinedList = [];
-            // Quét qua các bảng thiết bị để tìm xem món nào đang nằm trong danh sách validLocIds
-            const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums"];
+            const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums", "Slickline_Units_Mast", "Slickline_Wires", "Electronic_Logging_Tools"];
+            
             checkTabs.forEach(tName => {
                 (appData[tName] || []).forEach(item => {
-                    // Giả định cột Location thường nằm ở index 8 (Toolstrings), index 6 hoặc 7 tùy bảng
-                    const locField = item[8] || item[7] || item[6] || "";
+                    const locField = item.join(" ");
                     if (validLocIds.some(id => locField.includes(id))) {
-                        combinedList.push({ id: item[0], name: item[1], category: tName, origTab: tName });
+                        combinedList.push({ id: item[0], name: item[1] || item[2] || item[0], category: tName, origTab: tName });
                     }
                 });
             });
@@ -452,75 +536,93 @@
             let html = "";
             const val = (idx, defaultVal = "") => rowData ? (rowData[idx] || "") : defaultVal;
 
+            const locs = appData.Locations || [];
+            const types = [...new Set(locs.map(l => l[1]).filter(Boolean))];
+            const clients = [...new Set(locs.map(l => l[2]).filter(Boolean))];
+            const parentIds = [...new Set(locs.map(l => l[0]).filter(Boolean))];
+
+            let optionsType = types.map(t => `<option value="${t}">`).join("");
+            let optionsClient = clients.map(c => `<option value="${c}">`).join("");
+            let optionsParent = parentIds.map(p => `<option value="${p}">`).join("");
+            
+            const defaultLocTypes = ["Base / Kho / Xưởng", "Supply Boat", "Platform (Giàn khoan)", "Container", "Winch Unit (Máy tời)", "Mast Basket", "Drum Box", "Tool Box", "Rack / Kệ", "Ngăn Kéo", "Vị trí Cáp Phía Trước (Winch Front)", "Vị trí Cáp Phía Sau (Winch Rear)"];
+            defaultLocTypes.forEach(t => {
+                if (!types.includes(t)) optionsType += `<option value="${t}">`;
+            });
+
             if (tab === "Locations") {
-                // Thu thập danh sách gợi ý từ dữ liệu Locations đang có
-                const locs = appData.Locations || [];
-                const types = [...new Set(locs.map(l => l[1]).filter(Boolean))]; // Các loại: Kho, Container, Kệ...
-                const clients = [...new Set(locs.map(l => l[2]).filter(Boolean))]; // AMSITO, Vietsovpetro...
-                const parentIds = [...new Set(locs.map(l => l[0]).filter(Boolean))]; // Danh sách các Location ID hiện có
-
-                // Tạo các thẻ datalist chứa danh sách gợi ý
-                let optionsType = types.map(t => `<option value="${t}">`).join("");
-                let optionsClient = clients.map(c => `<option value="${c}">`).join("");
-                let optionsParent = parentIds.map(p => `<option value="${p}">`).join("");
-                
-                if (!types.includes("Kho")) optionsType += `<option value="Kho">`;
-                if (!types.includes("Container")) optionsType += `<option value="Container">`;
-                if (!types.includes("Giá Kệ")) optionsType += `<option value="Giá Kệ">`;
-                if (!types.includes("Ngăn kéo")) optionsType += `<option value="Ngăn kéo">`;
-
                 html = `
-                    <!-- Khai báo danh sách gợi ý Datalist -->
                     <datalist id="dl-loc-types">${optionsType}</datalist>
                     <datalist id="dl-loc-clients">${optionsClient}</datalist>
                     <datalist id="dl-loc-parents">${optionsParent}</datalist>
-                    <datalist id="dl-statuses">
-                        <option value="Active">
-                        <option value="Inactive">
-                        <option value="Offshore">
-                        <option value="Base">
-                    </datalist>
 
                     <div>
                         <label class="block text-xs text-slate-300 mb-1">Location ID (Mã Vị Trí)</label>
-                        <input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="VD: LOC001, CONT_07, RACK_04"'} value="${val(0)}">
+                        <input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="VD: LOC_BASE, CONT_07, WINCH_FRONT"'} value="${val(0)}">
                     </div>
 
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1">Phân loại (Kho, Kệ, Container, Ngăn kéo...)</label>
+                        <label class="block text-xs text-slate-300 mb-1">Phân loại Vị Trí</label>
                         <input type="text" name="f1" required list="dl-loc-types" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Chọn có sẵn hoặc gõ mới..." value="${val(1)}">
                     </div>
 
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1">Client Name / Sở Hữu</label>
+                        <label class="block text-xs text-slate-300 mb-1">AMSITO / Client / Sở Hữu</label>
                         <input type="text" name="f2" required list="dl-loc-clients" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Chọn Client hoặc gõ mới..." value="${val(2, 'AMSITO')}">
                     </div>
 
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1">Tên Vị Trí / Mô Tả</label>
-                        <input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="VD: Kho số 1 (Base Vũng Tàu), Ngăn kéo số 3..." value="${val(3)}">
+                        <label class="block text-xs text-slate-300 mb-1">Tên Vị Trí / Mô Tả Chi Tiết</label>
+                        <input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="VD: Kho Vũng Tàu Base, Ngăn kéo số 1..." value="${val(3)}">
                     </div>
 
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1">Parent ID (Mã vị trí cấp trên - nếu có)</label>
-                        <input type="text" name="f4" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Để trống nếu là vị trí Gốc, hoặc chọn ID cấp trên..." value="${val(4)}">
+                        <label class="block text-xs text-slate-300 mb-1">Parent ID (Mã vị trí cấp trên chứa mục này)</label>
+                        <input type="text" name="f4" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Để trống nếu là Cấp 1 (Base/Giàn/Tàu)..." value="${val(4)}">
                     </div>
 
                     <div>
                         <label class="block text-xs text-slate-300 mb-1">Trạng thái</label>
-                        <input type="text" name="f5" list="dl-statuses" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5, 'Active')}">
+                        <input type="text" name="f5" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5, 'Active')}">
                     </div>
                 `;
-            } else {
-                // Đẩy gợi ý danh sách Location ID cho các tab thiết bị khác
-                const locs = appData.Locations || [];
-                const parentIds = locs.map(l => `<option value="${l[0]}">${l[3]}</option>`).join("");
-                
+            } else if (tab === "Slickline_Toolstrings") {
                 html = `
-                    <datalist id="dl-loc-parents">${parentIds}</datalist>
-                    <div><label class="block text-xs text-slate-300 mb-1">ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Tên / Mô tả</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID / Vị Trí Lưu Trữ</label><input type="text" name="f2" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Chọn Location ID..." value="${val(2)}"></div>
+                    <datalist id="dl-loc-parents">${optionsParent}<option value="N/A">Vị trí không xác định (N/A)</option></datalist>
+                    <div><label class="block text-xs text-slate-300 mb-1">Tool ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Description</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Contract Inquire</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label class="block text-xs text-slate-300 mb-1">Qty</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">Length (m)</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">Weight (Lbs)</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
+                    </div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Part NO</label><input type="text" name="f6" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Asset NO</label><input type="text" name="f7" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID / Drawer</label><input type="text" name="f8" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Brand</label><input type="text" name="f9" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(9, 'PEAK')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status / Remark</label><input type="text" name="f10" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(10, 'New')}"></div>
+                `;
+            } else if (tab === "Slickline_Drums") {
+                html = `
+                    <datalist id="dl-loc-parents">${optionsParent}<option value="N/A">Vị trí không xác định (N/A)</option></datalist>
+                    <div><label class="block text-xs text-slate-300 mb-1">Drum ID / Name (VD: AMS-01-SC08)</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">DRUM Description</label><input type="text" name="f1" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Wire Information (VD: 0.160" - Supa 75)</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Cert Number</label><input type="text" name="f3" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-xs text-slate-300 mb-1">Spool Date</label><input type="text" name="f4" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">Length (m)</label><input type="text" name="f5" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
+                    </div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (WINCH_FRONT, WINCH_REAR, DRUMBOX_01...)</label><input type="text" name="f6" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Remark / Status</label><input type="text" name="f7" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
+                `;
+            } else {
+                html = `
+                    <datalist id="dl-loc-parents">${optionsParent}<option value="N/A">Vị trí không xác định (N/A)</option></datalist>
+                    <div><label class="block text-xs text-slate-300 mb-1">ID Thiết Bị</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Tên / Mô tả Thiết Bị</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (Vị Trí Đang Lưu Trữ)</label><input type="text" name="f2" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Chọn Location ID hoặc gõ N/A..." value="${val(2)}"></div>
                 `;
             }
             container.innerHTML = html;
@@ -535,6 +637,20 @@
             document.getElementById("equipment-modal").classList.remove("hidden");
             document.getElementById("equipment-modal").classList.add("flex");
             renderFormFields();
+        }
+
+        function openEditModal(tabName, itemId) {
+            if (!itemId || itemId === "N/A") return;
+            editingItemId = itemId;
+            const targetRow = (appData[tabName] || []).find(r => r[0] === itemId);
+            if (!targetRow) return;
+            document.getElementById("modal-title").innerText = `Chỉnh Sửa: ${itemId}`;
+            document.getElementById("submit-btn").innerText = "Cập Nhật & Đồng Bộ Sheet";
+            document.getElementById("form-target-tab").value = tabName;
+            document.getElementById("form-target-tab").disabled = true;
+            document.getElementById("equipment-modal").classList.remove("hidden");
+            document.getElementById("equipment-modal").classList.add("flex");
+            renderFormFields(targetRow);
         }
 
         function closeModal() {
@@ -566,6 +682,55 @@
             renderTree();
         }
 
+        function openDetailModal(tabName, itemId) {
+            const row = (appData[tabName] || []).find(r => r[0] === itemId);
+            if (!row) return;
+
+            const headers = tableHeaders[tabName] || [];
+            let locId = row[8] || row[7] || row[6] || row[4] || row[2] || "";
+            let fullPath = getLocationPath(locId);
+
+            let contentHtml = `
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
+                    <div class="flex justify-between items-center pb-2 border-b border-slate-800">
+                        <span class="text-xs uppercase font-semibold text-sky-400">Mã Định Danh (ID): ${row[0]}</span>
+                        <span class="text-xs px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${row[row.length - 1] || 'Active'}</span>
+                    </div>
+
+                    <div class="bg-sky-950/40 border border-sky-500/30 p-3 rounded-lg">
+                        <span class="text-sky-400 block text-[10px] uppercase font-bold mb-1"><i class="fa-solid fa-route mr-1"></i> Lộ Trình Vị Trí Lưu Trữ:</span>
+                        <span class="text-white font-semibold text-xs">${fullPath}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
+            `;
+
+            row.forEach((val, idx) => {
+                if (idx === 0) return;
+                const headerName = headers[idx] || `Thuộc tính ${idx}`;
+                contentHtml += `
+                    <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50">
+                        <span class="text-slate-400 block text-[10px] uppercase font-medium">${headerName}</span>
+                        <span class="text-slate-200 font-semibold text-sm mt-0.5 block">${val || 'N/A'}</span>
+                    </div>
+                `;
+            });
+
+            contentHtml += `</div></div>`;
+            document.getElementById("detail-modal-content").innerHTML = contentHtml;
+            document.getElementById("detail-edit-btn").onclick = function() {
+                closeDetailModal();
+                openEditModal(tabName, itemId);
+            };
+            document.getElementById("detail-modal").classList.remove("hidden");
+            document.getElementById("detail-modal").classList.add("flex");
+        }
+
+        function closeDetailModal() {
+            document.getElementById("detail-modal").classList.remove("flex");
+            document.getElementById("detail-modal").classList.add("hidden");
+        }
+
         function renderTable(tabName) {
             const headers = tableHeaders[tabName] || [];
             const rows = appData[tabName] || [];
@@ -577,13 +742,15 @@
 
             let bodyHtml = "";
             if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu.</td></tr>`;
+                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
             } else {
                 rows.forEach((row, index) => {
-                    bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800">`;
-                    bodyHtml += `<td class="px-4 py-3 text-slate-400">${index + 1}</td>`;
+                    bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
+                    bodyHtml += `<td class="px-4 py-3 text-slate-400 font-semibold">${index + 1}</td>`;
                     row.forEach(cell => bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell}</td>`);
-                    bodyHtml += `<td class="px-4 py-3 text-right">
+                    bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                        <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition"><i class="fa-solid fa-circle-info"></i></button>
+                        <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition"><i class="fa-solid fa-trash-can"></i></button>
                     </td></tr>`;
                 });
@@ -594,12 +761,22 @@
         }
 
         function deleteItem(tabName, id) {
-            if (!confirm(`Xóa bản ghi [${id}]?`)) return;
-            appData[tabName] = appData[tabName].filter(row => row[0] !== id);
+            if (!confirm(`Bạn có chắc chắn muốn xóa bản ghi [${id}] này không?`)) return;
+            appData[tabName] = (appData[tabName] || []).filter(row => row[0] !== id);
             saveDataLocal();
             syncToGoogleSheet("delete", tabName, [], id);
             renderTable(currentActiveTab);
             renderTree();
+        }
+
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `slickline_master_v18_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         }
 
         window.onload = initData;
