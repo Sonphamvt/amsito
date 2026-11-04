@@ -35,7 +35,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-xs text-slate-400">Hệ thống quản lý phân cấp Kho - Khách hàng - Container & Thiết bị</p>
+                <p class="text-xs text-slate-400">Hệ thống quản lý phân cấp Kho - Khách hàng - Toolstrings & Thiết bị</p>
             </div>
         </div>
         
@@ -52,12 +52,12 @@
         </div>
     </header>
 
-    <!-- Custom Right Click Context Menu -->
+    <!-- Context Menu -->
     <div id="custom-context-menu" class="hidden fixed bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-1.5 z-50 text-xs w-48 divide-y divide-slate-800">
         <div class="px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase bg-slate-800/50 truncate" id="ctx-menu-title">Tùy chọn</div>
         <div class="py-1">
             <button onclick="ctxAction('view')" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
-                <i class="fa-solid fa-circle-info text-sky-400"></i> Xem chi tiết & Lịch sử
+                <i class="fa-solid fa-circle-info text-sky-400"></i> Xem chi tiết
             </button>
             <button onclick="ctxAction('edit')" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2 transition">
                 <i class="fa-solid fa-pen text-sky-400"></i> Chỉnh sửa / Đổi tên
@@ -102,7 +102,10 @@
             <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md flex flex-wrap gap-2 items-center justify-between">
                 <div class="flex flex-wrap gap-1.5" id="tab-buttons">
                     <button onclick="switchTab('Locations_Clients')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations_Clients">
-                        <i class="fa-solid fa-location-dot mr-1"></i> Vị Trí & Kho / Khách
+                        <i class="fa-solid fa-location-dot mr-1"></i> Kho & Khách
+                    </button>
+                    <button onclick="switchTab('Slickline_Toolstrings')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Slickline_Toolstrings">
+                        <i class="fa-solid fa-screwdriver-wrench mr-1 text-sky-300"></i> 1.875" Toolstring
                     </button>
                     <button onclick="switchTab('Containers_Units')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Containers_Units">
                         <i class="fa-solid fa-box mr-1"></i> Container & Box
@@ -111,26 +114,20 @@
                         <i class="fa-solid fa-truck-monster mr-1"></i> Unit & Mast
                     </button>
                     <button onclick="switchTab('Slickline_Drums')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Slickline_Drums">
-                        <i class="fa-solid fa-dharmachakra mr-1 text-amber-400"></i> Tang Cáp (Drums)
+                        <i class="fa-solid fa-dharmachakra mr-1 text-amber-400"></i> Tang Cáp
                     </button>
                     <button onclick="switchTab('Slickline_Wires')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Slickline_Wires">
-                        <i class="fa-solid fa-circle-notch mr-1 text-sky-400"></i> Sợi Cáp (Wires)
+                        <i class="fa-solid fa-circle-notch mr-1 text-sky-400"></i> Sợi Cáp
                     </button>
                     <button onclick="switchTab('PCE_Equipment')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="PCE_Equipment">
                         <i class="fa-solid fa-shield-halved mr-1"></i> PCE
                     </button>
                     <button onclick="switchTab('Mechanical_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Mechanical_Tools">
-                        <i class="fa-solid fa-screwdriver-wrench mr-1"></i> Cơ Khí
+                        <i class="fa-solid fa-wrench mr-1"></i> Cơ Khí Khác
                     </button>
                     <button onclick="switchTab('Electronic_Logging_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Electronic_Logging_Tools">
-                        <i class="fa-solid fa-microchip mr-1 text-purple-400"></i> Điện Tử & Logging
+                        <i class="fa-solid fa-microchip mr-1 text-purple-400"></i> Logging
                     </button>
-                </div>
-
-                <div class="flex items-center gap-2">
-                    <span id="cert-warning-indicator" class="hidden text-xs bg-amber-500/10 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg items-center gap-1.5 cursor-pointer" onclick="filterExpiringCerts()">
-                        <i class="fa-solid fa-triangle-exclamation"></i> <span id="expiring-count">0</span> Hết hạn
-                    </span>
                 </div>
             </div>
 
@@ -161,7 +158,7 @@
         </section>
     </main>
 
-    <!-- Modal Form Thêm / Sửa Thiết Bị với DATALIST gợi ý thông minh -->
+    <!-- Modal Form Thêm / Sửa Thiết Bị -->
     <div id="equipment-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
@@ -174,13 +171,14 @@
                     <label class="block text-xs font-medium text-slate-300 mb-1">Chọn Nhóm Quản Lý (Tab mục tiêu)</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
                         <option value="Locations_Clients">1. Kho & Khách Hàng (Locations)</option>
-                        <option value="Containers_Units">2. Container & Drum Box</option>
-                        <option value="Slickline_Units_Mast">3. Slickline Unit & Mast</option>
-                        <option value="Slickline_Drums">4. Tang Cáp (Drums)</option>
-                        <option value="Slickline_Wires">5. Sợi Cáp (Slickline Wires)</option>
-                        <option value="PCE_Equipment">6. PCE Equipment</option>
-                        <option value="Mechanical_Tools">7. Dụng Cụ Cơ Khí Thả Giếng</option>
-                        <option value="Electronic_Logging_Tools">8. Thiết Bị Điện Tử & Logging</option>
+                        <option value="Slickline_Toolstrings">2. 1.875" Toolstring</option>
+                        <option value="Containers_Units">3. Container & Box</option>
+                        <option value="Slickline_Units_Mast">4. Slickline Unit & Mast</option>
+                        <option value="Slickline_Drums">5. Tang Cáp (Drums)</option>
+                        <option value="Slickline_Wires">6. Sợi Cáp (Wires)</option>
+                        <option value="PCE_Equipment">7. PCE Equipment</option>
+                        <option value="Mechanical_Tools">8. Dụng Cụ Cơ Khí</option>
+                        <option value="Electronic_Logging_Tools">9. Thiết Bị Điện Tử & Logging</option>
                     </select>
                 </div>
 
@@ -194,12 +192,12 @@
         </div>
     </div>
 
-    <!-- Modal Chi Tiết Thiết Bị & Danh Sách Trực Thuộc -->
+    <!-- Modal Chi Tiết -->
     <div id="detail-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-sky-400"></i> Thông Tin Chi Tiết Thiết Bị & Tài Sản Trực Thuộc
+                    <i class="fa-solid fa-circle-info text-sky-400"></i> Thông Tin Chi Tiết Thiết Bị
                 </h3>
                 <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -242,7 +240,6 @@
 
     <!-- Script Logic -->
     <script>
-        // Thay đường dẫn Web App Google Apps Script của bạn vào đây
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyd94XGDXbgZjtmc4NhAuEErQ-N-4ugEP72RdRQvjOLK259kjZSJOCq32BoEf7e3v4/exec";
 
         let appData = {
@@ -255,39 +252,37 @@
                 ["LOC_CUS2", "Khách hàng", "JVPC", "Khách hàng: JVPC", "Active"],
                 ["LOC_PLAT_JVPC", "Platform", "JVPC", "Giàn JVPC Package", "LOC_CUS2"]
             ],
+            Slickline_Toolstrings: [
+                ["DHT_1875_01", "Rope socket/ 1.875\" OD, Pear Drop Type/ 1 7/8\" HDQRJ (PEAK BC) box/ 1.75\"/1.812\" Dual FN/ 0.125\" wire", "", "4", "0.34", "9.68", "A123-1875-014", "P6-RST(01,02,03,04)", "Drawer 08", "PEAK", "New"],
+                ["DHT_1875_02", "Rope socket/ 2.125\" OD, Pear Drop Type/ 1 7/8\" HDQRJ (PEAK BC) box/ 1.75\"/1.812\" Dual FN/ 0.160\" wire", "", "2", "0.35", "8.1", "A123-2125-021", "P6-RST(11,12)", "Drawer 08", "PEAK", "New"]
+            ],
             Containers_Units: [
                 ["CONT_HL_1", "25H08527", "HLHV PACKAGE CONTAINER", "LOC_PLAT_HL", "2027-04-19", "2027-10-19", "Offshore"],
-                ["CONT_HL_2", "AMS-R26", "PCE FRAME", "LOC_PLAT_HL", "2026-12-26", "2027-06-26", "Offshore"],
-                ["BOX_DRUM_01", "AMS-D21", "DRUM STORAGE BOX (Hộp đựng tang)", "LOC001_R1", "2028-01-01", "2028-01-01", "Base"],
-                ["BOX_DRUM_02", "AMS-D17", "DRUM STORAGE BOX (Hộp đựng tang)", "LOC001", "2028-01-01", "2028-01-01", "Base"]
+                ["BOX_DRUM_01", "AMS-D21", "DRUM STORAGE BOX", "LOC001_R1", "2028-01-01", "2028-01-01", "Base"]
             ],
             Slickline_Units_Mast: [
-                ["UNIT001", "ASEP WIRELINE UNIT", "25H08527", "Diesel / 6T", "LOC_PLAT_HL", "2027-10-19", "Active"],
-                ["UNIT002", "ASEP WIRELINE UNIT", "104346", "6T", "LOC_PLAT_HL", "2027-06-24", "Active"],
-                ["MAST001", "70ft wireline Mast", "L 6901031666V01-025", "70 ft", "LOC_PLAT_HL", "2027-06-15", "Active"]
+                ["UNIT001", "ASEP WIRELINE UNIT", "25H08527", "Diesel / 6T", "LOC_PLAT_HL", "2027-10-19", "Active"]
             ],
             Slickline_Drums: [
-                ["DRUM001", "Standard Wire Drum A1", "DRUM-SN-881", "UNIT001", "LOC_PLAT_HL", "Mounted on Unit"],
-                ["DRUM002", "Standard Wire Drum A2", "DRUM-SN-882", "UNIT001", "LOC_PLAT_HL", "Mounted on Unit"],
-                ["DRUM003", "Spare Drum B1", "DRUM-SN-901", "BOX_DRUM_01", "LOC001_R1", "In Drum Box"]
+                ["DRUM001", "Standard Wire Drum A1", "DRUM-SN-881", "UNIT001", "LOC_PLAT_HL", "Mounted on Unit"]
             ],
             Slickline_Wires: [
-                ["WIRE001", "SUPRA 75", "0.125\"", "W-2025-089", "22500 lbs", "21800 ft", "DRUM001", JSON.stringify([["2025-06-15", "Đảo đầu dây lần 1"]]), "In Use"],
-                ["WIRE002", "316L Stainless", "0.108\"", "W-2024-112", "18500 lbs", "17500 ft", "DRUM002", JSON.stringify([["2024-11-10", "Quấn mới"]]), "Ready"]
+                ["WIRE001", "SUPRA 75", "0.125\"", "W-2025-089", "22500 lbs", "21800 ft", "DRUM001", JSON.stringify([["2025-06-15", "Đảo đầu dây lần 1"]]), "In Use"]
             ],
             PCE_Equipment: [
-                ["PCE001", "BOP 4.00\" (Elmar)", "L-972488", "10000", "H2S", "6.125\" Pin/Box", "CONT_HL_2", "LOC_PLAT_HL", "2027-06-26", "In Use"]
+                ["PCE001", "BOP 4.00\" (Elmar)", "L-972488", "10000", "H2S", "6.125\" Pin/Box", "CONT_HL_1", "LOC_PLAT_HL", "2027-06-26", "In Use"]
             ],
             Mechanical_Tools: [
                 ["DHT001", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT_HL_1", "LOC_PLAT_HL", "In Use"]
             ],
             Electronic_Logging_Tools: [
-                ["ELT001", "MPLT (Memory Production Logging Tool)", "MPLT-AMS-01", "1.375\"", "Firmware v2.4", "Calibrated (Valid)", "CONT_HL_1", "LOC_PLAT_HL", "Ready"]
+                ["ELT001", "MPLT Tool", "MPLT-AMS-01", "1.375\"", "Firmware v2.4", "Calibrated", "CONT_HL_1", "LOC_PLAT_HL", "Ready"]
             ]
         };
 
         const tableHeaders = {
-            Locations_Clients: ["STT", "Location ID", "Phân loại", "AMSITO / Client", "Tên Vị Trí / Kho / Giá / Platform", "Thuộc Vị Trí Cha / Trạng thái"],
+            Locations_Clients: ["STT", "Location ID", "Phân loại", "AMSITO / Client", "Tên Vị Trí / Kho / Giá / Platform", "Trạng thái"],
+            Slickline_Toolstrings: ["STT", "Tool ID", "Description", "Contract Inquire", "Qty", "Length (m)", "Weight (Lbs)", "Part NO", "Asset NO", "Location", "Brand", "Status / Remark"],
             Containers_Units: ["STT", "Container ID", "Asset / Serial No", "Type / Equipment", "Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
             Slickline_Units_Mast: ["STT", "Unit ID", "Equipment Name", "Serial No", "Power / Capacity", "Location ID", "Recert Expiry", "Status"],
             Slickline_Drums: ["STT", "Drum ID", "Drum Name", "Serial No", "Parent Container / Unit", "Location ID", "Status / Notes"],
@@ -309,44 +304,42 @@
         }
 
         function initData() {
-            const saved = localStorage.getItem("slickline_asset_master_v17");
+            const saved = localStorage.getItem("slickline_asset_master_v18");
             if (saved) {
                 try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
             }
             renderTable(currentActiveTab);
             renderTree();
-            checkExpiringCerts();
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_asset_master_v17", JSON.stringify(appData));
+            localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
-            checkExpiringCerts();
         }
 
-       async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
-    if (!GOOGLE_SHEET_API_URL) return;
-    try {
-        const payload = { action: action, sheetName: sheetName, row: rowData, id: itemId };
-        const indicator = document.getElementById("sync-status");
-        indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Syncing...`;
+        async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
+            if (!GOOGLE_SHEET_API_URL) return;
+            try {
+                const payload = { action: action, sheetName: sheetName, row: rowData, id: itemId };
+                const indicator = document.getElementById("sync-status");
+                indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Syncing...`;
 
-        // Sử dụng no-cors và không chờ await response để tránh bị trình duyệt chặn đứng luồng
-        fetch(GOOGLE_SHEET_API_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        }).catch(err => console.log("Background sync triggered"));
+                fetch(GOOGLE_SHEET_API_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.log("Background sync triggered"));
 
-        setTimeout(() => {
-            indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
-        }, 800);
-    } catch (error) {
-        console.error("Lỗi đồng bộ Google Sheet:", error);
-    }
-}
+                setTimeout(() => {
+                    indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
+                }, 800);
+            } catch (error) {
+                console.error("Lỗi đồng bộ Google Sheet:", error);
+            }
+        }
+
         function switchTab(tabName) {
             currentActiveTab = tabName;
             document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -363,75 +356,23 @@
         function filterByTreeNode(type, id) {
             const badge = document.getElementById("tree-filter-badge");
             badge.classList.remove("hidden");
-
-            if (type === 'LOC' || type === 'RACK' || type === 'CUS' || type === 'PLAT') {
-                renderLocationCombinedTable(id);
-                return;
-            }
-
-            let targetTab = 'Containers_Units';
-            let filtered = [];
-
-            if (type === 'CONT' || type === 'UNIT') {
-                targetTab = 'Slickline_Drums';
-                filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
-            } else if (type === 'DRUM') {
-                targetTab = 'Slickline_Wires';
-                filtered = (appData.Slickline_Wires || []).filter(w => w[6] === id);
-            }
-
-            switchTab(targetTab);
-            renderTable(targetTab, filtered, id);
+            renderLocationCombinedTable(id);
         }
 
         function renderLocationCombinedTable(locId) {
             const locName = getLocationName(locId);
             document.getElementById("current-table-title").innerText = `TẤT CẢ THIẾT BỊ TẠI VỊ TRÍ: ${locName.toUpperCase()}`;
-
             document.querySelectorAll(".tab-btn").forEach(btn => {
                 btn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
             });
 
             let validLocIds = [locId];
-            (appData.Locations_Clients || []).forEach(l => {
-                if (l[4] === locId) validLocIds.push(l[0]);
-            });
+            (appData.Locations_Clients || []).forEach(l => { if (l[4] === locId) validLocIds.push(l[0]); });
 
             const combinedList = [];
-
-            (appData.Containers_Units || []).forEach(c => {
-                if (validLocIds.includes(c[3])) {
-                    combinedList.push({ id: c[0], name: c[2] || c[1], category: "Container & Box", origTab: "Containers_Units", status: c[6] || "Active" });
-                }
-            });
-
-            (appData.Slickline_Units_Mast || []).forEach(u => {
-                if (validLocIds.includes(u[4])) {
-                    combinedList.push({ id: u[0], name: `${u[1]} (${u[2]})`, category: "Unit & Mast", origTab: "Slickline_Units_Mast", status: u[6] || "Active" });
-                }
-            });
-
-            (appData.Slickline_Drums || []).forEach(d => {
-                if (validLocIds.includes(d[4])) {
-                    combinedList.push({ id: d[0], name: d[1], category: "Tang cáp (Drum)", origTab: "Slickline_Drums", status: d[5] || "Active" });
-                }
-            });
-
-            (appData.PCE_Equipment || []).forEach(p => {
-                if (validLocIds.includes(p[7])) {
-                    combinedList.push({ id: p[0], name: `${p[1]} - SN: ${p[2]}`, category: "Thiết bị PCE", origTab: "PCE_Equipment", status: p[9] || "Active" });
-                }
-            });
-
-            (appData.Mechanical_Tools || []).forEach(m => {
-                if (validLocIds.includes(m[6])) {
-                    combinedList.push({ id: m[0], name: m[1], category: "Dụng cụ cơ khí", origTab: "Mechanical_Tools", status: m[7] || "Active" });
-                }
-            });
-
-            (appData.Electronic_Logging_Tools || []).forEach(e => {
-                if (validLocIds.includes(e[7])) {
-                    combinedList.push({ id: e[0], name: `${e[1]} (${e[2]})`, category: "Thiết bị Logging", origTab: "Electronic_Logging_Tools", status: e[8] || "Active" });
+            (appData.Slickline_Toolstrings || []).forEach(t => {
+                if (validLocIds.includes(t[8]) || t[8]?.includes("Drawer") || t[8]?.includes("Rack")) {
+                    combinedList.push({ id: t[0], name: t[1], category: "Toolstring", origTab: "Slickline_Toolstrings", status: t[10] || "New" });
                 }
             });
 
@@ -440,7 +381,7 @@
                     <th class="px-4 py-3 font-semibold">STT</th>
                     <th class="px-4 py-3 font-semibold">Mã ID</th>
                     <th class="px-4 py-3 font-semibold">Phân Loại Nhóm</th>
-                    <th class="px-4 py-3 font-semibold">Tên Thiết Bị / Mô Tả</th>
+                    <th class="px-4 py-3 font-semibold">Mô Tả / Tên Thiết Bị</th>
                     <th class="px-4 py-3 font-semibold">Trạng Thái</th>
                     <th class="px-4 py-3 text-right">Thao tác</th>
                 </tr>
@@ -456,20 +397,18 @@
                             <td class="px-4 py-3 font-semibold text-slate-400">${idx + 1}</td>
                             <td class="px-4 py-3 text-sky-400 font-medium">${item.id}</td>
                             <td class="px-4 py-3 text-amber-300 font-medium">${item.category}</td>
-                            <td class="px-4 py-3 text-slate-200 font-semibold">${item.name}</td>
+                            <td class="px-4 py-3 text-slate-200 font-semibold truncate max-w-xs">${item.name}</td>
                             <td class="px-4 py-3 text-emerald-400">${item.status}</td>
                             <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                                <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                                <button onclick="openMoveModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
-                                <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition"><i class="fa-solid fa-circle-info"></i></button>
+                                <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
                         </tr>
                     `;
                 });
             }
-
             document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("record-count").innerText = `${combinedList.length} bản ghi`;
+            document.getElementById("record-count").innerText = `${combinedList.length} thiết bị`;
         }
 
         function resetTreeFilter() {
@@ -481,7 +420,6 @@
             const contentEl = document.getElementById(contentId);
             const iconEl = document.getElementById(iconId);
             if (!contentEl || !iconEl) return;
-
             if (contentEl.classList.contains('hidden')) {
                 contentEl.classList.remove('hidden');
                 iconEl.className = "fa-solid fa-square-minus text-accent cursor-pointer text-xs";
@@ -495,310 +433,69 @@
             const container = document.getElementById("tree-container");
             let html = "";
             let totalNodes = 0;
-
             const locs = appData.Locations_Clients || [];
-            const containers = appData.Containers_Units || [];
-            const units = appData.Slickline_Units_Mast || [];
-            const drums = appData.Slickline_Drums || [];
-            const wires = appData.Slickline_Wires || [];
-            const pce = appData.PCE_Equipment || [];
-            const tools = appData.Mechanical_Tools || [];
-            const logging = appData.Electronic_Logging_Tools || [];
 
-            function countItemsAtLoc(locId) {
-                let subIds = [locId];
-                locs.forEach(l => { if (l[4] === locId) subIds.push(l[0]); });
-
-                return containers.filter(c => subIds.includes(c[3])).length +
-                       units.filter(u => subIds.includes(u[4])).length +
-                       drums.filter(d => subIds.includes(d[4])).length +
-                       pce.filter(p => subIds.includes(p[7])).length +
-                       tools.filter(t => subIds.includes(t[6])).length +
-                       logging.filter(e => subIds.includes(e[7])).length;
-            }
-
-            const warehouses = locs.filter(l => l[1] === "Kho");
-            const customers = locs.filter(l => l[1] === "Khách hàng");
-
-            warehouses.sort((a, b) => countItemsAtLoc(b[0]) - countItemsAtLoc(a[0]));
-
-            customers.sort((a, b) => {
-                let countA = 0, countB = 0;
-                locs.filter(l => l[4] === a[0]).forEach(p => countA += countItemsAtLoc(p[0]));
-                locs.filter(l => l[4] === b[0]).forEach(p => countB += countItemsAtLoc(p[0]));
-                return countB - countA;
-            });
-
-            // 1. NHÁNH KHO NỘI BỘ
-            html += `<div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 pt-1"><i class="fa-solid fa-warehouse mr-1 text-emerald-400"></i> HỆ THỐNG KHO & GIÁ KỆ</div>`;
-            
-            warehouses.forEach(wh => {
+            locs.forEach(loc => {
                 totalNodes++;
-                const whId = wh[0];
-                const whName = wh[3];
-                const racks = locs.filter(l => l[1] === "Giá Kệ Kho" && l[4] === whId);
-                const whTotalCount = countItemsAtLoc(whId);
-
-                const whBranchId = `wh-branch-${whId}`;
-                const whIconId = `wh-icon-${whId}`;
-                const hasWhChildren = racks.length > 0 || whTotalCount > 0;
-
                 html += `
                 <div class="border-l-2 border-emerald-500/40 pl-2 py-1 space-y-1 mb-2">
-                    <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700/65 transition group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Locations_Clients', '${whId}', '${whName}')">
+                    <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700 transition cursor-pointer" onclick="filterByTreeNode('LOC', '${loc[0]}')">
                         <div class="flex items-center gap-1.5 truncate">
-                            ${hasWhChildren ? `<i id="${whIconId}" onclick="toggleTreeNode('${whBranchId}', '${whIconId}')" class="fa-solid fa-square-plus text-emerald-400 cursor-pointer text-xs" title="Thu gọn/Mở rộng"></i>` : `<i class="fa-solid fa-circle text-[6px] text-slate-500 ml-0.5"></i>`}
-                            <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('LOC', '${whId}')">
-                                <i class="fa-solid fa-warehouse text-emerald-400 text-xs"></i>
-                                <span class="truncate">${whName}</span>
-                            </div>
+                            <i class="fa-solid fa-warehouse text-emerald-400 text-xs"></i>
+                            <span class="truncate">${loc[3]}</span>
                         </div>
-                        <div class="flex items-center gap-1">
-                            <span class="text-[10px] bg-slate-900 text-slate-300 px-1.5 py-0.5 rounded">${whTotalCount}</span>
-                            <button onclick="openEditModal('Locations_Clients', '${whId}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
-                        </div>
-                    </div>`;
-
-                if (hasWhChildren) {
-                    html += `<div id="${whBranchId}" class="hidden space-y-1 pl-2 border-l border-slate-800 ml-1 mt-1">`;
-                    racks.forEach(rack => {
-                        totalNodes++;
-                        const rackId = rack[0];
-                        const rackName = rack[3];
-                        const rackCount = countItemsAtLoc(rackId);
-                        
-                        html += `
-                        <div class="flex items-center justify-between text-slate-300 bg-slate-900/50 p-1 rounded hover:bg-slate-800 transition">
-                            <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('RACK', '${rackId}')">
-                                <i class="fa-solid fa-layer-group text-amber-400 text-[11px]"></i>
-                                <span class="truncate">${rackName}</span>
-                            </div>
-                            <span class="text-[10px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">${rackCount}</span>
-                        </div>`;
-                    });
-                    html += `</div>`;
-                }
-                html += `</div>`;
+                    </div>
+                </div>`;
             });
-
-            // 2. NHÁNH KHÁCH HÀNG & PLATFORM
-            html += `<div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1 pt-2"><i class="fa-solid fa-ship mr-1 text-amber-400"></i> KHÁCH HÀNG & GIÀN KHOAN</div>`;
-
-            customers.forEach(cus => {
-                totalNodes++;
-                const cusId = cus[0];
-                const cusName = cus[3];
-                const platforms = locs.filter(l => l[1] === "Platform" && l[4] === cusId);
-
-                platforms.sort((p1, p2) => countItemsAtLoc(p2[0]) - countItemsAtLoc(p1[0]));
-
-                let cusTotalCount = 0;
-                platforms.forEach(p => cusTotalCount += countItemsAtLoc(p[0]));
-
-                const cusBranchId = `cus-branch-${cusId}`;
-                const cusIconId = `cus-icon-${cusId}`;
-                const hasCusChildren = platforms.length > 0;
-
-                html += `
-                <div class="border-l-2 border-amber-500/40 pl-2 py-1 space-y-1 mb-2">
-                    <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700/65 transition group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Locations_Clients', '${cusId}', '${cusName}')">
-                        <div class="flex items-center gap-1.5 truncate">
-                            ${hasCusChildren ? `<i id="${cusIconId}" onclick="toggleTreeNode('${cusBranchId}', '${cusIconId}')" class="fa-solid fa-square-plus text-amber-400 cursor-pointer text-xs"></i>` : `<i class="fa-solid fa-circle text-[6px] text-slate-500 ml-0.5"></i>`}
-                            <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('CUS', '${cusId}')">
-                                <i class="fa-solid fa-building-user text-amber-400 text-xs"></i>
-                                <span class="truncate">${cusName}</span>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <span class="text-[10px] bg-slate-900 text-slate-300 px-1.5 py-0.5 rounded">${cusTotalCount}</span>
-                            <button onclick="openEditModal('Locations_Clients', '${cusId}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
-                        </div>
-                    </div>`;
-
-                if (hasCusChildren) {
-                    html += `<div id="${cusBranchId}" class="hidden space-y-1.5 pl-2 border-l border-slate-800 ml-1 mt-1">`;
-                    platforms.forEach(plat => {
-                        totalNodes++;
-                        const platId = plat[0];
-                        const platName = plat[3];
-                        const platCount = countItemsAtLoc(platId);
-
-                        const platContainers = containers.filter(c => c[3] === platId);
-                        const platUnits = units.filter(u => u[4] === platId);
-                        const hasPlatChildren = (platContainers.length > 0 || platUnits.length > 0);
-                        
-                        const platBranchId = `plat-branch-${platId}`;
-                        const platIconId = `plat-icon-${platId}`;
-
-                        html += `
-                        <div class="border-l-2 border-slate-700 pl-2 py-1 space-y-1">
-                            <div class="flex items-center justify-between text-sky-300 bg-slate-900/50 p-1.5 rounded group">
-                                <div class="flex items-center gap-1.5 truncate">
-                                    ${hasPlatChildren ? `<i id="${platIconId}" onclick="toggleTreeNode('${platBranchId}', '${platIconId}')" class="fa-solid fa-square-plus text-sky-400 cursor-pointer text-[10px]"></i>` : ``}
-                                    <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('PLAT', '${platId}')">
-                                        <i class="fa-solid fa-oil-well text-xs"></i>
-                                        <span class="truncate font-medium">${platName}</span>
-                                    </div>
-                                </div>
-                                <span class="text-[10px] bg-slate-900 text-slate-300 px-1.5 py-0.5 rounded">${platCount}</span>
-                            </div>`;
-
-                        if (hasPlatChildren) {
-                            html += `<div id="${platBranchId}" class="hidden space-y-1 pl-2 border-l border-slate-800 ml-1 mt-1">`;
-                            platUnits.forEach(u => {
-                                totalNodes++;
-                                html += `<div class="text-sky-300 text-[11px] py-0.5 pl-2 border-l border-slate-700 cursor-pointer hover:text-white" onclick="openDetailModal('Slickline_Units_Mast', '${u[0]}')"><i class="fa-solid fa-truck-monster text-[10px]"></i> ${u[1]} (${u[2]})</div>`;
-                            });
-                            platContainers.forEach(cont => {
-                                totalNodes++;
-                                html += `<div class="text-slate-300 text-[11px] py-0.5 pl-2 border-l border-slate-700 cursor-pointer hover:text-white" onclick="openDetailModal('Containers_Units', '${cont[0]}')"><i class="fa-solid fa-box text-sky-400 text-[10px]"></i> ${cont[1]} - ${cont[2]}</div>`;
-                            });
-                            html += `</div>`;
-                        }
-                        html += `</div>`;
-                    });
-                    html += `</div>`;
-                }
-                html += `</div>`;
-            });
-
-            container.innerHTML = html || '<div class="text-slate-500 text-center py-4">Chưa có dữ liệu phân cấp.</div>';
+            container.innerHTML = html;
             document.getElementById("total-nodes-badge").innerText = `${totalNodes} mục`;
         }
 
         function filterTree(query) {
             const q = query.toLowerCase();
             document.querySelectorAll("#tree-container > div").forEach(el => {
-                const match = el.innerText.toLowerCase().includes(q);
-                el.style.display = match ? "block" : "none";
-                if (match && q.length > 0) {
-                    el.querySelectorAll("div[id*='branch']").forEach(b => b.classList.remove('hidden'));
-                }
+                el.style.display = el.innerText.toLowerCase().includes(q) ? "block" : "none";
             });
         }
 
-        // DATALIST GỢI Ý THÔNG MINH + CHO PHÉP NHẬP MỚI
         function renderFormFields(rowData = null) {
             const tab = document.getElementById("form-target-tab").value;
             const container = document.getElementById("dynamic-fields-container");
             let html = "";
             const val = (idx, defaultVal = "") => rowData ? (rowData[idx] || "") : defaultVal;
-
-            const locationTypes = ["Kho", "Giá Kệ Kho", "Khách hàng", "Platform"];
-            const clientNames = ["AMSITO", "Vietsovpetro", "JVPC", "Phu Quoc POC", "PVEP"];
-            const statuses = ["Active", "Inactive", "Offshore", "Base", "In Use", "Ready", "Maintenance"];
-
-            const parentLocIds = (appData.Locations_Clients || []).map(l => l[0]);
-            const containerIds = (appData.Containers_Units || []).map(c => c[0]);
-            const unitIds = (appData.Slickline_Units_Mast || []).map(u => u[0]);
+            const statuses = ["Active", "New", "Ready", "Offshore"];
 
             if (tab === "Locations_Clients") {
                 html = `
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Location ID (Mã Vị Trí / Kho / Giá / Platform)</label>
-                        <input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-accent"'} value="${val(0)}" placeholder="VD: LOC003, LOC_PLAT_01...">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Phân loại</label>
-                        <input type="text" name="f1" list="list-loctype" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-accent" value="${val(1)}" placeholder="Chọn hoặc nhập loại vị trí...">
-                        <datalist id="list-loctype">
-                            ${locationTypes.map(t => `<option value="${t}"></option>`).join('')}
-                        </datalist>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">AMSITO / Client Name (Tên Khách Hàng / Công Ty)</label>
-                        <input type="text" name="f2" list="list-clientname" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-accent" value="${val(2)}" placeholder="Chọn hoặc nhập tên khách hàng...">
-                        <datalist id="list-clientname">
-                            ${clientNames.map(c => `<option value="${c}"></option>`).join('')}
-                        </datalist>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Tên Vị Trí / Kho / Giá / Platform</label>
-                        <input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-accent" value="${val(3)}" placeholder="VD: Kho số 3, Giá kệ B2, Giàn MSP-1...">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Thuộc Vị Trí Cha (Location ID cha nếu có) / Trạng thái</label>
-                        <input type="text" name="f4" list="list-parentloc" autocomplete="off" value="${val(4, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:border-accent" placeholder="Chọn vị trí cha hoặc nhập Active/Inactive...">
-                        <datalist id="list-parentloc">
-                            ${statuses.map(s => `<option value="${s}"></option>`).join('')}
-                            ${parentLocIds.map(id => `<option value="${id}">${getLocationName(id)}</option>`).join('')}
-                        </datalist>
-                    </div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Phân loại</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Client Name</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Tên Vị Trí</label><input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Trạng thái</label><input type="text" name="f4" value="${val(4, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
                 `;
-            } else if (tab === "Containers_Units") {
+            } else if (tab === "Slickline_Toolstrings") {
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Container / Box ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Asset / Serial No</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Type / Description</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Location ID (Vị Trí Lưu Trữ)</label>
-                        <input type="text" name="f3" list="list-loc-ids" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}">
-                        <datalist id="list-loc-ids">${parentLocIds.map(id => `<option value="${id}">${getLocationName(id)}</option>`).join('')}</datalist>
+                    <div><label class="block text-xs text-slate-300 mb-1">Tool ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Description</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Contract Inquire</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div><label class="block text-xs text-slate-300 mb-1">Qty</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">Length (m)</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">Weight (Lbs)</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
                     </div>
-                    <div><label class="block text-xs text-slate-300 mb-1">MPI Expiry</label><input type="date" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Load Test Expiry</label><input type="date" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Status</label>
-                        <input type="text" name="f6" list="list-status" value="${val(6, 'Offshore')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-                        <datalist id="list-status">${statuses.map(s => `<option value="${s}"></option>`).join('')}</datalist>
-                    </div>
-                `;
-            } else if (tab === "Slickline_Units_Mast") {
-                html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Unit ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Power / Capacity</label><input type="text" name="f3" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Location ID</label>
-                        <input type="text" name="f4" list="list-loc-ids" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}">
-                        <datalist id="list-loc-ids">${parentLocIds.map(id => `<option value="${id}">${getLocationName(id)}</option>`).join('')}</datalist>
-                    </div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Recert Expiry</label><input type="date" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Status</label>
-                        <input type="text" name="f6" list="list-status" value="${val(6, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-                        <datalist id="list-status">${statuses.map(s => `<option value="${s}"></option>`).join('')}</datalist>
-                    </div>
-                `;
-            } else if (tab === "Slickline_Drums") {
-                html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Drum ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Drum Name</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Parent Container / Unit ID</label>
-                        <input type="text" name="f3" list="list-containers-units" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}">
-                        <datalist id="list-containers-units">
-                            ${containerIds.map(id => `<option value="${id}">Container: ${id}</option>`).join('')}
-                            ${unitIds.map(id => `<option value="${id}">Unit: ${id}</option>`).join('')}
-                        </datalist>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Location ID</label>
-                        <input type="text" name="f4" list="list-loc-ids" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}">
-                        <datalist id="list-loc-ids">${parentLocIds.map(id => `<option value="${id}">${getLocationName(id)}</option>`).join('')}</datalist>
-                    </div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status / Notes</label><input type="text" name="f5" value="${val(5, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Part NO</label><input type="text" name="f6" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Asset NO</label><input type="text" name="f7" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location / Drawer</label><input type="text" name="f8" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Brand</label><input type="text" name="f9" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(9, 'PEAK')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status / Remark</label><input type="text" name="f10" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(10, 'New')}"></div>
                 `;
             } else {
                 html = `
                     <div><label class="block text-xs text-slate-300 mb-1">ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Name / Type</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Location ID / Container Cha</label>
-                        <input type="text" name="f3" list="list-all-parents" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}">
-                        <datalist id="list-all-parents">
-                            ${parentLocIds.map(id => `<option value="${id}">${getLocationName(id)}</option>`).join('')}
-                            ${containerIds.map(id => `<option value="${id}">Container: ${id}</option>`).join('')}
-                        </datalist>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Status</label>
-                        <input type="text" name="f4" list="list-status" value="${val(4, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">
-                        <datalist id="list-status">${statuses.map(s => `<option value="${s}"></option>`).join('')}</datalist>
-                    </div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f4" value="${val(4, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
                 `;
             }
             container.innerHTML = html;
@@ -866,83 +563,6 @@
             syncToGoogleSheet("delete", tabName, [], id);
         }
 
-        function openMoveModal(tabName, itemId) {
-            movingItem = { tabName, itemId };
-            const row = appData[tabName].find(r => r[0] === itemId);
-            if (!row) return;
-
-            document.getElementById("move-item-name").value = `[${row[0]}] ${row[1] || row[2]}`;
-
-            let destHtml = `<optgroup label="--- Hệ thống Kho & Giá Kệ ---">`;
-            (appData.Locations_Clients || []).filter(l => l[1] === "Kho" || l[1] === "Giá Kệ Kho").forEach(loc => {
-                destHtml += `<option value="${loc[0]}">🏢 [${loc[0]}] ${loc[3]}</option>`;
-            });
-            destHtml += `</optgroup><optgroup label="--- Khách hàng & Platform ---">`;
-            (appData.Locations_Clients || []).filter(l => l[1] === "Platform").forEach(loc => {
-                destHtml += `<option value="${loc[0]}">🛢️ [${loc[0]}] ${loc[3]}</option>`;
-            });
-            destHtml += `</optgroup><optgroup label="--- Container Lớn / Winch Unit ---">`;
-            (appData.Containers_Units || []).forEach(cont => {
-                if (cont[0] !== itemId) destHtml += `<option value="${cont[0]}">📦 Container: [${cont[0]}] ${cont[1]} - ${cont[2]}</option>`;
-            });
-            (appData.Slickline_Units_Mast || []).forEach(u => {
-                if (u[0] !== itemId) destHtml += `<option value="${u[0]}">🚜 Unit: [${u[0]}] ${u[1]} (${u[2]})</option>`;
-            });
-            destHtml += `</optgroup>`;
-
-            document.getElementById("move-destination-select").innerHTML = destHtml;
-            document.getElementById("move-modal").classList.remove("hidden");
-            document.getElementById("move-modal").classList.add("flex");
-        }
-
-        function closeMoveModal() {
-            document.getElementById("move-modal").classList.remove("flex");
-            document.getElementById("move-modal").classList.add("hidden");
-        }
-
-        function confirmMove() {
-            const destId = document.getElementById("move-destination-select").value;
-            const { tabName, itemId } = movingItem;
-            const row = appData[tabName].find(r => r[0] === itemId);
-            if (!row) return;
-
-            if (tabName === "Containers_Units") {
-                row[3] = destId;
-                let targetLocationId = destId.startsWith("LOC") ? destId : "";
-                if (!targetLocationId) {
-                    const parentCont = (appData.Containers_Units || []).find(c => c[0] === destId);
-                    if (parentCont) targetLocationId = parentCont[3];
-                }
-
-                if (targetLocationId) {
-                    ["PCE_Equipment", "Mechanical_Tools", "Electronic_Logging_Tools"].forEach(subTab => {
-                        (appData[subTab] || []).forEach(subItem => {
-                            if (subItem[6] === itemId || subItem[5] === itemId) {
-                                subItem[subTab === "PCE_Equipment" ? 7 : 6] = targetLocationId;
-                            }
-                        });
-                    });
-                }
-
-            } else if (tabName === "Slickline_Units_Mast") {
-                row[4] = destId;
-            } else if (tabName === "Slickline_Drums") {
-                row[3] = destId;
-                const parentUnit = (appData.Slickline_Units_Mast || []).find(u => u[0] === destId);
-                const parentCont = (appData.Containers_Units || []).find(c => c[0] === destId);
-                if (parentUnit) row[4] = parentUnit[4];
-                else if (parentCont) row[4] = parentCont[3];
-                else if (destId.startsWith("LOC")) row[4] = destId;
-            } else if (tabName === "Slickline_Wires") {
-                row[6] = destId;
-            }
-
-            saveDataLocal();
-            syncToGoogleSheet("update", tabName, row, itemId);
-            closeMoveModal();
-            alert(`Đã di chuyển thành công [${itemId}] và đồng bộ vị trí các tài sản trực thuộc!`);
-        }
-
         function openDetailModal(tabName, itemId) {
             const row = (appData[tabName] || []).find(r => r[0] === itemId);
             if (!row) return;
@@ -960,28 +580,20 @@
             row.forEach((val, idx) => {
                 if (idx === 0) return;
                 const headerName = headers[idx] || `Thuộc tính ${idx}`;
-                let displayVal = val;
-                const locIndices = { Containers_Units: 3, Slickline_Units_Mast: 4, Slickline_Drums: 4, PCE_Equipment: 7, Mechanical_Tools: 6, Electronic_Logging_Tools: 7 };
-                if (locIndices[tabName] !== undefined && idx === locIndices[tabName]) {
-                    displayVal = getLocationName(val);
-                }
-
                 contentHtml += `
                     <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50">
                         <span class="text-slate-400 block text-[10px] uppercase font-medium">${headerName}</span>
-                        <span class="text-slate-200 font-semibold text-sm mt-0.5 block">${displayVal || 'N/A'}</span>
+                        <span class="text-slate-200 font-semibold text-sm mt-0.5 block">${val || 'N/A'}</span>
                     </div>
                 `;
             });
 
             contentHtml += `</div></div>`;
-
             document.getElementById("detail-modal-content").innerHTML = contentHtml;
             document.getElementById("detail-edit-btn").onclick = function() {
                 closeDetailModal();
                 openEditModal(tabName, itemId);
             };
-
             document.getElementById("detail-modal").classList.remove("hidden");
             document.getElementById("detail-modal").classList.add("flex");
         }
@@ -992,48 +604,42 @@
         }
 
         function renderTable(tabName, customRows = null, highlightId = null) {
-    const headers = tableHeaders[tabName];
-    const rows = customRows || appData[tabName] || [];
+            const headers = tableHeaders[tabName];
+            const rows = customRows || appData[tabName] || [];
 
-    let headHtml = "<tr>";
-    headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
-    headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
-    document.getElementById("table-head").innerHTML = headHtml;
+            let headHtml = "<tr>";
+            headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
+            headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
+            document.getElementById("table-head").innerHTML = headHtml;
 
-    let bodyHtml = "";
-    if (rows.length === 0) {
-        bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
-    } else {
-        rows.forEach((row, index) => {
-            const rowId = row[0]; // Khai báo rõ biến rowId ở đây để tránh lỗi Undefined
-            const isHighlight = (rowId === highlightId);
-            const rowBg = isHighlight ? 'bg-sky-500/20 border-sky-400' : 'hover:bg-slate-800/40 border-slate-800/60';
+            let bodyHtml = "";
+            if (rows.length === 0) {
+                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
+            } else {
+                rows.forEach((row, index) => {
+                    const rowId = row[0];
+                    const isHighlight = (rowId === highlightId);
+                    const rowBg = isHighlight ? 'bg-sky-500/20 border-sky-400' : 'hover:bg-slate-800/40 border-slate-800/60';
 
-            bodyHtml += `<tr class="${rowBg} transition border-b cursor-pointer" onclick="openDetailModal('${tabName}', '${rowId}')">`;
-            bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
+                    bodyHtml += `<tr class="${rowBg} transition border-b cursor-pointer" onclick="openDetailModal('${tabName}', '${rowId}')">`;
+                    bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
 
-            row.forEach((cell, cellIdx) => {
-                let displayVal = cell;
-                const locIndices = { Containers_Units: 3, Slickline_Units_Mast: 4, Slickline_Drums: 4, PCE_Equipment: 7, Mechanical_Tools: 6, Electronic_Logging_Tools: 7 };
-                if (locIndices[tabName] !== undefined && cellIdx === locIndices[tabName]) {
-                    displayVal = getLocationName(cell);
-                }
-                bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${displayVal}</td>`;
-            });
+                    row.forEach((cell) => {
+                        bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell}</td>`;
+                    });
 
-            bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                <button onclick="openDetailModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                <button onclick="openMoveModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
-                <button onclick="openEditModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                <button onclick="deleteItem('${tabName}', '${rowId}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
-            </td>`;
-            bodyHtml += `</tr>`;
-        });
-    }
-    document.getElementById("table-body").innerHTML = bodyHtml;
-    document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
-    document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
-}
+                    bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                        <button onclick="openDetailModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
+                        <button onclick="openEditModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteItem('${tabName}', '${rowId}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>`;
+                    bodyHtml += `</tr>`;
+                });
+            }
+            document.getElementById("table-body").innerHTML = bodyHtml;
+            document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
+            document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
+        }
 
         function showContextMenu(event, tabName, itemId, itemName) {
             event.preventDefault();
@@ -1057,7 +663,6 @@
             if (!itemId) return;
             if (action === 'view') openDetailModal(tabName, itemId);
             else if (action === 'edit') openEditModal(tabName, itemId);
-            else if (action === 'move') openMoveModal(tabName, itemId);
             else if (action === 'delete') deleteItem(tabName, itemId);
         }
 
@@ -1065,28 +670,10 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_v17_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `slickline_master_v18_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
-        }
-
-        function checkExpiringCerts() {
-            let count = 0;
-            const today = new Date();
-            (appData.Containers_Units || []).forEach(c => {
-                if (c[4] && new Date(c[4]) < new Date(today.getTime() + 30*24*60*60*1000)) count++;
-            });
-            const indicator = document.getElementById("cert-warning-indicator");
-            if (count > 0) {
-                document.getElementById("expiring-count").innerText = count;
-                indicator.classList.remove("hidden");
-                indicator.classList.add("flex");
-            }
-        }
-
-        function filterExpiringCerts() {
-            switchTab("Containers_Units");
         }
 
         window.onload = initData;
