@@ -286,12 +286,11 @@
             MPI_LT: ["STT", "ID", "Equipment Name", "Asset NO", "MPI Test Date", "MPI Expire Date", "LT Test Date", "LT Expire Date", "Pressure Test Expire", "Location ID", "Status"]
         };
 
-        // ĐỊNH NGHĨA CHUẨN CHỈ SỐ CỘT LOCATION ID CHO TỪNG BẢNG
         const locationColMap = {
             Locations: 4,
             Slickline_Toolstrings: 9,
             Containers_Units: 4,
-            Slickline_Units_Mast: 4, // Cột Location ID trong Slickline_Units_Mast nằm ở index 4
+            Slickline_Units_Mast: 4,
             Slickline_Drums: 7,
             Slickline_Wires: 7,
             PCE_Equipment: 8,
@@ -338,13 +337,12 @@
             return path.join(" ➔ ");
         }
 
-        // HÀM ĐỒNG BỘ CHUẨN XÁC DỰA TRÊN ASSET NO LÀM CHUẨN ĐỊNH DANH
         function syncMpiLtToCorrespondingTabs() {
             const mpiList = appData.MPI_LT || [];
             mpiList.forEach(item => {
                 const id = item[0];
                 const eqName = item[1] || "";
-                const assetNo = item[2] || ""; // ASSET NO / SERIAL CHUẨN
+                const assetNo = item[2] || "";
                 const locId = item[8] || "N/A";
                 const status = item[9] || "Active";
                 const upperName = eqName.toUpperCase();
@@ -354,7 +352,6 @@
 
                 if (upperName.includes("UNIT") || upperName.includes("WINCH") || upperName.includes("MAST")) {
                     targetTab = "Slickline_Units_Mast";
-                    // Cấu trúc chuẩn 7 cột: [Unit ID (0), Equipment Name (1), Serial No (2), Power/Capacity (3), Location ID (4), Recert Expiry (5), Status (6)]
                     newRow = [id, eqName, assetNo, "", locId, "", status];
                 } else if (upperName.includes("CONTAINER") || upperName.includes("SKID") || upperName.includes("BOX")) {
                     targetTab = "Containers_Units";
@@ -376,8 +373,8 @@
                         appData[targetTab][existingIdx][0] = id;
                         appData[targetTab][existingIdx][1] = eqName;
                         if (targetTab === "Slickline_Units_Mast") {
-                            appData[targetTab][existingIdx][2] = assetNo; // Đảm bảo Serial No là Asset No
-                            appData[targetTab][existingIdx][4] = locId;   // Đảm bảo Location ID đúng index 4
+                            appData[targetTab][existingIdx][2] = assetNo;
+                            appData[targetTab][existingIdx][4] = locId;
                         }
                     } else {
                         appData[targetTab].push(newRow);
@@ -417,7 +414,6 @@
             }
 
             syncMpiLtToCorrespondingTabs();
-
             localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
@@ -749,7 +745,7 @@
         }
 
         function closeMoveModal() {
-            document.getElementById("move-modal").classList.remove("flex");
+            document.getElementById("move-modal").classList.remove("hidden");
             document.getElementById("move-modal").classList.add("hidden");
         }
 
@@ -795,18 +791,18 @@
                 html = `
                     <datalist id="dl-loc-parents">${optionsParent}</datalist>
                     <div><label class="block text-xs text-slate-300 mb-1">ID Bản Ghi</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name (Tên Thiết Bị)</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Asset NO (Serial chuẩn định danh)</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
                     <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">MPI Test Date</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 13-Apr-26" value="${val(3)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">MPI Expire Date</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 11-Oct-26" value="${val(4)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">MPI Test Date</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">MPI Expire Date</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">LT Test Date</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 8-Nov-25" value="${val(5)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">LT Expire Date</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 8-Nov-26" value="${val(6)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">LT Test Date</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">LT Expire Date</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
                     </div>
                     <div><label class="block text-xs text-slate-300 mb-1">Pressure Test Expire Date</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (Vị Trí)</label><input type="text" name="f8" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f8" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status / Remark</label><input type="text" name="f9" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(9, 'Active')}"></div>
                 `;
             } else if (tab === "Slickline_Units_Mast") {
@@ -815,10 +811,24 @@
                     <div><label class="block text-xs text-slate-300 mb-1">Unit ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Equipment Name</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Serial No (Asset No chuẩn)</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Power / Capacity</label><input type="text" name="f3" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Power / Capacity & Kích thước vật lý (DxRxC, Gross Weight)</label><input type="text" name="f3" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 75kW, 3.34 x 1.35 x 2.35m, 6T" value="${val(3)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f4" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Recert Expiry</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6, 'Active')}"></div>
+                `;
+            } else if (tab === "PCE_Equipment") {
+                html = `
+                    <datalist id="dl-loc-parents">${optionsParent}</datalist>
+                    <div><label class="block text-xs text-slate-300 mb-1">PCE ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Type</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Working Pressure (PSI)</label><input type="text" name="f3" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 10K PSI" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Service</label><input type="text" name="f4" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Connection</label><input type="text" name="f5" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent Container</label><input type="text" name="f6" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Pressure Test Expiry</label><input type="text" name="f8" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f9" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(9, 'Active')}"></div>
                 `;
             } else if (tab === "Locations") {
                 html = `
@@ -947,7 +957,7 @@
         }
 
         function closeDetailModal() {
-            document.getElementById("detail-modal").classList.remove("flex");
+            document.getElementById("detail-modal").classList.remove("hidden");
             document.getElementById("detail-modal").classList.add("hidden");
         }
 
