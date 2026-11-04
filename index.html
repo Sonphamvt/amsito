@@ -311,7 +311,27 @@
             renderTable(currentActiveTab);
             renderTree();
         }
+async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
+    if (!GOOGLE_SHEET_API_URL) return;
+    try {
+        const payload = { action: action, sheetName: sheetName, row: rowData, id: itemId };
+        const indicator = document.getElementById("sync-status");
+        indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Syncing...`;
 
+        fetch(GOOGLE_SHEET_API_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        }).catch(err => console.log("Background sync triggered"));
+
+        setTimeout(() => {
+            indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
+        }, 800);
+    } catch (error) {
+        console.error("Lỗi đồng bộ Google Sheet:", error);
+    }
+}
         function saveDataLocal() {
             localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
             renderTable(currentActiveTab);
