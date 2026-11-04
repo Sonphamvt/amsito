@@ -486,325 +486,22 @@
             renderTable(currentActiveTab);
         }
 
-        // --- CẬP NHẬT MỚI: HIỂN THỊ THÔNG SỐ VÀ DANH SÁCH THIẾT BỊ TRỰC THUỘC BÊN TRONG ---
-        function openDetailModal(tabName, itemId) {
-            const row = (appData[tabName] || []).find(r => r[0] === itemId);
-            if (!row) return;
+        // --- HÀM TOGGLE THU GỌN / MỞ RỘNG CÂY ---
+        function toggleTreeNode(contentId, iconId) {
+            const contentEl = document.getElementById(contentId);
+            const iconEl = document.getElementById(iconId);
+            if (!contentEl || !iconEl) return;
 
-            const headers = tableHeaders[tabName];
-            let contentHtml = `
-                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
-                    <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-                        <span class="text-xs uppercase font-semibold text-sky-400">Mã Định Danh (ID): ${row[0]}</span>
-                        <span class="text-xs px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${row[row.length - 1] || 'Active'}</span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
-            `;
-
-            row.forEach((val, idx) => {
-                if (idx === 0) return;
-                const headerName = headers[idx] || `Thuộc tính ${idx}`;
-                if (tabName === "Slickline_Wires" && idx === 7) return;
-
-                let displayVal = val;
-                const locIndices = { Containers_Units: 3, Slickline_Units_Mast: 4, Slickline_Drums: 4, PCE_Equipment: 7, Mechanical_Tools: 6, Electronic_Logging_Tools: 7 };
-                if (locIndices[tabName] !== undefined && idx === locIndices[tabName]) {
-                    displayVal = getLocationName(val);
-                }
-
-                contentHtml += `
-                    <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50">
-                        <span class="text-slate-400 block text-[10px] uppercase font-medium">${headerName}</span>
-                        <span class="text-slate-200 font-semibold text-sm mt-0.5 block">${displayVal || 'N/A'}</span>
-                    </div>
-                `;
-            });
-
-            contentHtml += `</div></div>`;
-
-            // --- QUÉT CÁC THIẾT BỊ TRỰC THUỘC BÊN TRONG (CONTAINER / UNIT / DRUM / BOX) ---
-            let childItems = [];
-            let childTitle = "Danh Sách Thiết Bị Trực Thuộc Bên Trong";
-
-            if (tabName === "Containers_Units") {
-                // Quét Tang cáp thuộc Container/Box này
-                const drumsInCont = (appData.Slickline_Drums || []).filter(d => d[3] === itemId);
-                drumsInCont.forEach(d => childItems.push({ id: d[0], name: `${d[1]} (${d[2]})`, type: "Tang cáp (Drum)", tab: "Slickline_Drums" }));
-
-                // Quét PCE Equipment thuộc Container này
-                const pceInCont = (appData.PCE_Equipment || []).filter(p => p[6] === itemId);
-                pceInCont.forEach(p => childItems.push({ id: p[0], name: `${p[1]} (SN: ${p[2]})`, type: "PCE Equipment", tab: "PCE_Equipment" }));
-
-                // Quét Cơ khí / Tools thuộc Container này
-                const toolsInCont = (appData.Mechanical_Tools || []).filter(t => t[5] === itemId);
-                toolsInCont.forEach(t => childItems.push({ id: t[0], name: `${t[1]} (${t[2]})`, type: "Cơ khí / Tool", tab: "Mechanical_Tools" }));
-
-                // Quét Logging tools thuộc Container này
-                const logInCont = (appData.Electronic_Logging_Tools || []).filter(e => e[6] === itemId);
-                logInCont.forEach(e => childItems.push({ id: e[0], name: `${e[1]} (${e[2]})`, type: "Logging Tool", tab: "Electronic_Logging_Tools" }));
-
-            } else if (tabName === "Slickline_Units_Mast") {
-                childTitle = "Tang Cáp (Drums) Gắn Trên Winch Unit Này";
-                const drumsOnUnit = (appData.Slickline_Drums || []).filter(d => d[3] === itemId);
-                drumsOnUnit.forEach(d => childItems.push({ id: d[0], name: `${d[1]} (${d[2]})`, type: "Tang cáp (Drum)", tab: "Slickline_Drums" }));
-
-            } else if (tabName === "Slickline_Drums") {
-                childTitle = "Sợi Cáp (Wires) Quấn Trên Tang Này";
-                const wiresOnDrum = (appData.Slickline_Wires || []).filter(w => w[6] === itemId);
-                wiresOnDrum.forEach(w => childItems.push({ id: w[0], name: `Cáp ${w[1]} (${w[2]}) - Dài: ${w[5]}`, type: "Sợi Cáp", tab: "Slickline_Wires" }));
-            }
-
-            if (tabName === "Containers_Units" || tabName === "Slickline_Units_Mast" || tabName === "Slickline_Drums") {
-                contentHtml += `
-                    <div class="space-y-3 pt-3 border-t border-slate-800">
-                        <h4 class="text-xs font-bold text-accent uppercase tracking-wide flex items-center gap-2">
-                            <i class="fa-solid fa-boxes-stacked"></i> ${childTitle} (${childItems.length} mục)
-                        </h4>
-                `;
-
-                if (childItems.length === 0) {
-                    contentHtml += `<div class="bg-slate-900/40 border border-slate-800 p-3 rounded-lg text-slate-500 text-xs italic text-center">Trống - Hiện chưa có thiết bị nào được gán bên trong thiết bị này.</div>`;
-                } else {
-                    contentHtml += `
-                        <div class="border border-slate-700 rounded-xl overflow-hidden bg-slate-900/50">
-                            <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-800 text-slate-400 uppercase">
-                                    <tr>
-                                        <th class="p-2.5">Mã ID</th>
-                                        <th class="p-2.5">Loại Thiết Bị</th>
-                                        <th class="p-2.5">Tên / Chi Tiết</th>
-                                        <th class="p-2.5 text-right">Thao Tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-800">
-                    `;
-                    childItems.forEach(item => {
-                        contentHtml += `
-                            <tr class="hover:bg-slate-800/40 transition cursor-pointer" onclick="openDetailModal('${item.tab}', '${item.id}')">
-                                <td class="p-2.5 text-sky-400 font-semibold">${item.id}</td>
-                                <td class="p-2.5 text-amber-300 font-medium">${item.type}</td>
-                                <td class="p-2.5 text-slate-200">${item.name}</td>
-                                <td class="p-2.5 text-right space-x-2" onclick="event.stopPropagation()">
-                                    <button onclick="openDetailModal('${item.tab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                                    <button onclick="openMoveModal('${item.tab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    contentHtml += `</tbody></table></div>`;
-                }
-                contentHtml += `</div>`;
-            }
-
-            if (tabName === "Slickline_Wires" && row[7]) {
-                try {
-                    const historyArr = JSON.parse(row[7]);
-                    contentHtml += `
-                        <div class="space-y-2">
-                            <h4 class="text-xs font-bold text-sky-400 uppercase tracking-wide flex items-center gap-1.5">
-                                <i class="fa-solid fa-clock-rotate-left"></i> Lịch Sử Vận Hành & Bảo Dưỡng Cáp (${historyArr.length} mốc)
-                            </h4>
-                            <div class="border border-slate-700 rounded-xl overflow-hidden bg-slate-900/50 max-h-48 overflow-y-auto">
-                                <table class="w-full text-left text-xs">
-                                    <thead class="bg-slate-800 text-slate-400 sticky top-0">
-                                        <tr>
-                                            <th class="p-2.5 w-1/3">Ngày Tháng</th>
-                                            <th class="p-2.5">Sự Kiện / Ghi Chú Kỹ Thuật</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-slate-800">
-                    `;
-                    if (historyArr.length === 0) {
-                        contentHtml += `<tr><td colspan="2" class="p-3 text-center text-slate-500 italic">Chưa có lịch sử ghi nhận.</td></tr>`;
-                    } else {
-                        historyArr.forEach(h => {
-                            contentHtml += `<tr><td class="p-2.5 text-amber-300 font-medium">${h[0]}</td><td class="p-2.5 text-slate-300">${h[1]}</td></tr>`;
-                        });
-                    }
-                    contentHtml += `</tbody></table></div></div>`;
-                } catch(e) {}
-            }
-
-            document.getElementById("detail-modal-content").innerHTML = contentHtml;
-            document.getElementById("detail-edit-btn").onclick = function() {
-                closeDetailModal();
-                openEditModal(tabName, itemId);
-            };
-
-            document.getElementById("detail-modal").classList.remove("hidden");
-            document.getElementById("detail-modal").classList.add("flex");
-        }
-
-        function closeDetailModal() {
-            document.getElementById("detail-modal").classList.remove("flex");
-            document.getElementById("detail-modal").classList.add("hidden");
-        }
-
-        function renderTable(tabName, customRows = null, highlightId = null) {
-            const headers = tableHeaders[tabName];
-            const rows = customRows || appData[tabName] || [];
-
-            let headHtml = "<tr>";
-            headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
-            headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
-            document.getElementById("table-head").innerHTML = headHtml;
-
-            let bodyHtml = "";
-            if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
+            if (contentEl.classList.contains('hidden')) {
+                contentEl.classList.remove('hidden');
+                iconEl.className = "fa-solid fa-square-minus text-accent cursor-pointer text-xs";
             } else {
-                rows.forEach((row, index) => {
-                    const isHighlight = (row[0] === highlightId);
-                    const rowBg = isHighlight ? 'bg-sky-500/20 border-sky-400' : 'hover:bg-slate-800/40 border-slate-800/60';
-                    const rowIdAttr = `row-${row[0]}`;
-
-                    bodyHtml += `<tr id="${rowIdAttr}" class="${rowBg} transition border-b cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')" title="Click để xem chi tiết thiết bị">`;
-                    bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
-
-                    row.forEach((cell, cellIdx) => {
-                        let displayVal = cell;
-
-                        if (tabName === "Slickline_Wires" && cellIdx === 7) {
-                            try {
-                                const historyArr = JSON.parse(cell);
-                                if (Array.isArray(historyArr) && historyArr.length > 0) {
-                                    const latest = historyArr[historyArr.length - 1];
-                                    displayVal = `📅 [${latest[0]}]: ${latest[1]} (${historyArr.length} sự kiện)`;
-                                } else {
-                                    displayVal = "Chưa có lịch sử";
-                                }
-                            } catch (e) {
-                                displayVal = cell;
-                            }
-                        }
-
-                        const locIndices = {
-                            Containers_Units: 3,
-                            Slickline_Units_Mast: 4,
-                            Slickline_Drums: 4,
-                            PCE_Equipment: 7,
-                            Mechanical_Tools: 6,
-                            Electronic_Logging_Tools: 7
-                        };
-                        if (locIndices[tabName] !== undefined && cellIdx === locIndices[tabName]) {
-                            displayVal = getLocationName(cell);
-                        }
-
-                        bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${displayVal}</td>`;
-                    });
-
-                    bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                        <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                        <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
-                        <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa / Đổi tên"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>`;
-                    bodyHtml += `</tr>`;
-                });
-            }
-            document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
-            document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
-
-            if (highlightId) {
-                setTimeout(() => {
-                    const targetRow = document.getElementById(`row-${highlightId}`);
-                    if (targetRow) targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
+                contentEl.classList.add('hidden');
+                iconEl.className = "fa-solid fa-square-plus text-accent cursor-pointer text-xs";
             }
         }
 
-        function showContextMenu(event, tabName, itemId, itemName) {
-            event.preventDefault();
-            event.stopPropagation();
-            contextTarget = { tabName, itemId };
-
-            const menu = document.getElementById("custom-context-menu");
-            document.getElementById("ctx-menu-title").innerText = itemName || itemId;
-
-            menu.style.top = `${event.clientY}px`;
-            menu.style.left = `${event.clientX}px`;
-            menu.classList.remove("hidden");
-        }
-
-        function hideContextMenu() {
-            const menu = document.getElementById("custom-context-menu");
-            if (!menu.classList.contains("hidden")) menu.classList.add("hidden");
-        }
-
-        function ctxAction(action) {
-            hideContextMenu();
-            const { tabName, itemId } = contextTarget;
-            if (!itemId) return;
-
-            if (action === 'view') openDetailModal(tabName, itemId);
-            else if (action === 'edit') openEditModal(tabName, itemId);
-            else if (action === 'move') openMoveModal(tabName, itemId);
-            else if (action === 'delete') deleteItem(tabName, itemId);
-        }
-
-        function openMoveModal(tabName, itemId) {
-            movingItem = { tabName, itemId };
-            const row = appData[tabName].find(r => r[0] === itemId);
-            if (!row) return;
-
-            document.getElementById("move-item-name").value = `[${row[0]}] ${row[1] || row[2]}`;
-
-            let destHtml = `<optgroup label="--- Vị trí Base / Giàn Offshore ---">`;
-            (appData.Locations_Clients || []).forEach(loc => {
-                destHtml += `<option value="${loc[0]}">📍 [${loc[0]}] ${loc[3]} (${loc[1]})</option>`;
-            });
-            destHtml += `</optgroup><optgroup label="--- Container & Drum Box ---">`;
-            (appData.Containers_Units || []).forEach(cont => {
-                destHtml += `<option value="${cont[0]}">📦 [${cont[0]}] ${cont[1]} - ${cont[2]}</option>`;
-            });
-            destHtml += `</optgroup><optgroup label="--- Slickline Winch Units ---">`;
-            (appData.Slickline_Units_Mast || []).forEach(u => {
-                destHtml += `<option value="${u[0]}">🚜 [${u[0]}] ${u[1]} (${u[2]})</option>`;
-            });
-            destHtml += `</optgroup><optgroup label="--- Tang Cáp (Drums) ---">`;
-            (appData.Slickline_Drums || []).forEach(d => {
-                destHtml += `<option value="${d[0]}">🛞 [${d[0]}] ${d[1]} (${d[2]})</option>`;
-            });
-            destHtml += `</optgroup>`;
-
-            document.getElementById("move-destination-select").innerHTML = destHtml;
-            document.getElementById("move-modal").classList.remove("hidden");
-            document.getElementById("move-modal").classList.add("flex");
-        }
-
-        function closeMoveModal() {
-            document.getElementById("move-modal").classList.remove("flex");
-            document.getElementById("move-modal").classList.add("hidden");
-        }
-
-        function confirmMove() {
-            const destId = document.getElementById("move-destination-select").value;
-            const { tabName, itemId } = movingItem;
-            const row = appData[tabName].find(r => r[0] === itemId);
-            if (!row) return;
-
-            if (tabName === "Containers_Units") {
-                row[3] = destId;
-            } else if (tabName === "Slickline_Units_Mast") {
-                row[4] = destId;
-            } else if (tabName === "Slickline_Drums") {
-                row[3] = destId;
-                const parentUnit = (appData.Slickline_Units_Mast || []).find(u => u[0] === destId);
-                const parentBox = (appData.Containers_Units || []).find(c => c[0] === destId);
-                if (parentUnit) row[4] = parentUnit[4];
-                else if (parentBox) row[4] = parentBox[3];
-                else if (destId.startsWith("LOC")) row[4] = destId;
-            } else if (tabName === "Slickline_Wires") {
-                row[6] = destId;
-            }
-
-            saveDataLocal();
-            syncToGoogleSheet("update", tabName, row, itemId);
-            closeMoveModal();
-            alert(`Đã di chuyển thành công [${itemId}] đến đích mới!`);
-        }
-
+        // --- CẬP NHẬT CÂY: SẮP XẾP VỊ TRÍ NHIỀU THIẾT BỊ LÊN TRÊN & MẶC ĐỊNH THU GỌN ---
         function renderTree() {
             const container = document.getElementById("tree-container");
             let html = "";
@@ -817,7 +514,20 @@
             const wires = appData.Slickline_Wires || [];
             const pce = appData.PCE_Equipment || [];
 
-            locations.forEach(loc => {
+            // Tính số lượng thiết bị trực thuộc mỗi Location để sắp xếp giảm dần (nhiều thiết bị lên trước)
+            const locCounts = locations.map(loc => {
+                const locId = loc[0];
+                const count = containers.filter(c => c[3] === locId).length +
+                              units.filter(u => u[4] === locId).length +
+                              drums.filter(d => d[4] === locId).length +
+                              pce.filter(p => p[7] === locId).length;
+                return { loc, count };
+            });
+
+            locCounts.sort((a, b) => b.count - a.count);
+            const sortedLocations = locCounts.map(item => item.loc);
+
+            sortedLocations.forEach((loc, locIndex) => {
                 totalNodes++;
                 const locId = loc[0];
                 const locName = loc[3];
@@ -826,73 +536,111 @@
                 const childContainers = containers.filter(c => c[3] === locId);
                 const childUnits = units.filter(u => u[4] === locId);
                 const childDrumsDirect = drums.filter(d => d[4] === locId && !containers.some(c => c[0] === d[3]) && !units.some(u => u[0] === d[3]));
+                
+                const hasChildren = (childContainers.length > 0 || childUnits.length > 0 || childDrumsDirect.length > 0);
+                const contentId = `tree-branch-${locId}`;
+                const iconId = `tree-icon-${locId}`;
 
                 html += `
                 <div class="border-l-2 border-accent/40 pl-2 py-1 space-y-1">
                     <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700/65 transition group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Locations_Clients', '${locId}', '${locName}')">
-                        <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('LOC', '${locId}')" title="Click để tổng hợp tất cả thiết bị tại ${locName}">
-                            <i class="fa-solid ${locCat === 'Base' ? 'fa-warehouse text-emerald-400' : 'fa-oil-well text-amber-400'} text-xs"></i>
-                            <span class="truncate">${locName}</span>
+                        <div class="flex items-center gap-1.5 truncate">
+                            ${hasChildren ? `<i id="${iconId}" onclick="toggleTreeNode('${contentId}', '${iconId}')" class="fa-solid fa-square-plus text-accent cursor-pointer text-xs" title="Thu gọn/Mở rộng"></i>` : `<i class="fa-solid fa-circle text-[6px] text-slate-500 ml-0.5"></i>`}
+                            <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('LOC', '${locId}')" title="Click để tổng hợp tất cả thiết bị tại ${locName}">
+                                <i class="fa-solid ${locCat === 'Base' ? 'fa-warehouse text-emerald-400' : 'fa-oil-well text-amber-400'} text-xs"></i>
+                                <span class="truncate">${locName}</span>
+                            </div>
                         </div>
-                        <button onclick="openEditModal('Locations_Clients', '${locId}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
+                        <div class="flex items-center gap-1">
+                            <span class="text-[10px] bg-slate-900 text-slate-400 px-1.5 py-0.5 rounded">${locCounts.find(x => x.loc[0] === locId).count}</span>
+                            <button onclick="openEditModal('Locations_Clients', '${locId}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
+                        </div>
                     </div>`;
 
-                childUnits.forEach(u => {
-                    totalNodes++;
-                    const unitDrums = drums.filter(d => d[3] === u[0]);
-                    html += `
-                    <div class="ml-3 border-l-2 border-slate-700 pl-2 py-1 space-y-1">
-                        <div class="flex items-center justify-between text-sky-300 bg-slate-900/50 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Slickline_Units_Mast', '${u[0]}', '${u[1]}')">
-                            <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('UNIT', '${u[0]}')" title="Click để xem Tang cáp thuộc Unit này">
-                                <i class="fa-solid fa-truck-monster text-xs"></i>
-                                <span class="truncate font-medium">${u[1]} (${u[2]})</span>
-                            </div>
-                            <button onclick="openEditModal('Slickline_Units_Mast', '${u[0]}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
-                        </div>`;
+                if (hasChildren) {
+                    // Mặc định hidden (thu gọn về mục chính)
+                    html += `<div id="${contentId}" class="hidden space-y-1 pl-2 border-l border-slate-800 ml-1 mt-1">`;
 
-                    unitDrums.forEach(drum => {
+                    childUnits.forEach(u => {
                         totalNodes++;
-                        html += renderDrumTreeBranch(drum, wires);
+                        const unitDrums = drums.filter(d => d[3] === u[0]);
+                        const unitBranchId = `unit-branch-${u[0]}`;
+                        const unitIconId = `unit-icon-${u[0]}`;
+                        const hasUnitChildren = unitDrums.length > 0;
+
+                        html += `
+                        <div class="border-l-2 border-slate-700 pl-2 py-1 space-y-1">
+                            <div class="flex items-center justify-between text-sky-300 bg-slate-900/50 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Slickline_Units_Mast', '${u[0]}', '${u[1]}')">
+                                <div class="flex items-center gap-1.5 truncate">
+                                    ${hasUnitChildren ? `<i id="${unitIconId}" onclick="toggleTreeNode('${unitBranchId}', '${unitIconId}')" class="fa-solid fa-square-plus text-sky-400 cursor-pointer text-[10px]"></i>` : ``}
+                                    <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('UNIT', '${u[0]}')" title="Click để xem Tang cáp thuộc Unit này">
+                                        <i class="fa-solid fa-truck-monster text-xs"></i>
+                                        <span class="truncate font-medium">${u[1]} (${u[2]})</span>
+                                    </div>
+                                </div>
+                                <button onclick="openEditModal('Slickline_Units_Mast', '${u[0]}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
+                            </div>`;
+
+                        if (hasUnitChildren) {
+                            html += `<div id="${unitBranchId}" class="hidden space-y-1 pl-2 border-l border-slate-800 ml-1">`;
+                            unitDrums.forEach(drum => {
+                                totalNodes++;
+                                html += renderDrumTreeBranch(drum, wires);
+                            });
+                            html += `</div>`;
+                        }
+
+                        html += `</div>`;
+                    });
+
+                    childContainers.forEach(cont => {
+                        totalNodes++;
+                        const contId = cont[0];
+                        const contName = cont[1];
+                        const contType = cont[2];
+                        const contDrums = drums.filter(d => d[3] === contId);
+                        const contPCE = pce.filter(p => p[6] === contId);
+                        const contBranchId = `cont-branch-${contId}`;
+                        const contIconId = `cont-icon-${contId}`;
+                        const hasContChildren = (contDrums.length > 0 || contPCE.length > 0);
+
+                        html += `
+                        <div class="border-l-2 border-slate-700 pl-2 py-1 space-y-1">
+                            <div class="flex items-center justify-between text-slate-300 bg-slate-900/50 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Containers_Units', '${contId}', '${contName}')">
+                                <div class="flex items-center gap-1.5 truncate">
+                                    ${hasContChildren ? `<i id="${contIconId}" onclick="toggleTreeNode('${contBranchId}', '${contIconId}')" class="fa-solid fa-square-plus text-sky-400 cursor-pointer text-[10px]"></i>` : ``}
+                                    <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('CONT', '${contId}')" title="Click để xem thiết bị bên trong Container này">
+                                        <i class="fa-solid fa-box text-sky-400 text-xs"></i>
+                                        <span class="truncate font-medium">${contName} (${contType})</span>
+                                    </div>
+                                </div>
+                                <button onclick="openEditModal('Containers_Units', '${contId}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
+                            </div>`;
+
+                        if (hasContChildren) {
+                            html += `<div id="${contBranchId}" class="hidden space-y-1 pl-2 border-l border-slate-800 ml-1">`;
+                            contDrums.forEach(drum => {
+                                totalNodes++;
+                                html += renderDrumTreeBranch(drum, wires);
+                            });
+
+                            contPCE.forEach(item => {
+                                totalNodes++;
+                                html += `<div class="ml-2 flex items-center justify-between text-emerald-400 text-[11px] py-0.5 cursor-pointer hover:text-white" onclick="openDetailModal('PCE_Equipment', '${item[0]}')"><span class="truncate"><i class="fa-solid fa-shield-halved mr-1 text-[10px]"></i> ${item[1]} (${item[2]})</span></div>`;
+                            });
+                            html += `</div>`;
+                        }
+
+                        html += `</div>`;
+                    });
+
+                    childDrumsDirect.forEach(drum => {
+                        totalNodes++;
+                        html += `<div class="ml-2">` + renderDrumTreeBranch(drum, wires) + `</div>`;
                     });
 
                     html += `</div>`;
-                });
-
-                childContainers.forEach(cont => {
-                    totalNodes++;
-                    const contId = cont[0];
-                    const contName = cont[1];
-                    const contType = cont[2];
-                    const contDrums = drums.filter(d => d[3] === contId);
-                    const contPCE = pce.filter(p => p[6] === contId);
-
-                    html += `
-                    <div class="ml-3 border-l-2 border-slate-700 pl-2 py-1 space-y-1">
-                        <div class="flex items-center justify-between text-slate-300 bg-slate-900/50 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Containers_Units', '${contId}', '${contName}')">
-                            <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('CONT', '${contId}')" title="Click để xem thiết bị bên trong Container này">
-                                <i class="fa-solid fa-box text-sky-400 text-xs"></i>
-                                <span class="truncate font-medium">${contName} (${contType})</span>
-                            </div>
-                            <button onclick="openEditModal('Containers_Units', '${contId}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
-                        </div>`;
-
-                    contDrums.forEach(drum => {
-                        totalNodes++;
-                        html += renderDrumTreeBranch(drum, wires);
-                    });
-
-                    contPCE.forEach(item => {
-                        totalNodes++;
-                        html += `<div class="ml-4 flex items-center justify-between text-emerald-400 text-[11px] py-0.5 cursor-pointer hover:text-white" onclick="openDetailModal('PCE_Equipment', '${item[0]}')"><span class="truncate"><i class="fa-solid fa-shield-halved mr-1 text-[10px]"></i> ${item[1]} (${item[2]})</span></div>`;
-                    });
-
-                    html += `</div>`;
-                });
-
-                childDrumsDirect.forEach(drum => {
-                    totalNodes++;
-                    html += `<div class="ml-3">` + renderDrumTreeBranch(drum, wires) + `</div>`;
-                });
+                }
 
                 html += `</div>`;
             });
@@ -905,23 +653,30 @@
             const drumId = drum[0];
             const drumName = drum[1];
             const assignedWires = allWires.filter(w => w[6] === drumId);
+            const drumBranchId = `drum-branch-${drumId}`;
+            const drumIconId = `drum-icon-${drumId}`;
+            const hasWires = assignedWires.length > 0;
 
             let branch = `
-            <div class="ml-3 border-l-2 border-amber-500/30 pl-2 py-1 space-y-1">
+            <div class="border-l-2 border-amber-500/30 pl-2 py-1 space-y-1">
                 <div class="flex items-center justify-between text-amber-300 bg-slate-900/40 p-1 rounded group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Slickline_Drums', '${drumId}', '${drumName}')">
-                    <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('DRUM', '${drumId}')" title="Click để xem sợi cáp trên tang này">
-                        <i class="fa-solid fa-dharmachakra text-xs text-amber-400"></i>
-                        <span class="truncate font-medium">Tang: ${drumName} [${drumId}]</span>
+                    <div class="flex items-center gap-1.5 truncate">
+                        ${hasWires ? `<i id="${drumIconId}" onclick="toggleTreeNode('${drumBranchId}', '${drumIconId}')" class="fa-solid fa-square-plus text-amber-400 cursor-pointer text-[10px]"></i>` : ``}
+                        <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('DRUM', '${drumId}')" title="Click để xem sợi cáp trên tang này">
+                            <i class="fa-solid fa-dharmachakra text-xs text-amber-400"></i>
+                            <span class="truncate font-medium">Tang: ${drumName} [${drumId}]</span>
+                        </div>
                     </div>
                     <button onclick="openEditModal('Slickline_Drums', '${drumId}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
                 </div>`;
 
-            if (assignedWires.length === 0) {
+            if (!hasWires) {
                 branch += `<div class="ml-4 text-slate-500 text-[11px] italic">Tang trống (Không quấn cáp)</div>`;
             } else {
+                branch += `<div id="${drumBranchId}" class="hidden space-y-1 pl-2 border-l border-slate-800 ml-1">`;
                 assignedWires.forEach(wire => {
                     branch += `
-                    <div class="ml-4 flex items-center justify-between text-sky-400 text-[11px] py-0.5 group">
+                    <div class="flex items-center justify-between text-sky-400 text-[11px] py-0.5 group">
                         <div class="flex items-center gap-1.5 cursor-pointer truncate hover:text-white" onclick="openDetailModal('Slickline_Wires', '${wire[0]}')" title="Click xem chi tiết sợi cáp">
                             <i class="fa-solid fa-circle-notch text-[10px]"></i>
                             <span>Cáp: ${wire[1]} (${wire[2]}) - Dài: ${wire[5]}</span>
@@ -929,6 +684,7 @@
                         <button onclick="openEditModal('Slickline_Wires', '${wire[0]}')" class="opacity-0 group-hover:opacity-100 text-slate-400 hover:text-sky-400 px-1 transition"><i class="fa-solid fa-pen"></i></button>
                     </div>`;
                 });
+                branch += `</div>`;
             }
             branch += `</div>`;
             return branch;
@@ -937,7 +693,14 @@
         function filterTree(query) {
             const q = query.toLowerCase();
             document.querySelectorAll("#tree-container > div").forEach(el => {
-                el.style.display = el.innerText.toLowerCase().includes(q) ? "block" : "none";
+                const match = el.innerText.toLowerCase().includes(q);
+                el.style.display = match ? "block" : "none";
+                if (match && q.length > 0) {
+                    // Tự động mở rộng nhánh khi đang tìm kiếm
+                    el.querySelectorAll("div[id^='tree-branch-'], div[id^='unit-branch-'], div[id^='cont-branch-']").forEach(branch => {
+                        branch.classList.remove('hidden');
+                    });
+                }
             });
         }
 
