@@ -371,36 +371,126 @@
             renderTable(tabName);
         }
 
-       function filterByTreeNode(type, id) {
-    const badge = document.getElementById("tree-filter-badge");
-    badge.classList.remove("hidden");
+        // --- CẬP NHẬT MỚI: QUÉT & TỔNG HỢP TOÀN BỘ THIẾT BỊ TẠI VỊ TRÍ ---
+        function filterByTreeNode(type, id) {
+            const badge = document.getElementById("tree-filter-badge");
+            badge.classList.remove("hidden");
 
-    if (type === 'LOC') {
-        // Khi click vào Vị trí (Base / Giàn): Gom tất cả thiết bị thuộc vị trí này hiển thị qua các tab tương ứng
-        // Mặc định hiển thị tab Containers_Units chứa các container/box thuộc vị trí này
-        let filteredContainers = (appData.Containers_Units || []).filter(c => c[3] === id);
-        switchTab('Containers_Units');
-        renderTable('Containers_Units', filteredContainers, id);
-        return;
-    }
+            if (type === 'LOC') {
+                renderLocationCombinedTable(id);
+                return;
+            }
 
-    let targetTab = 'Containers_Units';
-    let filtered = [];
+            let targetTab = 'Containers_Units';
+            let filtered = [];
 
-    if (type === 'CONT') {
-        targetTab = 'Slickline_Drums';
-        filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
-    } else if (type === 'UNIT') {
-        targetTab = 'Slickline_Drums';
-        filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
-    } else if (type === 'DRUM') {
-        targetTab = 'Slickline_Wires';
-        filtered = (appData.Slickline_Wires || []).filter(w => w[6] === id);
-    }
+            if (type === 'CONT') {
+                targetTab = 'Slickline_Drums';
+                filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
+            } else if (type === 'UNIT') {
+                targetTab = 'Slickline_Drums';
+                filtered = (appData.Slickline_Drums || []).filter(d => d[3] === id);
+            } else if (type === 'DRUM') {
+                targetTab = 'Slickline_Wires';
+                filtered = (appData.Slickline_Wires || []).filter(w => w[6] === id);
+            }
 
-    switchTab(targetTab);
-    renderTable(targetTab, filtered, id);
-}
+            switchTab(targetTab);
+            renderTable(targetTab, filtered, id);
+        }
+
+        // --- HÀM TỔNG HỢP TẤT CẢ CÁC NHÓM THIẾT BỊ CÓ MẶT TẠI GIÀN / BASE ---
+        function renderLocationCombinedTable(locId) {
+            const locName = getLocationName(locId);
+            document.getElementById("current-table-title").innerText = `TẤT CẢ THIẾT BỊ TẠI: ${locName.toUpperCase()}`;
+
+            // Highlight tab Vị trí
+            document.querySelectorAll(".tab-btn").forEach(btn => {
+                btn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
+            });
+
+            const combinedList = [];
+
+            // 1. Containers / Boxes
+            (appData.Containers_Units || []).forEach(c => {
+                if (c[3] === locId) {
+                    combinedList.push({ id: c[0], name: c[2] || c[1], category: "Container & Box", origTab: "Containers_Units", status: c[6] || "Active" });
+                }
+            });
+
+            // 2. Winch Unit & Mast
+            (appData.Slickline_Units_Mast || []).forEach(u => {
+                if (u[4] === locId) {
+                    combinedList.push({ id: u[0], name: `${u[1]} (${u[2]})`, category: "Unit & Mast", origTab: "Slickline_Units_Mast", status: u[6] || "Active" });
+                }
+            });
+
+            // 3. Tang cáp (Drums)
+            (appData.Slickline_Drums || []).forEach(d => {
+                if (d[4] === locId) {
+                    combinedList.push({ id: d[0], name: d[1], category: "Tang cáp (Drum)", origTab: "Slickline_Drums", status: d[5] || "Active" });
+                }
+            });
+
+            // 4. PCE Equipment
+            (appData.PCE_Equipment || []).forEach(p => {
+                if (p[7] === locId) {
+                    combinedList.push({ id: p[0], name: `${p[1]} - SN: ${p[2]}`, category: "Thiết bị PCE", origTab: "PCE_Equipment", status: p[9] || "Active" });
+                }
+            });
+
+            // 5. Cơ Khí
+            (appData.Mechanical_Tools || []).forEach(m => {
+                if (m[6] === locId) {
+                    combinedList.push({ id: m[0], name: m[1], category: "Dụng cụ cơ khí", origTab: "Mechanical_Tools", status: m[7] || "Active" });
+                }
+            });
+
+            // 6. Logging & Điện tử
+            (appData.Electronic_Logging_Tools || []).forEach(e => {
+                if (e[7] === locId) {
+                    combinedList.push({ id: e[0], name: `${e[1]} (${e[2]})`, category: "Thiết bị Logging", origTab: "Electronic_Logging_Tools", status: e[8] || "Active" });
+                }
+            });
+
+            // Render Bảng Tổng Hợp
+            document.getElementById("table-head").innerHTML = `
+                <tr>
+                    <th class="px-4 py-3 font-semibold">STT</th>
+                    <th class="px-4 py-3 font-semibold">Mã ID</th>
+                    <th class="px-4 py-3 font-semibold">Phân Loại Nhóm</th>
+                    <th class="px-4 py-3 font-semibold">Tên Thiết Bị / Mô Tả</th>
+                    <th class="px-4 py-3 font-semibold">Trạng Thái</th>
+                    <th class="px-4 py-3 text-right">Thao tác</th>
+                </tr>
+            `;
+
+            let bodyHtml = "";
+            if (combinedList.length === 0) {
+                bodyHtml = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500 italic">Hiện không có thiết bị nào tại vị trí này.</td></tr>`;
+            } else {
+                combinedList.forEach((item, idx) => {
+                    bodyHtml += `
+                        <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${item.origTab}', '${item.id}')">
+                            <td class="px-4 py-3 font-semibold text-slate-400">${idx + 1}</td>
+                            <td class="px-4 py-3 text-sky-400 font-medium">${item.id}</td>
+                            <td class="px-4 py-3 text-amber-300 font-medium">${item.category}</td>
+                            <td class="px-4 py-3 text-slate-200 font-semibold">${item.name}</td>
+                            <td class="px-4 py-3 text-emerald-400">${item.status}</td>
+                            <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                                <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
+                                <button onclick="openMoveModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
+                                <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            document.getElementById("table-body").innerHTML = bodyHtml;
+            document.getElementById("record-count").innerText = `${combinedList.length} thiết bị`;
+        }
+
         function resetTreeFilter() {
             document.getElementById("tree-filter-badge").classList.add("hidden");
             renderTable(currentActiveTab);
@@ -654,7 +744,6 @@
             document.getElementById("move-modal").classList.add("hidden");
         }
 
-        // --- ĐÃ BỔ SUNG ĐẦY ĐỦ LOGIC MOVE CHO TẤT CẢ CÁC TAB ---
         function confirmMove() {
             const destId = document.getElementById("move-destination-select").value;
             const { tabName, itemId } = movingItem;
@@ -664,7 +753,7 @@
             if (tabName === "Containers_Units") {
                 row[3] = destId;
             } else if (tabName === "Slickline_Units_Mast") {
-                row[4] = destId; // Cập nhật Location ID cho Winch Unit
+                row[4] = destId;
             } else if (tabName === "Slickline_Drums") {
                 row[3] = destId;
                 const parentUnit = (appData.Slickline_Units_Mast || []).find(u => u[0] === destId);
@@ -673,7 +762,7 @@
                 else if (parentBox) row[4] = parentBox[3];
                 else if (destId.startsWith("LOC")) row[4] = destId;
             } else if (tabName === "Slickline_Wires") {
-                row[6] = destId; // Cập nhật Parent Drum ID cho sợi cáp
+                row[6] = destId;
             }
 
             saveDataLocal();
@@ -707,7 +796,7 @@
                 html += `
                 <div class="border-l-2 border-accent/40 pl-2 py-1 space-y-1">
                     <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700/65 transition group cursor-context-menu" oncontextmenu="showContextMenu(event, 'Locations_Clients', '${locId}', '${locName}')">
-                        <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('LOC', '${locId}')" title="Click để xem các Container/Thiết bị tại ${locName}">
+                        <div class="flex items-center gap-1.5 cursor-pointer truncate" onclick="filterByTreeNode('LOC', '${locId}')" title="Click để tổng hợp tất cả thiết bị tại ${locName}">
                             <i class="fa-solid ${locCat === 'Base' ? 'fa-warehouse text-emerald-400' : 'fa-oil-well text-amber-400'} text-xs"></i>
                             <span class="truncate">${locName}</span>
                         </div>
