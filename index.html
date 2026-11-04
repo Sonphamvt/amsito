@@ -192,96 +192,29 @@
         </div>
     </div>
 
-    <!-- Modal Chi Tiết -->
-    <div id="detail-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl">
-            <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
-                <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-sky-400"></i> Thông Tin Chi Tiết Thiết Bị
-                </h3>
-                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="detail-modal-content"></div>
-
-            <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Đóng</button>
-                <button type="button" id="detail-edit-btn" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Chỉnh Sửa Thiết Bị</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Move -->
-    <div id="move-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-            <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
-                <h3 class="font-bold text-base text-white"><i class="fa-solid fa-right-left text-accent mr-2"></i> Di Chuyển Vị Trí (Move Location)</h3>
-                <button onclick="closeMoveModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="p-6 space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Đang chọn thiết bị / tài sản:</label>
-                    <input type="text" id="move-item-name" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Chọn Đích Đến Mới:</label>
-                    <select id="move-destination-select" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"></select>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
-                    <button type="button" onclick="closeMoveModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition">Hủy</button>
-                    <button type="button" onclick="confirmMove()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium transition shadow-md">Xác Nhận Move</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Script Logic -->
     <script>
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwVok8qThyXH-98fJq3rQ7uVzdTSn2BDiJEbupXphhfpjNzJnKQsF36UsIsGdwyXtoB/exec";
 
         let appData = {
             Locations: [
-                ["LOC001", "Kho", "AMSITO", "Kho số 1 (Vũng Tàu Base)", "Active"],
-                ["LOC001_R1", "Giá Kệ Kho", "AMSITO", "Kho số 1 - Giá kệ A1", "LOC001"],
-                ["LOC002", "Kho", "AMSITO", "Kho số 2 (Phụ trợ)", "Active"],
-                ["LOC_CUS1", "Khách hàng", "Vietsovpetro", "Khách hàng: Vietsovpetro", "Active"],
-                ["LOC_PLAT_HL", "Platform", "Vietsovpetro", "Giàn HL / Offshore Platform", "LOC_CUS1"],
-                ["LOC_CUS2", "Khách hàng", "JVPC", "Khách hàng: JVPC", "Active"],
-                ["LOC_PLAT_JVPC", "Platform", "JVPC", "Giàn JVPC Package", "LOC_CUS2"]
+                ["LOC001", "Kho", "AMSITO", "Kho số 1 (Vũng Tàu Base)", "", "Active"],
+                ["LOC001_R1", "Giá Kệ Kho", "AMSITO", "Kho số 1 - Giá kệ A1", "LOC001", "Active"],
+                ["CONT_07", "Container", "AMSITO", "Container số 7", "LOC001", "Active"],
+                ["DRAWER_03", "Ngăn kéo", "AMSITO", "Ngăn kéo số 3", "CONT_07", "Active"]
             ],
-            Slickline_Toolstrings: [
-                ["DHT_1875_01", "Rope socket/ 1.875\" OD, Pear Drop Type/ 1 7/8\" HDQRJ (PEAK BC) box/ 1.75\"/1.812\" Dual FN/ 0.125\" wire", "", "4", "0.34", "9.68", "A123-1875-014", "P6-RST(01,02,03,04)", "Drawer 08", "PEAK", "New"],
-                ["DHT_1875_02", "Rope socket/ 2.125\" OD, Pear Drop Type/ 1 7/8\" HDQRJ (PEAK BC) box/ 1.75\"/1.812\" Dual FN/ 0.160\" wire", "", "2", "0.35", "8.1", "A123-2125-021", "P6-RST(11,12)", "Drawer 08", "PEAK", "New"]
-            ],
-            Containers_Units: [
-                ["CONT_HL_1", "25H08527", "HLHV PACKAGE CONTAINER", "LOC_PLAT_HL", "2027-04-19", "2027-10-19", "Offshore"],
-                ["BOX_DRUM_01", "AMS-D21", "DRUM STORAGE BOX", "LOC001_R1", "2028-01-01", "2028-01-01", "Base"]
-            ],
-            Slickline_Units_Mast: [
-                ["UNIT001", "ASEP WIRELINE UNIT", "25H08527", "Diesel / 6T", "LOC_PLAT_HL", "2027-10-19", "Active"]
-            ],
-            Slickline_Drums: [
-                ["DRUM001", "Standard Wire Drum A1", "DRUM-SN-881", "UNIT001", "LOC_PLAT_HL", "Mounted on Unit"]
-            ],
-            Slickline_Wires: [
-                ["WIRE001", "SUPRA 75", "0.125\"", "W-2025-089", "22500 lbs", "21800 ft", "DRUM001", JSON.stringify([["2025-06-15", "Đảo đầu dây lần 1"]]), "In Use"]
-            ],
-            PCE_Equipment: [
-                ["PCE001", "BOP 4.00\" (Elmar)", "L-972488", "10000", "H2S", "6.125\" Pin/Box", "CONT_HL_1", "LOC_PLAT_HL", "2027-06-26", "In Use"]
-            ],
-            Mechanical_Tools: [
-                ["DHT001", "R-Type Pulling Tool", "1.875\"", "PT-1875-09", "15/16\" Sucker Rod", "CONT_HL_1", "LOC_PLAT_HL", "In Use"]
-            ],
-            Electronic_Logging_Tools: [
-                ["ELT001", "MPLT Tool", "MPLT-AMS-01", "1.375\"", "Firmware v2.4", "Calibrated", "CONT_HL_1", "LOC_PLAT_HL", "Ready"]
-            ]
+            Slickline_Toolstrings: [],
+            Containers_Units: [],
+            Slickline_Units_Mast: [],
+            Slickline_Drums: [],
+            Slickline_Wires: [],
+            PCE_Equipment: [],
+            Mechanical_Tools: [],
+            Electronic_Logging_Tools: []
         };
 
         const tableHeaders = {
-            Locations: ["STT", "Location ID", "Phân loại", "AMSITO / Client", "Tên Vị Trí / Kho / Giá / Platform", "Trạng thái"],
+            Locations: ["STT", "Location ID", "Phân loại", "AMSITO / Client", "Tên Vị Trí", "Parent ID", "Trạng thái"],
             Slickline_Toolstrings: ["STT", "Tool ID", "Description", "Contract Inquire", "Qty", "Length (m)", "Weight (Lbs)", "Part NO", "Asset NO", "Location", "Brand", "Status / Remark"],
             Containers_Units: ["STT", "Container ID", "Asset / Serial No", "Type / Equipment", "Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
             Slickline_Units_Mast: ["STT", "Unit ID", "Equipment Name", "Serial No", "Power / Capacity", "Location ID", "Recert Expiry", "Status"],
@@ -294,8 +227,6 @@
 
         let currentActiveTab = "Locations";
         let editingItemId = null;
-        let movingItem = { tabName: null, itemId: null };
-        let contextTarget = { tabName: null, itemId: null };
 
         function getLocationName(locId) {
             if (!locId) return "N/A";
@@ -303,64 +234,57 @@
             return found ? `${locId} (${found[3]})` : locId;
         }
 
-        function initData() {
-            const saved = localStorage.getItem("slickline_asset_master_v18");
-            if (saved) {
-                try { appData = JSON.parse(saved); } catch (e) { console.error(e); }
+        async function initData() {
+            const indicator = document.getElementById("sync-status");
+            if (GOOGLE_SHEET_API_URL) {
+                try {
+                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading from Sheet...`;
+                    const response = await fetch(GOOGLE_SHEET_API_URL);
+                    const data = await response.json();
+                    if (data && Object.keys(data).length > 0) {
+                        appData = data;
+                        indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
+                    }
+                } catch (e) {
+                    console.log("Lỗi tải từ Google Sheet, dùng bộ nhớ tạm:", e);
+                    const saved = localStorage.getItem("slickline_asset_master_v18");
+                    if (saved) {
+                        try { appData = JSON.parse(saved); } catch (err) { console.error(err); }
+                    }
+                    indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode`;
+                }
             }
             renderTable(currentActiveTab);
             renderTree();
         }
-async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
-    if (!GOOGLE_SHEET_API_URL) return;
-    try {
-        const payload = { action: action, sheetName: sheetName, row: rowData, id: itemId };
-        const indicator = document.getElementById("sync-status");
-        indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Syncing...`;
 
-        fetch(GOOGLE_SHEET_API_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        }).catch(err => console.log("Background sync triggered"));
-
-        setTimeout(() => {
-            indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
-        }, 800);
-    } catch (error) {
-        console.error("Lỗi đồng bộ Google Sheet:", error);
-    }
-}
         function saveDataLocal() {
             localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
         }
 
-        async function initData() {
-    const indicator = document.getElementById("sync-status");
-    if (GOOGLE_SHEET_API_URL) {
-        try {
-            indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading from Sheet...`;
-            const response = await fetch(GOOGLE_SHEET_API_URL);
-            const data = await response.json();
-            if (data && Object.keys(data).length > 0) {
-                appData = data;
-                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
+        async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
+            if (!GOOGLE_SHEET_API_URL) return;
+            try {
+                const payload = { action: action, sheetName: sheetName, row: rowData, id: itemId };
+                const indicator = document.getElementById("sync-status");
+                indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Syncing...`;
+
+                fetch(GOOGLE_SHEET_API_URL, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                }).catch(err => console.log("Background sync triggered"));
+
+                setTimeout(() => {
+                    indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
+                }, 800);
+            } catch (error) {
+                console.error("Lỗi đồng bộ Google Sheet:", error);
             }
-        } catch (e) {
-            console.log("Lỗi tải từ Google Sheet, dùng bộ nhớ tạm:", e);
-            const saved = localStorage.getItem("slickline_asset_master_v18");
-            if (saved) {
-                try { appData = JSON.parse(saved); } catch (err) { console.error(err); }
-            }
-            indicator.innerHTML = `<i class="fa-solid triangle-exclamation text-amber-400"></i> Offline Mode`;
         }
-    }
-    renderTable(currentActiveTab);
-    renderTree();
-}
 
         function switchTab(tabName) {
             currentActiveTab = tabName;
@@ -375,55 +299,112 @@ async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
             renderTable(tabName);
         }
 
-        function filterByTreeNode(type, id) {
+        function filterByTreeNode(locId) {
             const badge = document.getElementById("tree-filter-badge");
             badge.classList.remove("hidden");
-            renderLocationCombinedTable(id);
+            renderLocationCombinedTable(locId);
+        }
+
+        // Đệ quy dựng cây thư mục hiển thị phân cấp vị trí trên Sidebar
+        function renderTree() {
+            const container = document.getElementById("tree-container");
+            const locs = appData.Locations || [];
+            let totalNodes = locs.length;
+
+            function buildBranch(parentId) {
+                const children = locs.filter(l => (l[4] || "") === parentId);
+                if (children.length === 0) return "";
+                let html = '<div class="pl-3 space-y-1 border-l border-slate-700/60 mt-1">';
+                children.forEach(child => {
+                    html += `
+                        <div>
+                            <div class="flex items-center justify-between text-slate-200 bg-slate-800/40 hover:bg-slate-700/60 p-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${child[0]}')">
+                                <div class="flex items-center gap-1.5 truncate">
+                                    <i class="fa-solid fa-folder-tree text-accent text-xs"></i>
+                                    <span class="truncate font-medium">${child[0]} - ${child[3]}</span>
+                                </div>
+                            </div>
+                            ${buildBranch(child[0])}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                return html;
+            }
+
+            // Lấy các node gốc (không có parent hoặc parent trống)
+            const roots = locs.filter(l => !l[4]);
+            let rootHtml = "";
+            roots.forEach(root => {
+                rootHtml += `
+                    <div class="mb-2">
+                        <div class="flex items-center justify-between text-white bg-slate-800/80 hover:bg-slate-700 p-2 rounded transition cursor-pointer font-semibold" onclick="filterByTreeNode('${root[0]}')">
+                            <div class="flex items-center gap-1.5 truncate">
+                                <i class="fa-solid fa-warehouse text-emerald-400 text-xs"></i>
+                                <span class="truncate">${root[0]} - ${root[3]}</span>
+                            </div>
+                        </div>
+                        ${buildBranch(root[0])}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = rootHtml || '<div class="text-slate-500 italic p-2">Chưa có vị trí phân cấp.</div>';
+            document.getElementById("total-nodes-badge").innerText = `${totalNodes} mục`;
         }
 
         function renderLocationCombinedTable(locId) {
             const locName = getLocationName(locId);
-            document.getElementById("current-table-title").innerText = `TẤT CẢ THIẾT BỊ TẠI VỊ TRÍ: ${locName.toUpperCase()}`;
-            document.querySelectorAll(".tab-btn").forEach(btn => {
-                btn.className = "tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
-            });
-
+            document.getElementById("current-table-title").innerText = `THIẾT BỊ TẠI VỊ TRÍ: ${locName.toUpperCase()}`;
+            
+            // Gom tất cả các con cháu bên trong vị trí này
             let validLocIds = [locId];
-            (appData.Locations || []).forEach(l => { if (l[4] === locId) validLocIds.push(l[0]); });
+            function findChildren(pId) {
+                (appData.Locations || []).forEach(l => {
+                    if (l[4] === pId) {
+                        validLocIds.push(l[0]);
+                        findChildren(l[0]);
+                    }
+                });
+            }
+            findChildren(locId);
 
             const combinedList = [];
-            (appData.Slickline_Toolstrings || []).forEach(t => {
-                if (validLocIds.includes(t[8]) || t[8]?.includes("Drawer") || t[8]?.includes("Rack")) {
-                    combinedList.push({ id: t[0], name: t[1], category: "Toolstring", origTab: "Slickline_Toolstrings", status: t[10] || "New" });
-                }
+            // Quét qua các bảng thiết bị để tìm xem món nào đang nằm trong danh sách validLocIds
+            const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums"];
+            checkTabs.forEach(tName => {
+                (appData[tName] || []).forEach(item => {
+                    // Giả định cột Location thường nằm ở index 8 (Toolstrings), index 6 hoặc 7 tùy bảng
+                    const locField = item[8] || item[7] || item[6] || "";
+                    if (validLocIds.some(id => locField.includes(id))) {
+                        combinedList.push({ id: item[0], name: item[1], category: tName, origTab: tName });
+                    }
+                });
             });
 
             document.getElementById("table-head").innerHTML = `
                 <tr>
                     <th class="px-4 py-3 font-semibold">STT</th>
                     <th class="px-4 py-3 font-semibold">Mã ID</th>
-                    <th class="px-4 py-3 font-semibold">Phân Loại Nhóm</th>
-                    <th class="px-4 py-3 font-semibold">Mô Tả / Tên Thiết Bị</th>
-                    <th class="px-4 py-3 font-semibold">Trạng Thái</th>
+                    <th class="px-4 py-3 font-semibold">Nhóm Thiết Bị</th>
+                    <th class="px-4 py-3 font-semibold">Tên / Mô Tả</th>
                     <th class="px-4 py-3 text-right">Thao tác</th>
                 </tr>
             `;
 
             let bodyHtml = "";
             if (combinedList.length === 0) {
-                bodyHtml = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500 italic">Hiện không có thiết bị nào tại vị trí này.</td></tr>`;
+                bodyHtml = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 italic">Không tìm thấy thiết bị nào ở cấp vị trí này.</td></tr>`;
             } else {
                 combinedList.forEach((item, idx) => {
                     bodyHtml += `
                         <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${item.origTab}', '${item.id}')">
                             <td class="px-4 py-3 font-semibold text-slate-400">${idx + 1}</td>
                             <td class="px-4 py-3 text-sky-400 font-medium">${item.id}</td>
-                            <td class="px-4 py-3 text-amber-300 font-medium">${item.category}</td>
-                            <td class="px-4 py-3 text-slate-200 font-semibold truncate max-w-xs">${item.name}</td>
-                            <td class="px-4 py-3 text-emerald-400">${item.status}</td>
-                            <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                            <td class="px-4 py-3 text-amber-300">${item.category}</td>
+                            <td class="px-4 py-3 text-slate-200 truncate max-w-xs">${item.name}</td>
+                            <td class="px-4 py-3 text-right">
                                 <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition"><i class="fa-solid fa-circle-info"></i></button>
-                                <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition"><i class="fa-solid fa-pen-to-square"></i></button>
                             </td>
                         </tr>
                     `;
@@ -438,41 +419,6 @@ async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
             renderTable(currentActiveTab);
         }
 
-        function toggleTreeNode(contentId, iconId) {
-            const contentEl = document.getElementById(contentId);
-            const iconEl = document.getElementById(iconId);
-            if (!contentEl || !iconEl) return;
-            if (contentEl.classList.contains('hidden')) {
-                contentEl.classList.remove('hidden');
-                iconEl.className = "fa-solid fa-square-minus text-accent cursor-pointer text-xs";
-            } else {
-                contentEl.classList.add('hidden');
-                iconEl.className = "fa-solid fa-square-plus text-accent cursor-pointer text-xs";
-            }
-        }
-
-        function renderTree() {
-            const container = document.getElementById("tree-container");
-            let html = "";
-            let totalNodes = 0;
-            const locs = appData.Locations || [];
-
-            locs.forEach(loc => {
-                totalNodes++;
-                html += `
-                <div class="border-l-2 border-emerald-500/40 pl-2 py-1 space-y-1 mb-2">
-                    <div class="flex items-center justify-between font-semibold text-white bg-slate-800/60 p-1.5 rounded hover:bg-slate-700 transition cursor-pointer" onclick="filterByTreeNode('LOC', '${loc[0]}')">
-                        <div class="flex items-center gap-1.5 truncate">
-                            <i class="fa-solid fa-warehouse text-emerald-400 text-xs"></i>
-                            <span class="truncate">${loc[3]}</span>
-                        </div>
-                    </div>
-                </div>`;
-            });
-            container.innerHTML = html;
-            document.getElementById("total-nodes-badge").innerText = `${totalNodes} mục`;
-        }
-
         function filterTree(query) {
             const q = query.toLowerCase();
             document.querySelectorAll("#tree-container > div").forEach(el => {
@@ -480,57 +426,26 @@ async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
             });
         }
 
-    function renderFormFields(rowData = null) {
+        function renderFormFields(rowData = null) {
             const tab = document.getElementById("form-target-tab").value;
             const container = document.getElementById("dynamic-fields-container");
             let html = "";
             const val = (idx, defaultVal = "") => rowData ? (rowData[idx] || "") : defaultVal;
-            const statuses = ["Active", "New", "Ready", "Offshore"];
 
             if (tab === "Locations") {
                 html = `
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Phân loại</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Phân loại (Kho, Kệ, Container, Ngăn kéo...)</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Client Name</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Tên Vị Trí</label><input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Trạng thái</label><input type="text" name="f4" value="${val(4, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
-                `;
-            } else if (tab === "Slickline_Toolstrings") {
-                html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Tool ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Description</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Contract Inquire</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">Qty</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">Length (m)</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">Weight (Lbs)</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
-                    </div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Part NO</label><input type="text" name="f6" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Asset NO</label><input type="text" name="f7" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location / Drawer</label><input type="text" name="f8" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Brand</label><input type="text" name="f9" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(9, 'PEAK')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status / Remark</label><input type="text" name="f10" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(10, 'New')}"></div>
-                `;
-            } else if (tab === "Slickline_Drums") {
-                html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Drum ID / Name (VD: AMS-01-SC08)</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">DRUM Description</label><input type="text" name="f1" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Wire Information (VD: 0.160" - Supa 75)</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Cert Number</label><input type="text" name="f3" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">Spool Date</label><input type="text" name="f4" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">Length (m)</label><input type="text" name="f5" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
-                    </div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location</label><input type="text" name="f6" list="list-loc-ids" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Remark / Status</label><input type="text" name="f7" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent ID (Mã vị trí cấp trên - nếu có)</label><input type="text" name="f4" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Trạng thái</label><input type="text" name="f5" value="${val(5, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
                 `;
             } else {
                 html = `
                     <div><label class="block text-xs text-slate-300 mb-1">ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Name / Type</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f4" value="${val(4, 'Ready')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Tên / Mô tả</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID / Vị Trí</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
                 `;
             }
             container.innerHTML = html;
@@ -547,110 +462,38 @@ async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
             renderFormFields();
         }
 
-        function openEditModal(tabName, itemId) {
-            if (!itemId || itemId === "N/A") return;
-            editingItemId = itemId;
-            const targetRow = appData[tabName].find(r => r[0] === itemId);
-            if (!targetRow) return;
-            document.getElementById("modal-title").innerText = `Chỉnh Sửa: ${itemId}`;
-            document.getElementById("submit-btn").innerText = "Cập Nhật & Đồng Bộ Sheet";
-            document.getElementById("form-target-tab").value = tabName;
-            document.getElementById("form-target-tab").disabled = true;
-            document.getElementById("equipment-modal").classList.remove("hidden");
-            document.getElementById("equipment-modal").classList.add("flex");
-            renderFormFields(targetRow);
-        }
-
         function closeModal() {
             document.getElementById("equipment-modal").classList.remove("flex");
             document.getElementById("equipment-modal").classList.add("hidden");
         }
 
         function handleFormSubmit(event) {
-    event.preventDefault();
-    const tab = document.getElementById("form-target-tab").value;
-    
-    // Đảm bảo tab này đã có mảng dữ liệu, nếu chưa có thì khởi tạo mảng rỗng
-    if (!appData[tab] || !Array.isArray(appData[tab])) {
-        appData[tab] = [];
-    }
+            event.preventDefault();
+            const tab = document.getElementById("form-target-tab").value;
+            if (!appData[tab] || !Array.isArray(appData[tab])) appData[tab] = [];
 
-    let rowData = [];
-    const formElements = document.querySelectorAll("#dynamic-fields-container input, #dynamic-fields-container select");
-    formElements.forEach(el => rowData.push(el.value));
+            let rowData = [];
+            document.querySelectorAll("#dynamic-fields-container input, #dynamic-fields-container select").forEach(el => rowData.push(el.value));
 
-    if (editingItemId) {
-        const index = appData[tab].findIndex(r => r[0] === editingItemId);
-        if (index !== -1) {
-            appData[tab][index] = rowData;
-        } else {
-            appData[tab].push(rowData);
-        }
-        saveDataLocal();
-        syncToGoogleSheet("update", tab, rowData, editingItemId);
-        alert(`Đã cập nhật bản ghi [${editingItemId}] thành công!`);
-    } else {
-        appData[tab].push(rowData);
-        saveDataLocal();
-        syncToGoogleSheet("append", tab, rowData);
-        alert("Đã thêm mới thành công!");
-    }
+            if (editingItemId) {
+                const index = appData[tab].findIndex(r => r[0] === editingItemId);
+                if (index !== -1) appData[tab][index] = rowData;
+                saveDataLocal();
+                syncToGoogleSheet("update", tab, rowData, editingItemId);
+            } else {
+                appData[tab].push(rowData);
+                saveDataLocal();
+                syncToGoogleSheet("append", tab, rowData);
+            }
 
-    closeModal();
-    renderTable(currentActiveTab);
-    renderTree();
-}
-
-        function deleteItem(tabName, id) {
-            if (!confirm(`Bạn có chắc muốn xóa bản ghi [${id}] này không?`)) return;
-            appData[tabName] = appData[tabName].filter(row => row[0] !== id);
-            saveDataLocal();
-            syncToGoogleSheet("delete", tabName, [], id);
+            closeModal();
+            renderTable(currentActiveTab);
+            renderTree();
         }
 
-        function openDetailModal(tabName, itemId) {
-            const row = (appData[tabName] || []).find(r => r[0] === itemId);
-            if (!row) return;
-
-            const headers = tableHeaders[tabName];
-            let contentHtml = `
-                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-2">
-                    <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-                        <span class="text-xs uppercase font-semibold text-sky-400">Mã Định Danh (ID): ${row[0]}</span>
-                        <span class="text-xs px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${row[row.length - 1] || 'Active'}</span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 text-xs">
-            `;
-
-            row.forEach((val, idx) => {
-                if (idx === 0) return;
-                const headerName = headers[idx] || `Thuộc tính ${idx}`;
-                contentHtml += `
-                    <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50">
-                        <span class="text-slate-400 block text-[10px] uppercase font-medium">${headerName}</span>
-                        <span class="text-slate-200 font-semibold text-sm mt-0.5 block">${val || 'N/A'}</span>
-                    </div>
-                `;
-            });
-
-            contentHtml += `</div></div>`;
-            document.getElementById("detail-modal-content").innerHTML = contentHtml;
-            document.getElementById("detail-edit-btn").onclick = function() {
-                closeDetailModal();
-                openEditModal(tabName, itemId);
-            };
-            document.getElementById("detail-modal").classList.remove("hidden");
-            document.getElementById("detail-modal").classList.add("flex");
-        }
-
-        function closeDetailModal() {
-            document.getElementById("detail-modal").classList.remove("flex");
-            document.getElementById("detail-modal").classList.add("hidden");
-        }
-
-        function renderTable(tabName, customRows = null, highlightId = null) {
-            const headers = tableHeaders[tabName];
-            const rows = customRows || appData[tabName] || [];
+        function renderTable(tabName) {
+            const headers = tableHeaders[tabName] || [];
+            const rows = appData[tabName] || [];
 
             let headHtml = "<tr>";
             headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
@@ -659,26 +502,15 @@ async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
 
             let bodyHtml = "";
             if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
+                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu.</td></tr>`;
             } else {
                 rows.forEach((row, index) => {
-                    const rowId = row[0];
-                    const isHighlight = (rowId === highlightId);
-                    const rowBg = isHighlight ? 'bg-sky-500/20 border-sky-400' : 'hover:bg-slate-800/40 border-slate-800/60';
-
-                    bodyHtml += `<tr class="${rowBg} transition border-b cursor-pointer" onclick="openDetailModal('${tabName}', '${rowId}')">`;
-                    bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
-
-                    row.forEach((cell) => {
-                        bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell}</td>`;
-                    });
-
-                    bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                        <button onclick="openDetailModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                        <button onclick="openEditModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteItem('${tabName}', '${rowId}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>`;
-                    bodyHtml += `</tr>`;
+                    bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800">`;
+                    bodyHtml += `<td class="px-4 py-3 text-slate-400">${index + 1}</td>`;
+                    row.forEach(cell => bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell}</td>`);
+                    bodyHtml += `<td class="px-4 py-3 text-right">
+                        <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition"><i class="fa-solid fa-trash-can"></i></button>
+                    </td></tr>`;
                 });
             }
             document.getElementById("table-body").innerHTML = bodyHtml;
@@ -686,39 +518,13 @@ async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
             document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
         }
 
-        function showContextMenu(event, tabName, itemId, itemName) {
-            event.preventDefault();
-            event.stopPropagation();
-            contextTarget = { tabName, itemId };
-            const menu = document.getElementById("custom-context-menu");
-            document.getElementById("ctx-menu-title").innerText = itemName || itemId;
-            menu.style.top = `${event.clientY}px`;
-            menu.style.left = `${event.clientX}px`;
-            menu.classList.remove("hidden");
-        }
-
-        function hideContextMenu() {
-            const menu = document.getElementById("custom-context-menu");
-            if (!menu.classList.contains("hidden")) menu.classList.add("hidden");
-        }
-
-        function ctxAction(action) {
-            hideContextMenu();
-            const { tabName, itemId } = contextTarget;
-            if (!itemId) return;
-            if (action === 'view') openDetailModal(tabName, itemId);
-            else if (action === 'edit') openEditModal(tabName, itemId);
-            else if (action === 'delete') deleteItem(tabName, itemId);
-        }
-
-        function exportJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_v18_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+        function deleteItem(tabName, id) {
+            if (!confirm(`Xóa bản ghi [${id}]?`)) return;
+            appData[tabName] = appData[tabName].filter(row => row[0] !== id);
+            saveDataLocal();
+            syncToGoogleSheet("delete", tabName, [], id);
+            renderTable(currentActiveTab);
+            renderTree();
         }
 
         window.onload = initData;
