@@ -547,29 +547,39 @@
         }
 
         function handleFormSubmit(event) {
-            event.preventDefault();
-            const tab = document.getElementById("form-target-tab").value;
-            let rowData = [];
-            const formElements = document.querySelectorAll("#dynamic-fields-container input, #dynamic-fields-container select");
-            formElements.forEach(el => rowData.push(el.value));
+    event.preventDefault();
+    const tab = document.getElementById("form-target-tab").value;
+    
+    // Đảm bảo tab này đã có mảng dữ liệu, nếu chưa có thì khởi tạo mảng rỗng
+    if (!appData[tab] || !Array.isArray(appData[tab])) {
+        appData[tab] = [];
+    }
 
-            if (editingItemId) {
-                const index = appData[tab].findIndex(r => r[0] === editingItemId);
-                if (index !== -1) appData[tab][index] = rowData;
-                saveDataLocal();
-                syncToGoogleSheet("update", tab, rowData, editingItemId);
-                alert(`Đã cập nhật bản ghi [${editingItemId}] thành công!`);
-            } else {
-                appData[tab].push(rowData);
-                saveDataLocal();
-                syncToGoogleSheet("append", tab, rowData);
-                alert("Đã thêm mới thành công!");
-            }
+    let rowData = [];
+    const formElements = document.querySelectorAll("#dynamic-fields-container input, #dynamic-fields-container select");
+    formElements.forEach(el => rowData.push(el.value));
 
-            closeModal();
-            renderTable(currentActiveTab);
-            renderTree();
+    if (editingItemId) {
+        const index = appData[tab].findIndex(r => r[0] === editingItemId);
+        if (index !== -1) {
+            appData[tab][index] = rowData;
+        } else {
+            appData[tab].push(rowData);
         }
+        saveDataLocal();
+        syncToGoogleSheet("update", tab, rowData, editingItemId);
+        alert(`Đã cập nhật bản ghi [${editingItemId}] thành công!`);
+    } else {
+        appData[tab].push(rowData);
+        saveDataLocal();
+        syncToGoogleSheet("append", tab, rowData);
+        alert("Đã thêm mới thành công!");
+    }
+
+    closeModal();
+    renderTable(currentActiveTab);
+    renderTree();
+}
 
         function deleteItem(tabName, id) {
             if (!confirm(`Bạn có chắc muốn xóa bản ghi [${id}] này không?`)) return;
