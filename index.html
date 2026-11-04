@@ -236,24 +236,38 @@
 
         async function initData() {
             const indicator = document.getElementById("sync-status");
+            let loadedFromServer = false;
+
             if (GOOGLE_SHEET_API_URL) {
                 try {
                     indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading from Sheet...`;
                     const response = await fetch(GOOGLE_SHEET_API_URL);
                     const data = await response.json();
-                    if (data && Object.keys(data).length > 0) {
+                    
+                    if (data && data.Locations && data.Locations.length > 0) {
                         appData = data;
+                        loadedFromServer = true;
                         indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
                     }
                 } catch (e) {
-                    console.log("Lỗi tải từ Google Sheet, dùng bộ nhớ tạm:", e);
-                    const saved = localStorage.getItem("slickline_asset_master_v18");
-                    if (saved) {
-                        try { appData = JSON.parse(saved); } catch (err) { console.error(err); }
-                    }
-                    indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode`;
+                    console.log("Không tải được từ Google Sheet:", e);
                 }
             }
+
+            // Nếu không tải được từ server, tự động khôi phục từ bộ nhớ tạm của trình duyệt
+            if (!loadedFromServer) {
+                const saved = localStorage.getItem("slickline_asset_master_v18");
+                if (saved) {
+                    try { 
+                        appData = JSON.parse(saved); 
+                        indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode (Local)`;
+                    } catch (err) { console.error(err); }
+                }
+            } else {
+                // Lưu lại bản mới nhất từ Sheet vào localStorage để dự phòng
+                localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
+            }
+
             renderTable(currentActiveTab);
             renderTree();
         }
