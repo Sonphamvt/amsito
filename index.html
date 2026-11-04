@@ -337,6 +337,45 @@
             return path.join(" ➔ ");
         }
 
+        // HÀM TỰ ĐỘNG ĐỒNG BỘ DỮ LIỆU TỪ MPI/LT SANG CÁC DANH MỤC TƯƠNG ỨNG
+        function syncMpiLtToCorrespondingTabs() {
+            const mpiList = appData.MPI_LT || [];
+            mpiList.forEach(item => {
+                const id = item[0];
+                const name = (item[1] || "").toUpperCase();
+                const assetNo = item[2] || "";
+                const locId = item[8] || "N/A";
+                const status = item[9] || "Active";
+
+                let targetTab = "";
+                let newRow = [];
+
+                if (name.includes("UNIT") || name.includes("WINCH") || name.includes("MAST")) {
+                    targetTab = "Slickline_Units_Mast";
+                    newRow = [id, item[1], assetNo, "", locId, "", status];
+                } else if (name.includes("CONTAINER") || name.includes("SKID") || name.includes("BOX")) {
+                    targetTab = "Containers_Units";
+                    newRow = [id, item[1], assetNo, name, locId, item[4] || "", item[6] || "", status];
+                } else if (name.includes("SLING") || name.includes("SHACKLE") || name.includes("TOOL")) {
+                    targetTab = "Slickline_Toolstrings";
+                    newRow = [id, item[1], name, "", "1", "", "", "", assetNo, locId, "", status];
+                } else if (name.includes("DRUM") || name.includes("CÁP")) {
+                    targetTab = "Slickline_Drums";
+                    newRow = [id, item[1], name, "", "", "", "", locId, status];
+                } else if (name.includes("PCE") || name.includes("BOP") || name.includes("LUBRICATOR")) {
+                    targetTab = "PCE_Equipment";
+                    newRow = [id, item[1], name, assetNo, "", "", "", "", locId, "", status];
+                }
+
+                if (targetTab && appData[targetTab]) {
+                    const existing = appData[targetTab].find(r => r[0] === id);
+                    if (!existing) {
+                        appData[targetTab].push(newRow);
+                    }
+                }
+            });
+        }
+
         async function initData() {
             const indicator = document.getElementById("sync-status");
             let loadedFromServer = false;
@@ -365,15 +404,18 @@
                         indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode`;
                     } catch (err) { console.error(err); }
                 }
-            } else {
-                localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
             }
 
+            // Tự động đồng bộ từ MPI/LT sang các tab tương ứng
+            syncMpiLtToCorrespondingTabs();
+
+            localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
         }
 
         function saveDataLocal() {
+            syncMpiLtToCorrespondingTabs();
             localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
             renderTable(currentActiveTab);
             renderTree();
@@ -697,9 +739,8 @@
         }
 
         function closeMoveModal() {
-            document.getElementById("move-modal").classList.remove("hidden");
-            document.getElementById("move-modal").classList.add("hidden");
             document.getElementById("move-modal").classList.remove("flex");
+            document.getElementById("move-modal").classList.add("hidden");
         }
 
         function confirmMoveItem() {
@@ -904,9 +945,8 @@
         }
 
         function closeDetailModal() {
-            document.getElementById("detail-modal").classList.remove("hidden");
-            document.getElementById("detail-modal").classList.add("hidden");
             document.getElementById("detail-modal").classList.remove("flex");
+            document.getElementById("detail-modal").classList.add("hidden");
         }
 
         function deleteItem(tabName, id) {
