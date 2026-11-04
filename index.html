@@ -433,19 +433,74 @@
             const val = (idx, defaultVal = "") => rowData ? (rowData[idx] || "") : defaultVal;
 
             if (tab === "Locations") {
+                // Thu thập danh sách gợi ý từ dữ liệu Locations đang có
+                const locs = appData.Locations || [];
+                const types = [...new Set(locs.map(l => l[1]).filter(Boolean))]; // Các loại: Kho, Container, Kệ...
+                const clients = [...new Set(locs.map(l => l[2]).filter(Boolean))]; // AMSITO, Vietsovpetro...
+                const parentIds = [...new Set(locs.map(l => l[0]).filter(Boolean))]; // Danh sách các Location ID hiện có
+
+                // Tạo các thẻ datalist chứa danh sách gợi ý
+                let optionsType = types.map(t => `<option value="${t}">`).join("");
+                let optionsClient = clients.map(c => `<option value="${c}">`).join("");
+                let optionsParent = parentIds.map(p => `<option value="${p}">`).join("");
+                
+                if (!types.includes("Kho")) optionsType += `<option value="Kho">`;
+                if (!types.includes("Container")) optionsType += `<option value="Container">`;
+                if (!types.includes("Giá Kệ")) optionsType += `<option value="Giá Kệ">`;
+                if (!types.includes("Ngăn kéo")) optionsType += `<option value="Ngăn kéo">`;
+
                 html = `
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Phân loại (Kho, Kệ, Container, Ngăn kéo...)</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Client Name</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Tên Vị Trí</label><input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent ID (Mã vị trí cấp trên - nếu có)</label><input type="text" name="f4" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Trạng thái</label><input type="text" name="f5" value="${val(5, 'Active')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"></div>
+                    <!-- Khai báo danh sách gợi ý Datalist -->
+                    <datalist id="dl-loc-types">${optionsType}</datalist>
+                    <datalist id="dl-loc-clients">${optionsClient}</datalist>
+                    <datalist id="dl-loc-parents">${optionsParent}</datalist>
+                    <datalist id="dl-statuses">
+                        <option value="Active">
+                        <option value="Inactive">
+                        <option value="Offshore">
+                        <option value="Base">
+                    </datalist>
+
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Location ID (Mã Vị Trí)</label>
+                        <input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="VD: LOC001, CONT_07, RACK_04"'} value="${val(0)}">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Phân loại (Kho, Kệ, Container, Ngăn kéo...)</label>
+                        <input type="text" name="f1" required list="dl-loc-types" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Chọn có sẵn hoặc gõ mới..." value="${val(1)}">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Client Name / Sở Hữu</label>
+                        <input type="text" name="f2" required list="dl-loc-clients" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Chọn Client hoặc gõ mới..." value="${val(2, 'AMSITO')}">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Tên Vị Trí / Mô Tả</label>
+                        <input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="VD: Kho số 1 (Base Vũng Tàu), Ngăn kéo số 3..." value="${val(3)}">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Parent ID (Mã vị trí cấp trên - nếu có)</label>
+                        <input type="text" name="f4" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Để trống nếu là vị trí Gốc, hoặc chọn ID cấp trên..." value="${val(4)}">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs text-slate-300 mb-1">Trạng thái</label>
+                        <input type="text" name="f5" list="dl-statuses" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5, 'Active')}">
+                    </div>
                 `;
             } else {
+                // Đẩy gợi ý danh sách Location ID cho các tab thiết bị khác
+                const locs = appData.Locations || [];
+                const parentIds = locs.map(l => `<option value="${l[0]}">${l[3]}</option>`).join("");
+                
                 html = `
+                    <datalist id="dl-loc-parents">${parentIds}</datalist>
                     <div><label class="block text-xs text-slate-300 mb-1">ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Tên / Mô tả</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID / Vị Trí</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID / Vị Trí Lưu Trữ</label><input type="text" name="f2" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white placeholder-slate-500" placeholder="Chọn Location ID..." value="${val(2)}"></div>
                 `;
             }
             container.innerHTML = html;
