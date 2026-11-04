@@ -548,66 +548,72 @@
         }
 
         function renderLocationCombinedTable(locId) {
-            const locName = getLocationName(locId);
-            document.getElementById("current-table-title").innerText = `THIẾT BỊ TẠI VỊ TRÍ: ${locName.toUpperCase()}`;
-            
-            let validLocIds = [locId];
-            function findChildren(pId) {
-                (appData.Locations || []).forEach(l => {
-                    if (l[4] === pId) {
-                        validLocIds.push(l[0]);
-                        findChildren(l[0]);
-                    }
+    const locName = getLocationName(locId);
+    document.getElementById("current-table-title").innerText = `THIẾT BỊ TẠI VỊ TRÍ: ${locName.toUpperCase()}`;
+    
+    let validLocIds = [locId];
+    function findChildren(pId) {
+        (appData.Locations || []).forEach(l => {
+            if (String(l[4] || "") === pId) {
+                validLocIds.push(String(l[0] || ""));
+                findChildren(String(l[0] || ""));
+            }
+        });
+    }
+    findChildren(locId);
+
+    const combinedList = [];
+    Object.keys(appData).forEach(tName => {
+        if (tName === "Locations" || tName === "_headers") return;
+        const locIdx = getLocationColIndex(tName);
+        (appData[tName] || []).forEach(item => {
+            if (!item || !Array.isArray(item)) return;
+            const locField = String(item[locIdx] || item[8] || item[7] || item[6] || item[5] || "");
+            if (validLocIds.some(id => id && locField.includes(id))) {
+                combinedList.push({ 
+                    id: String(item[0] || "N/A"), 
+                    name: String(item[1] || item[2] || 'Equipment'), 
+                    category: tName, 
+                    origTab: tName 
                 });
             }
-            findChildren(locId);
+        });
+    });
 
-            const combinedList = [];
-            Object.keys(appData).forEach(tName => {
-                if (tName === "Locations") return;
-                const locIdx = getLocationColIndex(tName);
-                (appData[tName] || []).forEach(item => {
-                    const locField = item[locIdx] || "";
-                    if (validLocIds.some(id => locField.includes(id))) {
-                        combinedList.push({ id: item[0], name: item[1] || item[2] || 'Equipment', category: tName, origTab: tName });
-                    }
-                });
-            });
+    document.getElementById("table-head").innerHTML = `
+        <tr>
+            <th class="px-4 py-3 font-semibold">STT</th>
+            <th class="px-4 py-3 font-semibold">Mã ID</th>
+            <th class="px-4 py-3 font-semibold">Nhóm Sheet</th>
+            <th class="px-4 py-3 font-semibold">Tên / Mô Tả</th>
+            <th class="px-4 py-3 text-right">Thao tác</th>
+        </tr>
+    `;
 
-            document.getElementById("table-head").innerHTML = `
-                <tr>
-                    <th class="px-4 py-3 font-semibold">STT</th>
-                    <th class="px-4 py-3 font-semibold">Mã ID</th>
-                    <th class="px-4 py-3 font-semibold">Nhóm Sheet</th>
-                    <th class="px-4 py-3 font-semibold">Tên / Mô Tả</th>
-                    <th class="px-4 py-3 text-right">Thao tác</th>
+    let bodyHtml = "";
+    if (combinedList.length === 0) {
+        bodyHtml = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 italic">Không tìm thấy thiết bị nào ở cấp vị trí này.</td></tr>`;
+    } else {
+        combinedList.forEach((item, idx) => {
+            bodyHtml += `
+                <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${item.origTab}', '${item.id}')">
+                    <td class="px-4 py-3 font-semibold text-slate-400">${idx + 1}</td>
+                    <td class="px-4 py-3 text-sky-400 font-medium">${item.id}</td>
+                    <td class="px-4 py-3 text-amber-300">${item.category}</td>
+                    <td class="px-4 py-3 text-slate-200 truncate max-w-xs">${item.name}</td>
+                    <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                        <button onclick="openMoveModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
+                        <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
+                        <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteItem('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
                 </tr>
             `;
-
-            let bodyHtml = "";
-            if (combinedList.length === 0) {
-                bodyHtml = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 italic">Không tìm thấy thiết bị nào ở cấp vị trí này.</td></tr>`;
-            } else {
-                combinedList.forEach((item, idx) => {
-                    bodyHtml += `
-                        <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${item.origTab}', '${item.id}')">
-                            <td class="px-4 py-3 font-semibold text-slate-400">${idx + 1}</td>
-                            <td class="px-4 py-3 text-sky-400 font-medium">${item.id}</td>
-                            <td class="px-4 py-3 text-amber-300">${item.category}</td>
-                            <td class="px-4 py-3 text-slate-200 truncate max-w-xs">${item.name}</td>
-                            <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                                <button onclick="openMoveModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
-                                <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                                <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteItem('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                });
-            }
-            document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("record-count").innerText = `${combinedList.length} thiết bị`;
-        }
+        });
+    }
+    document.getElementById("table-body").innerHTML = bodyHtml;
+    document.getElementById("record-count").innerText = `${combinedList.length} thiết bị`;
+}
 
         function openMoveModal(tabName, itemId) {
             movingItemContext = { tabName, itemId };
