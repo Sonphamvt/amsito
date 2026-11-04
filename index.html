@@ -34,7 +34,7 @@
             </div>
             <div>
                 <h1 class="text-base md:text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-[11px] text-slate-400">Hệ thống quản lý phân cấp Kho - Giàn khoan - Toolstrings & Bảo dưỡng MPI/LT</p>
+                <p class="text-[11px] text-slate-400">Hệ thống quản lý tài sản & bảo dưỡng tự động đồng bộ Google Sheet</p>
             </div>
         </div>
         
@@ -50,22 +50,6 @@
             </button>
         </div>
     </header>
-
-    <!-- Context Menu -->
-    <div id="custom-context-menu" class="hidden fixed bg-slate-900 border border-slate-700 rounded-xl shadow-2xl py-1.5 z-50 text-xs w-48 divide-y divide-slate-800">
-        <div class="px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase bg-slate-800/50 truncate" id="ctx-menu-title">Tùy chọn</div>
-        <div class="py-1">
-            <button onclick="ctxAction('view')" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
-                <i class="fa-solid fa-circle-info text-sky-400"></i> Xem chi tiết
-            </button>
-            <button onclick="ctxAction('edit')" class="w-full text-left px-3 py-1.5 text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2 transition">
-                <i class="fa-solid fa-pen text-sky-400"></i> Chỉnh sửa / Đổi tên
-            </button>
-            <button onclick="ctxAction('delete')" class="w-full text-left px-3 py-1.5 text-red-400 hover:bg-red-600 hover:text-white flex items-center gap-2 transition">
-                <i class="fa-solid fa-trash-can"></i> Xóa thiết bị
-            </button>
-        </div>
-    </div>
 
     <!-- Main Dashboard Container -->
     <main class="p-4 md:p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -128,18 +112,18 @@
                         <i class="fa-solid fa-wrench mr-1"></i> Cơ Khí Khác
                     </button>
 
-                    <!-- Dropdown: Logging (MPLT, PPS Gauge, Battery, ART, Cement Dump, Other) -->
+                    <!-- Dropdown: Logging -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown(event, 'dropdown-logging')" class="tab-dropdown-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1">
                             <i class="fa-solid fa-microchip text-purple-400"></i> Logging <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
                         </button>
                         <div id="dropdown-logging" class="hidden absolute left-0 mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-30 py-1 divide-y divide-slate-800">
                             <button onclick="switchTab('Electronic_Logging_Tools'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-microchip text-purple-400"></i> MPLT</button>
-                            <button onclick="switchTab('PPS_Gauge'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-gauge text-sky-400"></i> PPS Gauge</button>
-                            <button onclick="switchTab('Battery_List'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-battery-full text-emerald-400"></i> Battery (Pin)</button>
-                            <button onclick="switchTab('ART_List'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-amber-400"></i> ART</button>
-                            <button onclick="switchTab('Cement_Dump'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-fill-drip text-rose-400"></i> Cement Dump</button>
-                            <button onclick="switchTab('Logging_Other'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-box-archive text-slate-400"></i> Other</button>
+                            <button onclick="switchTab('PPS'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-gauge text-sky-400"></i> PPS Gauge</button>
+                            <button onclick="switchTab('Battery'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-battery-full text-emerald-400"></i> Battery (Pin)</button>
+                            <button onclick="switchTab('ART'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-amber-400"></i> ART</button>
+                            <button onclick="switchTab('Cement'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-fill-drip text-rose-400"></i> Cement Dump</button>
+                            <button onclick="switchTab('Other'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-box-archive text-slate-400"></i> Other</button>
                         </div>
                     </div>
 
@@ -186,23 +170,9 @@
             
             <form id="dynamic-form" onsubmit="handleFormSubmit(event)" autocomplete="off" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Chọn Nhóm Quản Lý (Tab mục tiêu)</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Chọn Nhóm Quản Lý (Sheet mục tiêu)</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
-                        <option value="Locations">1. Locations (Vị Trí Lưu Trữ)</option>
-                        <option value="Slickline_Toolstrings">2. Slickline Tools</option>
-                        <option value="Containers_Units">3. Container & Box</option>
-                        <option value="Slickline_Units_Mast">4. Slickline Unit & Mast</option>
-                        <option value="Slickline_Drums">5. Tang Cáp (Drums)</option>
-                        <option value="Slickline_Wires">6. Sợi Cáp (Wires)</option>
-                        <option value="PCE_Equipment">7. PCE Equipment</option>
-                        <option value="Mechanical_Tools">8. Dụng Cụ Cơ Khí</option>
-                        <option value="Electronic_Logging_Tools">9. MPLT</option>
-                        <option value="PPS_Gauge">10. PPS Gauge</option>
-                        <option value="Battery_List">11. Battery (Pin)</option>
-                        <option value="ART_List">12. ART</option>
-                        <option value="Cement_Dump">13. Cement Dump</option>
-                        <option value="Logging_Other">14. Other</option>
-                        <option value="MPI_LT">15. Quản Lý Bảo Dưỡng MPI / LT</option>
+                        <!-- Sẽ được điền tự động từ danh sách sheet -->
                     </select>
                 </div>
 
@@ -240,7 +210,7 @@
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-right-left text-accent"></i> Di Chuyển Thiết Bị
+                    <i class="fa-solid fa-right-left text-accent"></i> Di Chuyển Vị Trí Thiết Bị
                 </h3>
                 <button onclick="closeMoveModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -265,81 +235,46 @@
         </div>
     </div>
 
-    <!-- Script Logic -->
+    <!-- Script Logic: Dynamic Schema từ Google Sheet -->
     <script>
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwMDTOYtAqzbv7oyMUZyo1CnMklu4LE8h7UZoG469Tg1gMTb1SIQc6WrweOWCi1um40/exec";
 
+        // Cấu trúc mặc định các sheet và tiêu đề cột (tự động cập nhật từ Google Sheet khi load)
         let appData = {
-            Locations: [
-                ["LOC_BASE", "Base", "AMSITO", "AMS Base (Kho / Xưởng Vũng Tàu)", "", "Active"],
-                ["LOC_TGT_H1", "Platform", "HLHV", "Giàn Platform TGT-H1", "", "Active"],
-                ["LOC_PLAT_E1", "Platform", "JVPC", "Giàn Platform E1", "", "Active"],
-                ["RIG_PVD1", "Rig", "PVD", "Giàn khoan PVD1", "", "Active"],
-                ["AMS_C22", "Container", "AMSITO", "Container AMS-C22", "LOC_BASE", "Active"],
-                ["UNIT_101373", "Winch Unit", "AMSITO", "ASEP Wireline Unit 101373", "LOC_BASE", "Active"],
-                ["UNIT_101490", "Winch Unit", "AMSITO", "ASEP Wireline Unit 101490", "LOC_TGT_H1", "Active"],
-                ["BASKET_MAST01", "Mast Basket", "AMSITO", "Basket chứa MAST01", "LOC_TGT_H1", "Active"],
-                ["AMS_R29", "PCE Frame", "AMSITO", "PCE Frame AMS-R29", "LOC_PLAT_E1", "Active"],
-                ["DRAW_1", "Ngăn kéo", "AMSITO", "Draw 1 (Trong AMS-C22)", "AMS_C22", "Active"],
-                ["WINCH_FRONT", "Winch Drum Pos", "AMSITO", "Tang cáp Phía Trước", "UNIT_101373", "Active"]
-            ],
-            Slickline_Toolstrings: [],
+            Locations: [],
+            PPS: [],
+            ART: [],
+            Cement: [],
+            Battery: [],
+            MPI_LT: [],
             Containers_Units: [],
             Slickline_Units_Mast: [],
+            Slickline_Toolstrings: [],
             Slickline_Drums: [],
             Slickline_Wires: [],
             PCE_Equipment: [],
             Mechanical_Tools: [],
             Electronic_Logging_Tools: [],
-            PPS_Gauge: [
-                ["PPS001", "PPS Multi-Sensor Gauge", "PPS-9000", "150°C", "10k PSI", "LOC_BASE", "Active", "2026-01-10: Hạ giàn TGT-H1 | 2026-03-15: Bảo dưỡng định kỳ"]
-            ],
-            Battery_List: [
-                ["BAT001", "High-Temp Lithium Pack", "LTC-7PN", "2025-05-10", "2025-06-01", "2027-06-01", "Good", "LOC_BASE", "2026-02-12: Sử dụng cho tool MPLT-01"]
-            ],
-            ART_List: [],
-            Cement_Dump: [],
-            Logging_Other: [],
-            MPI_LT: [
-                ["MPIL001", "ASEP WIRELINE UNIT", "101373", "16-Dec-25", "16-Dec-26", "22-Jun-26", "21-Jun-28", "", "LOC_BASE", "Active"],
-                ["MPIL002", "FLYLINE WINCH UNIT FRAME", "103358-F", "13-Apr-26", "11-Oct-26", "8-Nov-25", "8-Nov-26", "", "LOC_BASE", "Warehouse"]
-            ]
+            Other: []
         };
 
-        const tableHeaders = {
-            Locations: ["STT", "Location ID", "Phân loại", "AMSITO / Client", "Tên Vị Trí / Mô Tả", "Parent ID", "Trạng thái"],
-            Slickline_Toolstrings: ["STT", "Tool ID", "Description", "Contract Inquire", "Qty", "Length (m)", "Weight (Lbs)", "Part NO", "Asset NO", "Location", "Brand", "Status / Remark"],
-            Containers_Units: ["STT", "Container ID", "Asset / Serial No", "Type / Equipment", "Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
-            Slickline_Units_Mast: ["STT", "Unit ID", "Equipment Name", "Serial No", "Power / Capacity & Size", "Location ID", "Recert Expiry", "Status"],
-            Slickline_Drums: ["STT", "Drum ID / Name", "DRUM Description", "Wire Information", "Cert Number", "Spool Date", "Length (m)", "Location", "Remark"],
-            Slickline_Wires: ["STT", "Wire ID", "Wire Type", "Wire Size", "Serial No", "Breaking Strength", "Actual Length (ft)", "Parent Drum ID", "Lịch sử sử dụng", "Status"],
-            PCE_Equipment: ["STT", "PCE ID", "Equipment Type", "Serial No", "WP (PSI)", "Service", "Connection", "Parent Container", "Location ID", "Pressure Test Expire", "Status"],
-            Mechanical_Tools: ["STT", "Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location ID", "Status"],
-            Electronic_Logging_Tools: ["STT", "Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location ID", "Status"],
-            PPS_Gauge: ["STT", "Gauge ID", "Equipment Name", "Serial No (Asset)", "Max Temp", "Max Pressure", "Location ID", "Status", "Lịch sử sử dụng & Ngày tháng"],
-            Battery_List: ["STT", "Battery ID", "Part Number / Chủng loại", "Serial Number", "Ngày sản xuất", "Ngày mua", "Hạn sử dụng", "Tình trạng", "Location ID", "Lịch sử sử dụng"],
-            ART_List: ["STT", "ART ID", "Equipment Name", "Serial No", "Specs", "Location ID", "Status", "Lịch sử sử dụng"],
-            Cement_Dump: ["STT", "Dump ID", "Equipment Name", "Serial No", "Capacity / Size", "Location ID", "Status", "Lịch sử sử dụng"],
-            Logging_Other: ["STT", "Item ID", "Equipment Name", "Serial No", "Description", "Location ID", "Status", "Lịch sử sử dụng"],
-            MPI_LT: ["STT", "ID", "Equipment Name", "Asset NO", "MPI Test Date", "MPI Expire Date", "LT Test Date", "LT Expire Date", "Pressure Test Expire", "Location ID", "Status"]
-        };
-
-        const locationColMap = {
-            Locations: 4,
-            Slickline_Toolstrings: 9,
-            Containers_Units: 4,
-            Slickline_Units_Mast: 4,
-            Slickline_Drums: 7,
-            Slickline_Wires: 7,
-            PCE_Equipment: 8,
-            Mechanical_Tools: 7,
-            Electronic_Logging_Tools: 8,
-            PPS_Gauge: 6,
-            Battery_List: 8,
-            ART_List: 5,
-            Cement_Dump: 5,
-            Logging_Other: 5,
-            MPI_LT: 8
+        // Tiêu đề cột tương ứng từng sheet (Dynamic Headers)
+        let tableHeaders = {
+            Locations: ['Location ID', 'Phân loại / Type', 'AMSITO / Client', 'Tên Vị Trí / Mô tả', 'Parent ID', 'Trạng thái'],
+            PPS: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No (Asset)', 'Max Temp (degC)', 'Max Pressure (psi)', 'Location', 'Location ID', 'Calibration date', 'Expire date', 'Status', 'Lịch sử sử dụng & Ngày tháng'],
+            ART: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Specs', 'Location', 'Location ID', 'Status', 'Lịch sử sử dụng'],
+            Cement: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Capacity / Size', 'Location', 'Location ID', 'Status', 'Lịch sử sử dụng'],
+            Battery: ['STT', 'ASSET NO.', 'Part Number / Chủng loại', 'Serial Number', 'Ngày sản xuất', 'Ngày mua', 'Hạn sử dụng', 'Tình trạng', 'Location', 'Location ID', 'Lịch sử sử dụng'],
+            MPI_LT: ['ID', 'Equipment Name', 'Asset NO', 'MPI Date', 'MPI Expire', 'LT Date', 'LT Expire', 'Pressure Test Expire', 'Location ID', 'Status / Remark'],
+            Containers_Units: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Capacity & Size', 'Location ID', 'Status'],
+            Slickline_Units_Mast: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status'],
+            Slickline_Toolstrings: ['Tool ID', 'Description', 'Location', 'Contract Inquire', 'Qty', 'Length (m)', 'Weight (Lbs)', 'Part NO', 'Asset NO', 'Location ID', 'Brand', 'Status / Remark'],
+            Slickline_Drums: ['Drum ID', 'DRUM Description', 'Wire Information', 'Cert Number', 'Spool Date', 'Length (m)', 'Location', 'Location ID', 'Remark'],
+            Slickline_Wires: ['Wire ID', 'Wire Type', 'Wire Size', 'Serial No', 'Breaking Strength', 'Actual Length (ft)', 'Parent Drum ID', 'Location ID', 'Status'],
+            PCE_Equipment: ['STT', 'PCE ID', 'Equipment Type', 'Serial No', 'WP (PSI)', 'Service', 'Connection', 'Location', 'Location ID', 'Pressure Test Expire', 'Status'],
+            Mechanical_Tools: ['STT', 'Tool ID', 'Category', 'OD Size', 'Asset / Serial No', 'Connection Thread', 'Location', 'Location ID', 'Status'],
+            Electronic_Logging_Tools: ['STT', 'Tool ID', 'Equipment Name', 'Serial No', 'OD Size', 'Firmware / Specs', 'Calibration Status', 'Location', 'Location ID', 'Status'],
+            Other: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No (Asset)', 'Location', 'Location ID', 'Status', 'Lịch sử sử dụng & Ngày tháng']
         };
 
         let currentActiveTab = "Locations";
@@ -357,20 +292,16 @@
 
         function hideAllDropdowns(event) {
             document.querySelectorAll("[id^='dropdown-']").forEach(d => d.classList.add("hidden"));
-            const menu = document.getElementById("custom-context-menu");
-            if (menu && !menu.classList.contains("hidden")) {
-                menu.classList.add("hidden");
-            }
         }
 
         function getLocationName(locId) {
-            if (!locId || locId === "N/A") return "N/A";
+            if (!locId || locId === "N/A" || locId === "NaN") return "N/A";
             const found = (appData.Locations || []).find(l => l[0] === locId);
-            return found ? `${locId} (${found[3]})` : locId;
+            return found ? `${locId} (${found[3] || found[1] || ''})` : locId;
         }
 
         function getLocationPath(locId) {
-            if (!locId || locId === "N/A") return "Vị trí không xác định (N/A)";
+            if (!locId || locId === "N/A" || locId === "NaN") return "Vị trí không xác định (N/A)";
             const locs = appData.Locations || [];
             let path = [];
             let currId = locId;
@@ -381,7 +312,7 @@
                 const found = locs.find(l => l[0] === currId);
                 if (found) {
                     path.unshift(found[3] || found[0]);
-                    currId = found[4];
+                    currId = found[4]; // Parent ID index
                 } else {
                     path.unshift(currId);
                     break;
@@ -390,50 +321,14 @@
             return path.join(" ➔ ");
         }
 
-        function syncMpiLtToCorrespondingTabs() {
-            const mpiList = appData.MPI_LT || [];
-            mpiList.forEach(item => {
-                const id = item[0];
-                const eqName = item[1] || "";
-                const assetNo = item[2] || "";
-                const locId = item[8] || "N/A";
-                const status = item[9] || "Active";
-                const upperName = eqName.toUpperCase();
-
-                let targetTab = "";
-                let newRow = [];
-
-                if (upperName.includes("UNIT") || upperName.includes("WINCH") || upperName.includes("MAST")) {
-                    targetTab = "Slickline_Units_Mast";
-                    newRow = [id, eqName, assetNo, "", locId, "", status];
-                } else if (upperName.includes("CONTAINER") || upperName.includes("SKID") || upperName.includes("BOX")) {
-                    targetTab = "Containers_Units";
-                    newRow = [id, assetNo, eqName, locId, item[4] || "", item[6] || "", status];
-                } else if (upperName.includes("SLING") || upperName.includes("SHACKLE") || upperName.includes("TOOL")) {
-                    targetTab = "Slickline_Toolstrings";
-                    newRow = [id, eqName, upperName, "", "1", "", "", "", assetNo, locId, "", status];
-                } else if (upperName.includes("DRUM") || upperName.includes("CÁP")) {
-                    targetTab = "Slickline_Drums";
-                    newRow = [id, eqName, upperName, "", "", "", "", locId, status];
-                } else if (upperName.includes("PCE") || upperName.includes("BOP") || upperName.includes("LUBRICATOR")) {
-                    targetTab = "PCE_Equipment";
-                    newRow = [id, eqName, upperName, assetNo, "", "", "", "", locId, "", status];
-                }
-
-                if (targetTab && appData[targetTab]) {
-                    const existingIdx = appData[targetTab].findIndex(r => r[0] === id);
-                    if (existingIdx !== -1) {
-                        appData[targetTab][existingIdx][0] = id;
-                        appData[targetTab][existingIdx][1] = eqName;
-                        if (targetTab === "Slickline_Units_Mast") {
-                            appData[targetTab][existingIdx][2] = assetNo;
-                            appData[targetTab][existingIdx][4] = locId;
-                        }
-                    } else {
-                        appData[targetTab].push(newRow);
-                    }
-                }
-            });
+        // Tìm vị trí chỉ mục chứa Location ID trong bảng (động dựa vào tiêu đề cột)
+        function getLocationColIndex(tabName) {
+            const headers = tableHeaders[tabName] || [];
+            for (let i = 0; i < headers.length; i++) {
+                const h = headers[i].toLowerCase();
+                if (h.includes("location id") || h === "location") return i;
+            }
+            return headers.length > 1 ? 1 : 0;
         }
 
         async function initData() {
@@ -442,39 +337,45 @@
 
             if (GOOGLE_SHEET_API_URL) {
                 try {
-                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading...`;
+                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading Sheets...`;
                     const response = await fetch(GOOGLE_SHEET_API_URL);
                     const data = await response.json();
                     
-                    if (data && data.Locations && data.Locations.length > 0) {
-                        appData = data;
+                    if (data) {
+                        // Tự động nhận diện headers nếu Google Sheet trả về cấu trúc
+                        if (data._headers) {
+                            tableHeaders = data._headers;
+                            delete data._headers;
+                        }
+                        appData = { ...appData, ...data };
                         loadedFromServer = true;
                         indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
                     }
                 } catch (e) {
-                    console.log("Không tải được từ Google Sheet:", e);
+                    console.log("Không tải được trực tiếp từ Google Sheet API:", e);
                 }
             }
 
             if (!loadedFromServer) {
-                const saved = localStorage.getItem("slickline_asset_master_v18");
+                const saved = localStorage.getItem("slickline_master_v19");
                 if (saved) {
                     try { 
-                        appData = JSON.parse(saved); 
+                        const parsed = JSON.parse(saved);
+                        appData = parsed.appData || parsed;
+                        if (parsed.headers) tableHeaders = parsed.headers;
                         indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode`;
                     } catch (err) { console.error(err); }
                 }
             }
 
-            syncMpiLtToCorrespondingTabs();
-            localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
+            populateFormTabSelect();
+            localStorage.setItem("slickline_master_v19", JSON.stringify({ appData, headers: tableHeaders }));
             renderTable(currentActiveTab);
             renderTree();
         }
 
         function saveDataLocal() {
-            syncMpiLtToCorrespondingTabs();
-            localStorage.setItem("slickline_asset_master_v18", JSON.stringify(appData));
+            localStorage.setItem("slickline_master_v19", JSON.stringify({ appData, headers: tableHeaders }));
             renderTable(currentActiveTab);
             renderTree();
         }
@@ -499,6 +400,16 @@
             } catch (error) {
                 console.error("Lỗi đồng bộ Google Sheet:", error);
             }
+        }
+
+        function populateFormTabSelect() {
+            const select = document.getElementById("form-target-tab");
+            let html = "";
+            const keys = Object.keys(tableHeaders);
+            keys.forEach((key, idx) => {
+                html += `<option value="${key}">${idx + 1}. ${key.replace(/_/g, ' ')}</option>`;
+            });
+            select.innerHTML = html;
         }
 
         function switchTab(tabName) {
@@ -530,8 +441,6 @@
             if (t.includes("winch") || t.includes("tời")) return "fa-solid fa-truck-monster";
             if (t.includes("basket") || t.includes("mast")) return "fa-solid fa-layer-group";
             if (t.includes("drum")) return "fa-solid fa-dharmachakra";
-            if (t.includes("toolbox") || t.includes("hộp")) return "fa-solid fa-toolbox";
-            if (t.includes("rack") || t.includes("kệ") || t.includes("pce frame")) return "fa-solid fa-bars-staggered";
             return "fa-solid fa-folder-tree";
         }
 
@@ -570,7 +479,7 @@
                                 <div class="flex items-center gap-1 truncate">
                                     ${hasSub ? `<i id="tree-icon-${child[0]}" onclick="toggleTreeNode(event, '${child[0]}')" class="fa-solid fa-chevron-right text-slate-400 text-[10px] mr-1 hover:text-white p-0.5"></i>` : '<span class="w-3"></span>'}
                                     <i class="${icon} text-accent text-xs mr-1"></i>
-                                    <span class="truncate font-medium">${child[0]} - ${child[3]}</span>
+                                    <span class="truncate font-medium">${child[0]} - ${child[3] || child[1]}</span>
                                 </div>
                             </div>
                             ${buildBranch(child[0])}
@@ -581,7 +490,7 @@
                 return html;
             }
 
-            const roots = locs.filter(l => !l[4]);
+            const roots = locs.filter(l => !l[4] || l[4] === "NaN");
             let rootHtml = "";
             roots.forEach(root => {
                 const icon = getLocIcon(root[1]);
@@ -594,7 +503,7 @@
                             <div class="flex items-center gap-1 truncate">
                                 ${hasSub ? `<i id="tree-icon-${root[0]}" onclick="toggleTreeNode(event, '${root[0]}')" class="fa-solid fa-chevron-right text-slate-400 text-[10px] mr-1 hover:text-white p-0.5"></i>` : '<span class="w-3"></span>'}
                                 <i class="${icon} text-emerald-400 text-xs mr-1"></i>
-                                <span class="truncate">${root[0]} - ${root[3]}</span>
+                                <span class="truncate">${root[0]} - ${root[3] || root[1]}</span>
                             </div>
                         </div>
                         ${buildBranch(root[0])}
@@ -604,35 +513,6 @@
 
             container.innerHTML = rootHtml || '<div class="text-slate-500 italic p-2">Chưa có vị trí phân cấp.</div>';
             document.getElementById("total-nodes-badge").innerText = `${totalNodes} vị trí`;
-        }
-
-        function getExpiryStatus(dateStr) {
-            if (!dateStr) return { status: 'valid', days: 999 };
-            let expDate;
-            try {
-                expDate = new Date(dateStr);
-                if (isNaN(expDate.getTime())) {
-                    const parts = dateStr.split('-');
-                    if (parts.length === 3) {
-                        const months = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
-                        const day = parseInt(parts[0]);
-                        const month = months[parts[1].toLowerCase()];
-                        let year = parseInt(parts[2]);
-                        if (year < 100) year += 2000;
-                        expDate = new Date(year, month, day);
-                    }
-                }
-            } catch(e) { return { status: 'valid', days: 999 }; }
-
-            if (!expDate || isNaN(expDate.getTime())) return { status: 'valid', days: 999 };
-
-            const today = new Date();
-            const diffTime = expDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays < 0) return { status: 'expired', days: diffDays };
-            if (diffDays <= 30) return { status: 'warning', days: diffDays };
-            return { status: 'valid', days: diffDays };
         }
 
         function renderTable(tabName) {
@@ -648,63 +528,19 @@
             if (rows.length === 0) {
                 bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
             } else {
-                if (tabName === "MPI_LT") {
-                    rows.sort((a, b) => {
-                        const expA = getExpiryStatus(a[4] || a[6]);
-                        const expB = getExpiryStatus(b[4] || b[6]);
-                        const scoreA = expA.status === 'expired' ? 0 : (expA.status === 'warning' ? 1 : 2);
-                        const scoreB = expB.status === 'expired' ? 0 : (expB.status === 'warning' ? 1 : 2);
-                        if (scoreA !== scoreB) return scoreA - scoreB;
-                        return expA.days - expB.days;
+                rows.forEach((row, index) => {
+                    bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
+                    headers.forEach((h, cellIdx) => {
+                        const cellVal = row[cellIdx] !== undefined ? row[cellIdx] : '';
+                        bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cellVal}</td>`;
                     });
-
-                    rows.forEach((row, index) => {
-                        const mpiExp = getExpiryStatus(row[4]);
-                        const ltExp = getExpiryStatus(row[6]);
-                        let rowBg = 'hover:bg-slate-800/40 border-b border-slate-800';
-                        
-                        if (mpiExp.status === 'expired' || ltExp.status === 'expired') {
-                            rowBg = 'bg-rose-950/40 hover:bg-rose-900/50 border-b border-rose-800/80 text-rose-200';
-                        } else if (mpiExp.status === 'warning' || ltExp.status === 'warning') {
-                            rowBg = 'bg-amber-950/40 hover:bg-amber-900/50 border-b border-amber-800/80 text-amber-200';
-                        }
-
-                        bodyHtml += `<tr class="${rowBg} transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
-                        bodyHtml += `<td class="px-4 py-3 font-semibold">${index + 1}</td>`;
-                        
-                        row.forEach((cell, cellIdx) => {
-                            let cellStyle = "px-4 py-3 truncate max-w-xs";
-                            if (cellIdx === 4) {
-                                if (mpiExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-2 rounded";
-                                else if (mpiExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-2 rounded";
-                            }
-                            if (cellIdx === 6) {
-                                if (ltExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-2 rounded";
-                                else if (ltExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-2 rounded";
-                            }
-                            bodyHtml += `<td class="${cellStyle}">${cell || ''}</td>`;
-                        });
-
-                        bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                            <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
-                            <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                            <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
-                        </td></tr>`;
-                    });
-                } else {
-                    rows.forEach((row, index) => {
-                        bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
-                        bodyHtml += `<td class="px-4 py-3 text-slate-400 font-medium">${index + 1}</td>`;
-                        row.forEach(cell => bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell || ''}</td>`);
-                        bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                            <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
-                            <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                            <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                            <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
-                        </td></tr>`;
-                    });
-                }
+                    bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                        <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
+                        <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
+                        <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                    </td></tr>`;
+                });
             }
             document.getElementById("table-body").innerHTML = bodyHtml;
             document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
@@ -727,12 +563,11 @@
             findChildren(locId);
 
             const combinedList = [];
-            const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums", "Slickline_Units_Mast", "Slickline_Wires", "Electronic_Logging_Tools", "PPS_Gauge", "Battery_List", "ART_List", "Cement_Dump", "Logging_Other", "MPI_LT"];
-            
-            checkTabs.forEach(tName => {
-                const locIdx = locationColMap[tName] ?? 2;
+            Object.keys(appData).forEach(tName => {
+                if (tName === "Locations") return;
+                const locIdx = getLocationColIndex(tName);
                 (appData[tName] || []).forEach(item => {
-                    const locField = item[locIdx] || item[8] || item[7] || item[6] || item[4] || item[2] || "";
+                    const locField = item[locIdx] || "";
                     if (validLocIds.some(id => locField.includes(id))) {
                         combinedList.push({ id: item[0], name: item[1] || item[2] || 'Equipment', category: tName, origTab: tName });
                     }
@@ -743,7 +578,7 @@
                 <tr>
                     <th class="px-4 py-3 font-semibold">STT</th>
                     <th class="px-4 py-3 font-semibold">Mã ID</th>
-                    <th class="px-4 py-3 font-semibold">Nhóm Thiết Bị</th>
+                    <th class="px-4 py-3 font-semibold">Nhóm Sheet</th>
                     <th class="px-4 py-3 font-semibold">Tên / Mô Tả</th>
                     <th class="px-4 py-3 text-right">Thao tác</th>
                 </tr>
@@ -781,7 +616,7 @@
 
             document.getElementById("move-item-id").value = `${itemId} - ${row[1] || row[2] || ''}`;
 
-            const locIndex = locationColMap[tabName] ?? 2;
+            const locIndex = getLocationColIndex(tabName);
             const currentLocation = row[locIndex] || "";
 
             const selectEl = document.getElementById("move-target-location");
@@ -789,7 +624,7 @@
             
             (appData.Locations || []).forEach(loc => {
                 const isSelected = loc[0] === currentLocation ? "selected" : "";
-                optionsHtml += `<option value="${loc[0]}" ${isSelected}>${loc[0]} - ${loc[3]} (${loc[1]})</option>`;
+                optionsHtml += `<option value="${loc[0]}" ${isSelected}>${loc[0]} - ${loc[3] || loc[1]}</option>`;
             });
 
             selectEl.innerHTML = optionsHtml;
@@ -808,7 +643,7 @@
             const row = (appData[tabName] || []).find(r => r[0] === itemId);
 
             if (row) {
-                const locIndex = locationColMap[tabName] ?? 2;
+                const locIndex = getLocationColIndex(tabName);
                 row[locIndex] = newLocId;
                 saveDataLocal();
                 syncToGoogleSheet("update", tabName, row, itemId);
@@ -830,82 +665,31 @@
             });
         }
 
+        // Tự động sinh form nhập liệu từ các cột trong sheet hiện tại
         function renderFormFields(rowData = null) {
             const tab = document.getElementById("form-target-tab").value;
             const container = document.getElementById("dynamic-fields-container");
-            let html = "";
-            const val = (idx, defaultVal = "") => rowData ? (rowData[idx] || "") : defaultVal;
-
+            const headers = tableHeaders[tab] || ["ID", "Name"];
+            
             const locs = appData.Locations || [];
             const parentIds = [...new Set(locs.map(l => l[0]).filter(Boolean))];
             let optionsParent = parentIds.map(p => `<option value="${p}">${p}</option>`).join("");
 
-            if (tab === "Battery_List") {
-                html = `
-                    <datalist id="dl-loc-parents">${optionsParent}</datalist>
-                    <div><label class="block text-xs text-slate-300 mb-1">Battery ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-850 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Part Number / Chủng loại</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial Number</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">Ngày sản xuất</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="DD-MMM-YY" value="${val(3)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">Ngày mua</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="DD-MMM-YY" value="${val(4)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">Hạn sử dụng</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="DD-MMM-YY" value="${val(5)}"></div>
+            let html = `<datalist id="dl-loc-parents">${optionsParent}</datalist>`;
+
+            headers.forEach((header, idx) => {
+                const val = rowData && rowData[idx] !== undefined ? rowData[idx] : "";
+                const isIdField = (idx === 0);
+                const isLocationField = header.toLowerCase().includes("location");
+
+                html += `
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">${header}</label>
+                        <input type="text" name="f${idx}" value="${val}" ${isIdField && rowData ? 'readonly class="w-full bg-slate-850 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent"'} ${isLocationField ? 'list="dl-loc-parents"' : ''} autocomplete="off">
                     </div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Tình trạng</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6, 'Good')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Lịch sử sử dụng</label><textarea name="f8" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 2026-02-12: Sử dụng">${val(8)}</textarea></div>
                 `;
-            } else if (tab === "PPS_Gauge" || tab === "ART_List" || tab === "Cement_Dump" || tab === "Logging_Other") {
-                html = `
-                    <datalist id="dl-loc-parents">${optionsParent}</datalist>
-                    <div><label class="block text-xs text-slate-300 mb-1">Mã ID Thiết Bị</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-850 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Tên Thiết Bị / Chủng loại</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial Number (Asset No)</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">Thông số 1 (Nhiệt độ / Specs)</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">Thông số 2 (Áp suất / Size)</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
-                    </div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f5" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6, 'Active')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Lịch sử sử dụng & Ngày tháng</label><textarea name="f7" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 2026-01-10: Hạ giàn">${val(7)}</textarea></div>
-                `;
-            } else if (tab === "MPI_LT") {
-                html = `
-                    <datalist id="dl-loc-parents">${optionsParent}</datalist>
-                    <div><label class="block text-xs text-slate-300 mb-1">ID Bản Ghi</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-850 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Asset NO (Serial chuẩn định danh)</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">MPI Test Date</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">MPI Expire Date</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">LT Test Date</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">LT Expire Date</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
-                    </div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Pressure Test Expire Date</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f8" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Status / Remark</label><input type="text" name="f9" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(9, 'Active')}"></div>
-                `;
-            } else if (tab === "Locations") {
-                html = `
-                    <datalist id="dl-loc-parents">${optionsParent}</datalist>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-850 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Phân loại</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Client Name</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2, 'AMSITO')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Tên Vị Trí / Mô Tả</label><input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Parent ID</label><input type="text" name="f4" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Trạng thái</label><input type="text" name="f5" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5, 'Active')}"></div>
-                `;
-            } else {
-                html = `
-                    <datalist id="dl-loc-parents">${optionsParent}</datalist>
-                    <div><label class="block text-xs text-slate-300 mb-1">ID Thiết Bị</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-850 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Tên / Mô tả Thiết Bị</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Thông số / Serial</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (Vị Trí Lưu Trữ)</label><input type="text" name="f3" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
-                `;
-            }
+            });
+
             container.innerHTML = html;
         }
 
@@ -945,7 +729,7 @@
             if (!appData[tab] || !Array.isArray(appData[tab])) appData[tab] = [];
 
             let rowData = [];
-            document.querySelectorAll("#dynamic-fields-container input, #dynamic-fields-container select, #dynamic-fields-container textarea").forEach(el => rowData.push(el.value));
+            document.querySelectorAll("#dynamic-fields-container input").forEach(el => rowData.push(el.value));
 
             if (editingItemId) {
                 const index = appData[tab].findIndex(r => r[0] === editingItemId);
@@ -968,7 +752,7 @@
             if (!row) return;
 
             const headers = tableHeaders[tabName] || [];
-            const locColIdx = locationColMap[tabName] ?? 2;
+            const locColIdx = getLocationColIndex(tabName);
             const locId = row[locColIdx] || "";
             const fullPath = getLocationPath(locId);
 
@@ -976,7 +760,6 @@
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-3">
                     <div class="flex justify-between items-center pb-2 border-b border-slate-800">
                         <span class="text-xs uppercase font-semibold text-sky-400">Mã Định Danh (ID): ${row[0]}</span>
-                        <span class="text-xs px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">${row[row.length - 1] || 'Active'}</span>
                     </div>
 
                     <div class="bg-sky-950/40 border border-sky-500/30 p-3 rounded-lg flex justify-between items-center">
@@ -1028,10 +811,10 @@
         }
 
         function exportJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ appData, headers: tableHeaders }, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `slickline_master_v18_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `amsito_master_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
