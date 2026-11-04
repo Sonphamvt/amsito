@@ -94,9 +94,9 @@
         <!-- Content Area: Tables & Detail View -->
         <section class="lg:col-span-3 flex flex-col gap-4 md:gap-6">
             
-            <!-- Filter Tabs -->
-            <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md overflow-x-auto">
-                <div class="flex flex-nowrap md:flex-wrap gap-1.5 min-w-max" id="tab-buttons">
+            <!-- Filter Tabs - ĐÃ SỬA THÀNH 2 HÀNG, KHÔNG CÓ THANH CUỘN NGANG -->
+            <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md">
+                <div class="flex flex-wrap gap-1.5 items-center justify-start" id="tab-buttons">
                     <button onclick="switchTab('Locations')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations">
                         <i class="fa-solid fa-location-dot mr-1"></i> Locations
                     </button>
@@ -124,9 +124,9 @@
                     <button onclick="switchTab('Electronic_Logging_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Electronic_Logging_Tools">
                         <i class="fa-solid fa-microchip mr-1 text-purple-400"></i> Logging
                     </button>
-                    <!-- MỤC MPI / LT MỚI BỔ SUNG -->
+                    <!-- MỤC MPI / LT -->
                     <button onclick="switchTab('MPI_LT')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-900/60 border border-rose-500/40 text-rose-200 hover:bg-rose-800 transition" data-tab="MPI_LT">
-                        <i class="fa-solid fa-[#fa4b4b] fa-file-contract mr-1 text-rose-400"></i> MPI / LT
+                        <i class="fa-solid fa-file-contract mr-1 text-rose-400"></i> MPI / LT
                     </button>
                 </div>
             </div>
@@ -464,7 +464,6 @@
             document.getElementById("total-nodes-badge").innerText = `${totalNodes} vị trí`;
         }
 
-        // HÀM TÍNH TOÁN NGÀY HẾT HẠN CHO MỤC MPI / LT
         function getExpiryStatus(dateStr) {
             if (!dateStr) return { status: 'valid', days: 999 };
             let expDate;
@@ -507,10 +506,9 @@
             if (rows.length === 0) {
                 bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
             } else {
-                // XỬ LÝ SẮP XẾP VÀ TÔ MÀU CẢNH BÁO RIÊNG CHO TAB MPI / LT
                 if (tabName === "MPI_LT") {
                     rows.sort((a, b) => {
-                        const expA = getExpiryStatus(a[4] || a[6]); // Cột E (MPI Expire) hoặc G (LT Expire)
+                        const expA = getExpiryStatus(a[4] || a[6]);
                         const expB = getExpiryStatus(b[4] || b[6]);
                         const scoreA = expA.status === 'expired' ? 0 : (expA.status === 'warning' ? 1 : 2);
                         const scoreB = expB.status === 'expired' ? 0 : (expB.status === 'warning' ? 1 : 2);
@@ -534,11 +532,11 @@
                         
                         row.forEach((cell, cellIdx) => {
                             let cellStyle = "px-4 py-3 truncate max-w-xs";
-                            if (cellIdx === 4) { // Cột MPI Expire
+                            if (cellIdx === 4) {
                                 if (mpiExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-2 rounded";
                                 else if (mpiExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-2 rounded";
                             }
-                            if (cellIdx === 6) { // Cột LT Expire
+                            if (cellIdx === 6) {
                                 if (ltExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-2 rounded";
                                 else if (ltExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-2 rounded";
                             }
