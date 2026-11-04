@@ -285,7 +285,7 @@
             Slickline_Toolstrings: ["STT", "Tool ID", "Description", "Contract Inquire", "Qty", "Length (m)", "Weight (Lbs)", "Part NO", "Asset NO", "Location", "Brand", "Status / Remark"],
             Containers_Units: ["STT", "Container ID", "Asset / Serial No", "Type / Equipment", "Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
             Slickline_Units_Mast: ["STT", "Unit ID", "Equipment Name", "Serial No", "Power / Capacity", "Location ID", "Recert Expiry", "Status"],
-            Slickline_Drums: ["STT", "Drum ID", "Drum Name", "Serial No", "Parent Container / Unit", "Location ID", "Status / Notes"],
+            Slickline_Drums: ["STT", "Drum ID / Name", "DRUM Description", "Wire Information", "Cert Number", "Spool Date", "Length (m)", "Location", "Remark"]
             Slickline_Wires: ["STT", "Wire ID", "Wire Type", "Wire Size", "Serial No", "Breaking Strength", "Actual Length (ft)", "Parent Drum ID", "Lịch sử sử dụng", "Status"],
             PCE_Equipment: ["STT", "PCE ID", "Equipment Type", "Serial No", "WP (PSI)", "Service", "Connection", "Parent Container", "Location ID", "Recert Expiry", "Status"],
             Mechanical_Tools: ["STT", "Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location ID", "Status"],
@@ -460,7 +460,7 @@
             });
         }
 
-        function renderFormFields(rowData = null) {
+    function renderFormFields(rowData = null) {
             const tab = document.getElementById("form-target-tab").value;
             const container = document.getElementById("dynamic-fields-container");
             let html = "";
@@ -490,6 +490,19 @@
                     <div><label class="block text-xs text-slate-300 mb-1">Location / Drawer</label><input type="text" name="f8" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Brand</label><input type="text" name="f9" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(9, 'PEAK')}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status / Remark</label><input type="text" name="f10" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(10, 'New')}"></div>
+                `;
+            } else if (tab === "Slickline_Drums") {
+                html = `
+                    <div><label class="block text-xs text-slate-300 mb-1">Drum ID / Name (VD: AMS-01-SC08)</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">DRUM Description</label><input type="text" name="f1" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Wire Information (VD: 0.160" - Supa 75)</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Cert Number</label><input type="text" name="f3" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-xs text-slate-300 mb-1">Spool Date</label><input type="text" name="f4" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">Length (m)</label><input type="text" name="f5" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
+                    </div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location</label><input type="text" name="f6" list="list-loc-ids" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Remark / Status</label><input type="text" name="f7" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
                 `;
             } else {
                 html = `
