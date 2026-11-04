@@ -992,48 +992,48 @@
         }
 
         function renderTable(tabName, customRows = null, highlightId = null) {
-            const headers = tableHeaders[tabName];
-            const rows = customRows || appData[tabName] || [];
+    const headers = tableHeaders[tabName];
+    const rows = customRows || appData[tabName] || [];
 
-            let headHtml = "<tr>";
-            headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
-            headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
-            document.getElementById("table-head").innerHTML = headHtml;
+    let headHtml = "<tr>";
+    headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
+    headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
+    document.getElementById("table-head").innerHTML = headHtml;
 
-            let bodyHtml = "";
-            if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
-            } else {
-                rows.forEach((row, index) => {
-                    const isHighlight = (row[0] === highlightId);
-                    const rowBg = isHighlight ? 'bg-sky-500/20 border-sky-400' : 'hover:bg-slate-800/40 border-slate-800/60';
-                    const rowIdAttr = `row-${row[0]}`;
+    let bodyHtml = "";
+    if (rows.length === 0) {
+        bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
+    } else {
+        rows.forEach((row, index) => {
+            const rowId = row[0]; // Khai báo rõ biến rowId ở đây để tránh lỗi Undefined
+            const isHighlight = (rowId === highlightId);
+            const rowBg = isHighlight ? 'bg-sky-500/20 border-sky-400' : 'hover:bg-slate-800/40 border-slate-800/60';
 
-                    bodyHtml += `<tr id="${rowIdAttr}" class="${rowBg} transition border-b cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
-                    bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
+            bodyHtml += `<tr class="${rowBg} transition border-b cursor-pointer" onclick="openDetailModal('${tabName}', '${rowId}')">`;
+            bodyHtml += `<td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>`;
 
-                    row.forEach((cell, cellIdx) => {
-                        let displayVal = cell;
-                        const locIndices = { Containers_Units: 3, Slickline_Units_Mast: 4, Slickline_Drums: 4, PCE_Equipment: 7, Mechanical_Tools: 6, Electronic_Logging_Tools: 7 };
-                        if (locIndices[tabName] !== undefined && cellIdx === locIndices[tabName]) {
-                            displayVal = getLocationName(cell);
-                        }
-                        bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${displayVal}</td>`;
-                    });
+            row.forEach((cell, cellIdx) => {
+                let displayVal = cell;
+                const locIndices = { Containers_Units: 3, Slickline_Units_Mast: 4, Slickline_Drums: 4, PCE_Equipment: 7, Mechanical_Tools: 6, Electronic_Logging_Tools: 7 };
+                if (locIndices[tabName] !== undefined && cellIdx === locIndices[tabName]) {
+                    displayVal = getLocationName(cell);
+                }
+                bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${displayVal}</td>`;
+            });
 
-                    bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                        <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                        <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
-                        <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteItem('${tabName}', '${id}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>`;
-                    bodyHtml += `</tr>`;
-                });
-            }
-            document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
-            document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
-        }
+            bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                <button onclick="openDetailModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
+                <button onclick="openMoveModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
+                <button onclick="openEditModal('${tabName}', '${rowId}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button onclick="deleteItem('${tabName}', '${rowId}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+            </td>`;
+            bodyHtml += `</tr>`;
+        });
+    }
+    document.getElementById("table-body").innerHTML = bodyHtml;
+    document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
+    document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
+}
 
         function showContextMenu(event, tabName, itemId, itemName) {
             event.preventDefault();
