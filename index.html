@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AMSITO Slickline Master Asset & Equipment Dashboard</title>
+    <title>AMSITO Slickline Master Asset & Maintenance Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
@@ -26,7 +26,7 @@
 </head>
 <body class="bg-darkbg text-slate-100 min-h-screen font-sans" onclick="hideContextMenu()">
 
-    <!-- Header Header -->
+    <!-- Header -->
     <header class="bg-cardbg border-b border-slate-700 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
         <div class="flex items-center space-x-3 w-full md:w-auto">
             <div class="bg-accent/10 p-2.5 rounded-lg border border-accent/20">
@@ -34,7 +34,7 @@
             </div>
             <div>
                 <h1 class="text-base md:text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-[11px] text-slate-400">Hệ thống quản lý phân cấp Kho - Khách hàng - Toolstrings & Thiết bị</p>
+                <p class="text-[11px] text-slate-400">Hệ thống quản lý phân cấp Kho - Giàn khoan - Toolstrings & Bảo dưỡng MPI/LT</p>
             </div>
         </div>
         
@@ -70,7 +70,7 @@
     <!-- Main Dashboard Container -->
     <main class="p-4 md:p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
         
-        <!-- Sidebar: Hierarchy Tree (Khung Tổng Quan Vị Trí) -->
+        <!-- Sidebar: Hierarchy Tree -->
         <aside class="lg:col-span-1 bg-cardbg border border-slate-700/60 rounded-xl p-4 shadow-xl flex flex-col h-[65vh] lg:h-[78vh]">
             <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-3">
                 <h2 class="text-xs md:text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
@@ -87,7 +87,7 @@
             </div>
 
             <div id="tree-container" class="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs select-none">
-                <!-- Cây vị trí phân cấp được tự động vẽ ở đây -->
+                <!-- Cây vị trí phân cấp -->
             </div>
         </aside>
 
@@ -123,6 +123,10 @@
                     </button>
                     <button onclick="switchTab('Electronic_Logging_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Electronic_Logging_Tools">
                         <i class="fa-solid fa-microchip mr-1 text-purple-400"></i> Logging
+                    </button>
+                    <!-- MỤC MPI / LT MỚI BỔ SUNG -->
+                    <button onclick="switchTab('MPI_LT')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-900/60 border border-rose-500/40 text-rose-200 hover:bg-rose-800 transition" data-tab="MPI_LT">
+                        <i class="fa-solid fa-[#fa4b4b] fa-file-contract mr-1 text-rose-400"></i> MPI / LT
                     </button>
                 </div>
             </div>
@@ -175,6 +179,7 @@
                         <option value="PCE_Equipment">7. PCE Equipment</option>
                         <option value="Mechanical_Tools">8. Dụng Cụ Cơ Khí</option>
                         <option value="Electronic_Logging_Tools">9. Thiết Bị Điện Tử & Logging</option>
+                        <option value="MPI_LT">10. Quản Lý Bảo Dưỡng MPI / LT</option>
                     </select>
                 </div>
 
@@ -232,7 +237,11 @@
             Slickline_Wires: [],
             PCE_Equipment: [],
             Mechanical_Tools: [],
-            Electronic_Logging_Tools: []
+            Electronic_Logging_Tools: [],
+            MPI_LT: [
+                ["MPIL001", "ASEP WIRELINE UNIT", "101373", "16-Dec-25", "16-Dec-26", "22-Jun-26", "21-Jun-28", "", "LOC_BASE", "Active"],
+                ["MPIL002", "FLYLINE WINCH UNIT FRAME", "103358-F", "13-Apr-26", "11-Oct-26", "8-Nov-25", "8-Nov-26", "", "LOC_BASE", "Warehouse"]
+            ]
         };
 
         const tableHeaders = {
@@ -244,7 +253,8 @@
             Slickline_Wires: ["STT", "Wire ID", "Wire Type", "Wire Size", "Serial No", "Breaking Strength", "Actual Length (ft)", "Parent Drum ID", "Lịch sử sử dụng", "Status"],
             PCE_Equipment: ["STT", "PCE ID", "Equipment Type", "Serial No", "WP (PSI)", "Service", "Connection", "Parent Container", "Location ID", "Recert Expiry", "Status"],
             Mechanical_Tools: ["STT", "Tool ID", "Category", "OD Size", "Asset / Serial No", "Connection Thread", "Parent Container", "Location ID", "Status"],
-            Electronic_Logging_Tools: ["STT", "Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location ID", "Status"]
+            Electronic_Logging_Tools: ["STT", "Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location ID", "Status"],
+            MPI_LT: ["STT", "ID", "Equipment Name", "Asset NO", "MPI Test Date", "MPI Expire Date", "LT Test Date", "LT Expire Date", "Pressure Test Expire", "Location ID", "Status"]
         };
 
         let currentActiveTab = "Locations";
@@ -454,6 +464,111 @@
             document.getElementById("total-nodes-badge").innerText = `${totalNodes} vị trí`;
         }
 
+        // HÀM TÍNH TOÁN NGÀY HẾT HẠN CHO MỤC MPI / LT
+        function getExpiryStatus(dateStr) {
+            if (!dateStr) return { status: 'valid', days: 999 };
+            let expDate;
+            try {
+                expDate = new Date(dateStr);
+                if (isNaN(expDate.getTime())) {
+                    const parts = dateStr.split('-');
+                    if (parts.length === 3) {
+                        const months = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+                        const day = parseInt(parts[0]);
+                        const month = months[parts[1].toLowerCase()];
+                        let year = parseInt(parts[2]);
+                        if (year < 100) year += 2000;
+                        expDate = new Date(year, month, day);
+                    }
+                }
+            } catch(e) { return { status: 'valid', days: 999 }; }
+
+            if (!expDate || isNaN(expDate.getTime())) return { status: 'valid', days: 999 };
+
+            const today = new Date();
+            const diffTime = expDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) return { status: 'expired', days: diffDays };
+            if (diffDays <= 30) return { status: 'warning', days: diffDays };
+            return { status: 'valid', days: diffDays };
+        }
+
+        function renderTable(tabName) {
+            const headers = tableHeaders[tabName] || [];
+            let rows = [...(appData[tabName] || [])];
+
+            let headHtml = "<tr>";
+            headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
+            headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
+            document.getElementById("table-head").innerHTML = headHtml;
+
+            let bodyHtml = "";
+            if (rows.length === 0) {
+                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
+            } else {
+                // XỬ LÝ SẮP XẾP VÀ TÔ MÀU CẢNH BÁO RIÊNG CHO TAB MPI / LT
+                if (tabName === "MPI_LT") {
+                    rows.sort((a, b) => {
+                        const expA = getExpiryStatus(a[4] || a[6]); // Cột E (MPI Expire) hoặc G (LT Expire)
+                        const expB = getExpiryStatus(b[4] || b[6]);
+                        const scoreA = expA.status === 'expired' ? 0 : (expA.status === 'warning' ? 1 : 2);
+                        const scoreB = expB.status === 'expired' ? 0 : (expB.status === 'warning' ? 1 : 2);
+                        if (scoreA !== scoreB) return scoreA - scoreB;
+                        return expA.days - expB.days;
+                    });
+
+                    rows.forEach((row, index) => {
+                        const mpiExp = getExpiryStatus(row[4]);
+                        const ltExp = getExpiryStatus(row[6]);
+                        let rowBg = 'hover:bg-slate-800/40 border-b border-slate-800';
+                        
+                        if (mpiExp.status === 'expired' || ltExp.status === 'expired') {
+                            rowBg = 'bg-rose-950/40 hover:bg-rose-900/50 border-b border-rose-800/80 text-rose-200';
+                        } else if (mpiExp.status === 'warning' || ltExp.status === 'warning') {
+                            rowBg = 'bg-amber-950/40 hover:bg-amber-900/50 border-b border-amber-800/80 text-amber-200';
+                        }
+
+                        bodyHtml += `<tr class="${rowBg} transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
+                        bodyHtml += `<td class="px-4 py-3 font-semibold">${index + 1}</td>`;
+                        
+                        row.forEach((cell, cellIdx) => {
+                            let cellStyle = "px-4 py-3 truncate max-w-xs";
+                            if (cellIdx === 4) { // Cột MPI Expire
+                                if (mpiExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-2 rounded";
+                                else if (mpiExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-2 rounded";
+                            }
+                            if (cellIdx === 6) { // Cột LT Expire
+                                if (ltExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-2 rounded";
+                                else if (ltExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-2 rounded";
+                            }
+                            bodyHtml += `<td class="${cellStyle}">${cell || ''}</td>`;
+                        });
+
+                        bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                            <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition"><i class="fa-solid fa-circle-info"></i></button>
+                            <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition"><i class="fa-solid fa-trash-can"></i></button>
+                        </td></tr>`;
+                    });
+                } else {
+                    rows.forEach((row, index) => {
+                        bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
+                        bodyHtml += `<td class="px-4 py-3 text-slate-400 font-medium">${index + 1}</td>`;
+                        row.forEach(cell => bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell}</td>`);
+                        bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                            <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
+                            <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                        </td></tr>`;
+                    });
+                }
+            }
+            document.getElementById("table-body").innerHTML = bodyHtml;
+            document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
+            document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
+        }
+
         function renderLocationCombinedTable(locId) {
             const locName = getLocationName(locId);
             document.getElementById("current-table-title").innerText = `THIẾT BỊ TẠI VỊ TRÍ: ${locName.toUpperCase()}`;
@@ -470,7 +585,7 @@
             findChildren(locId);
 
             const combinedList = [];
-            const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums", "Slickline_Units_Mast", "Slickline_Wires", "Electronic_Logging_Tools"];
+            const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums", "Slickline_Units_Mast", "Slickline_Wires", "Electronic_Logging_Tools", "MPI_LT"];
             
             checkTabs.forEach(tName => {
                 (appData[tName] || []).forEach(item => {
@@ -540,7 +655,25 @@
             let optionsClient = clients.map(c => `<option value="${c}">`).join("");
             let optionsParent = parentIds.map(p => `<option value="${p}">${p}</option>`).join("");
 
-            if (tab === "Locations") {
+            if (tab === "MPI_LT") {
+                html = `
+                    <datalist id="dl-loc-parents">${optionsParent}</datalist>
+                    <div><label class="block text-xs text-slate-300 mb-1">ID Bản Ghi</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name (Tên Thiết Bị)</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Asset NO / Serial NO</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-xs text-slate-300 mb-1">MPI Test Date</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 13-Apr-26" value="${val(3)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">MPI Expire Date</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 11-Oct-26" value="${val(4)}"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div><label class="block text-xs text-slate-300 mb-1">LT Test Date</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 8-Nov-25" value="${val(5)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">LT Expire Date</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 8-Nov-26" value="${val(6)}"></div>
+                    </div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Pressure Test Expire Date</label><input type="text" name="f7" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (Vị Trí)</label><input type="text" name="f8" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(8)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Status / Remark</label><input type="text" name="f9" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(9, 'Active')}"></div>
+                `;
+            } else if (tab === "Locations") {
                 html = `
                     <datalist id="dl-loc-types">
                         ${optionsType}
@@ -554,43 +687,23 @@
                         <option value="Tool Box">
                         <option value="Rack / Kệ">
                         <option value="Ngăn Kéo">
-                        <option value="Vị trí Cáp Phía Trước (Winch Front)">
-                        <option value="Vị trí Cáp Phía Sau (Winch Rear)">
                     </datalist>
                     <datalist id="dl-loc-clients">${optionsClient}<option value="AMSITO"><option value="HLHV"><option value="JVPC"><option value="PVD"></datalist>
                     <datalist id="dl-loc-parents">${optionsParent}</datalist>
 
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Location ID (Mã Vị Trí)</label>
-                        <input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Phân loại (Base, Platform, Container, Winch Unit, Draw...)</label>
-                        <input type="text" name="f1" required list="dl-loc-types" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="Chọn có sẵn hoặc gõ mới..." value="${val(1)}">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">AMSITO / Client Name (HLHV, JVPC, PVD...)</label>
-                        <input type="text" name="f2" required list="dl-loc-clients" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2, 'AMSITO')}">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Tên Vị Trí / Mô Tả</label>
-                        <input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Parent ID (Mã vị trí cấp trên - nếu có)</label>
-                        <input type="text" name="f4" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="Để trống nếu là Cấp 1 (Base/Giàn/Tàu)..." value="${val(4)}">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-300 mb-1">Trạng thái</label>
-                        <input type="text" name="f5" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5, 'Active')}">
-                    </div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (Mã Vị Trí)</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Phân loại</label><input type="text" name="f1" required list="dl-loc-types" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Client Name</label><input type="text" name="f2" required list="dl-loc-clients" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2, 'AMSITO')}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Tên Vị Trí / Mô Tả</label><input type="text" name="f3" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Parent ID (Mã vị trí cấp trên)</label><input type="text" name="f4" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Trạng thái</label><input type="text" name="f5" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5, 'Active')}"></div>
                 `;
             } else {
                 html = `
                     <datalist id="dl-loc-parents">${optionsParent}<option value="N/A">Vị trí không xác định (N/A)</option></datalist>
                     <div><label class="block text-xs text-slate-300 mb-1">ID Thiết Bị</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Tên / Mô tả Thiết Bị</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (Vị Trí Lưu Trữ Chính Xác)</label><input type="text" name="f2" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="Chọn Location ID..." value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Location ID (Vị Trí Lưu Trữ)</label><input type="text" name="f2" list="dl-loc-parents" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
                 `;
             }
             container.innerHTML = html;
@@ -697,35 +810,6 @@
         function closeDetailModal() {
             document.getElementById("detail-modal").classList.remove("flex");
             document.getElementById("detail-modal").classList.add("hidden");
-        }
-
-        function renderTable(tabName) {
-            const headers = tableHeaders[tabName] || [];
-            const rows = appData[tabName] || [];
-
-            let headHtml = "<tr>";
-            headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
-            headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
-            document.getElementById("table-head").innerHTML = headHtml;
-
-            let bodyHtml = "";
-            if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu.</td></tr>`;
-            } else {
-                rows.forEach((row, index) => {
-                    bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
-                    bodyHtml += `<td class="px-4 py-3 text-slate-400 font-medium">${index + 1}</td>`;
-                    row.forEach(cell => bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell}</td>`);
-                    bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                        <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                        <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
-                    </td></tr>`;
-                });
-            }
-            document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
-            document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
         }
 
         function deleteItem(tabName, id) {
