@@ -227,6 +227,12 @@
 
         let currentActiveTab = "Locations";
         let editingItemId = null;
+        function hideContextMenu() {
+    const menu = document.getElementById("custom-context-menu");
+    if (menu && !menu.classList.contains("hidden")) {
+        menu.classList.add("hidden");
+    }
+}
 
         function getLocationName(locId) {
             if (!locId) return "N/A";
