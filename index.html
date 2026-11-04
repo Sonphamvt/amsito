@@ -337,38 +337,50 @@
             return path.join(" ➔ ");
         }
 
+        // HÀM ĐỒNG BỘ CHUẨN XÁC DỰA TRÊN ASSET NO LÀM CHUẨN ĐỊNH DANH
         function syncMpiLtToCorrespondingTabs() {
             const mpiList = appData.MPI_LT || [];
             mpiList.forEach(item => {
                 const id = item[0];
-                const name = (item[1] || "").toUpperCase();
-                const assetNo = item[2] || "";
+                const eqName = item[1] || "";
+                const assetNo = item[2] || ""; // ASSET NO / SERIAL CHUẨN
                 const locId = item[8] || "N/A";
                 const status = item[9] || "Active";
+                const upperName = eqName.toUpperCase();
 
                 let targetTab = "";
                 let newRow = [];
 
-                if (name.includes("UNIT") || name.includes("WINCH") || name.includes("MAST")) {
+                if (upperName.includes("UNIT") || upperName.includes("WINCH") || upperName.includes("MAST")) {
                     targetTab = "Slickline_Units_Mast";
-                    newRow = [id, item[1], assetNo, "", locId, "", status];
-                } else if (name.includes("CONTAINER") || name.includes("SKID") || name.includes("BOX")) {
+                    // Cấu trúc: [Unit ID, Equipment Name, Serial No, Power/Capacity, Location ID, Recert Expiry, Status]
+                    newRow = [id, eqName, assetNo, "", locId, "", status];
+                } else if (upperName.includes("CONTAINER") || upperName.includes("SKID") || upperName.includes("BOX")) {
                     targetTab = "Containers_Units";
-                    newRow = [id, item[1], assetNo, name, locId, item[4] || "", item[6] || "", status];
-                } else if (name.includes("SLING") || name.includes("SHACKLE") || name.includes("TOOL")) {
+                    // Cấu trúc: [Container ID, Asset/Serial No, Type/Equipment, Location ID, MPI Expiry, Load Test Expiry, Status]
+                    newRow = [id, assetNo, eqName, locId, item[4] || "", item[6] || "", status];
+                } else if (upperName.includes("SLING") || upperName.includes("SHACKLE") || upperName.includes("TOOL")) {
                     targetTab = "Slickline_Toolstrings";
-                    newRow = [id, item[1], name, "", "1", "", "", "", assetNo, locId, "", status];
-                } else if (name.includes("DRUM") || name.includes("CÁP")) {
+                    newRow = [id, eqName, upperName, "", "1", "", "", "", assetNo, locId, "", status];
+                } else if (upperName.includes("DRUM") || upperName.includes("CÁP")) {
                     targetTab = "Slickline_Drums";
-                    newRow = [id, item[1], name, "", "", "", "", locId, status];
-                } else if (name.includes("PCE") || name.includes("BOP") || name.includes("LUBRICATOR")) {
+                    newRow = [id, eqName, upperName, "", "", "", "", locId, status];
+                } else if (upperName.includes("PCE") || upperName.includes("BOP") || upperName.includes("LUBRICATOR")) {
                     targetTab = "PCE_Equipment";
-                    newRow = [id, item[1], name, assetNo, "", "", "", "", locId, "", status];
+                    newRow = [id, eqName, upperName, assetNo, "", "", "", "", locId, "", status];
                 }
 
                 if (targetTab && appData[targetTab]) {
-                    const existing = appData[targetTab].find(r => r[0] === id);
-                    if (!existing) {
+                    const existingIdx = appData[targetTab].findIndex(r => r[0] === id);
+                    if (existingIdx !== -1) {
+                        // Cập nhật lại đúng các thông tin chuẩn từ MPI/LT sang tab chuyên ngành
+                        appData[targetTab][existingIdx][0] = id;
+                        appData[targetTab][existingIdx][1] = eqName;
+                        if (targetTab === "Slickline_Units_Mast") {
+                            appData[targetTab][existingIdx][2] = assetNo; // Gán đúng Asset No vào Serial No
+                            appData[targetTab][existingIdx][4] = locId;   // Gán đúng Location ID
+                        }
+                    } else {
                         appData[targetTab].push(newRow);
                     }
                 }
@@ -737,9 +749,8 @@
         }
 
         function closeMoveModal() {
-            document.getElementById("move-modal").classList.remove("hidden");
-            document.getElementById("move-modal").classList.add("hidden");
             document.getElementById("move-modal").classList.remove("flex");
+            document.getElementById("move-modal").classList.add("hidden");
         }
 
         function confirmMoveItem() {
@@ -770,7 +781,6 @@
             });
         }
 
-        // HÀM TẠO FORM ĐỘNG PHÙ HỢP CHUẨN XÁC VỚI TỪNG BẢNG
         function renderFormFields(rowData = null) {
             const tab = document.getElementById("form-target-tab").value;
             const container = document.getElementById("dynamic-fields-container");
@@ -804,7 +814,7 @@
                     <datalist id="dl-loc-parents">${optionsParent}</datalist>
                     <div><label class="block text-xs text-slate-300 mb-1">Unit ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Equipment Name</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Serial No</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Serial No (Asset No chuẩn)</label><input type="text" name="f2" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Power / Capacity</label><input type="text" name="f3" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f4" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Recert Expiry</label><input type="text" name="f5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
