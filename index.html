@@ -240,7 +240,7 @@
 
     <!-- Script Logic -->
     <script>
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyd94XGDXbgZjtmc4NhAuEErQ-N-4ugEP72RdRQvjOLK259kjZSJOCq32BoEf7e3v4/exec";
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwVok8qThyXH-98fJq3rQ7uVzdTSn2BDiJEbupXphhfpjNzJnKQsF36UsIsGdwyXtoB/exec";
 
         let appData = {
             Locations_Clients: [
@@ -318,27 +318,29 @@
             renderTree();
         }
 
-        async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
-            if (!GOOGLE_SHEET_API_URL) return;
-            try {
-                const payload = { action: action, sheetName: sheetName, row: rowData, id: itemId };
-                const indicator = document.getElementById("sync-status");
-                indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Syncing...`;
-
-                fetch(GOOGLE_SHEET_API_URL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                }).catch(err => console.log("Background sync triggered"));
-
-                setTimeout(() => {
-                    indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
-                }, 800);
-            } catch (error) {
-                console.error("Lỗi đồng bộ Google Sheet:", error);
+        async function initData() {
+    const indicator = document.getElementById("sync-status");
+    if (GOOGLE_SHEET_API_URL) {
+        try {
+            indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading from Sheet...`;
+            const response = await fetch(GOOGLE_SHEET_API_URL);
+            const data = await response.json();
+            if (data && Object.keys(data).length > 0) {
+                appData = data;
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
             }
+        } catch (e) {
+            console.log("Lỗi tải từ Google Sheet, dùng bộ nhớ tạm:", e);
+            const saved = localStorage.getItem("slickline_asset_master_v18");
+            if (saved) {
+                try { appData = JSON.parse(saved); } catch (err) { console.error(err); }
+            }
+            indicator.innerHTML = `<i class="fa-solid triangle-exclamation text-amber-400"></i> Offline Mode`;
         }
+    }
+    renderTable(currentActiveTab);
+    renderTree();
+}
 
         function switchTab(tabName) {
             currentActiveTab = tabName;
