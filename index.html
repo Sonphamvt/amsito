@@ -94,7 +94,7 @@
         <!-- Content Area: Tables & Detail View -->
         <section class="lg:col-span-3 flex flex-col gap-4 md:gap-6">
             
-            <!-- Filter Tabs - ĐÃ SỬA THÀNH 2 HÀNG, KHÔNG CÓ THANH CUỘN NGANG -->
+            <!-- Filter Tabs - Đã cấu hình 2 hàng không có thanh cuộn ngang -->
             <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md">
                 <div class="flex flex-wrap gap-1.5 items-center justify-start" id="tab-buttons">
                     <button onclick="switchTab('Locations')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations">
@@ -124,7 +124,6 @@
                     <button onclick="switchTab('Electronic_Logging_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Electronic_Logging_Tools">
                         <i class="fa-solid fa-microchip mr-1 text-purple-400"></i> Logging
                     </button>
-                    <!-- MỤC MPI / LT -->
                     <button onclick="switchTab('MPI_LT')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-900/60 border border-rose-500/40 text-rose-200 hover:bg-rose-800 transition" data-tab="MPI_LT">
                         <i class="fa-solid fa-file-contract mr-1 text-rose-400"></i> MPI / LT
                     </button>
@@ -143,8 +142,9 @@
                     <div class="text-xs text-slate-400" id="record-count">0 bản ghi</div>
                 </div>
 
-                <div class="overflow-x-auto flex-1 max-h-[60vh] overflow-y-auto">
-                    <table class="w-full text-left border-collapse text-xs">
+                <!-- Khung bảng: Mặc định fit chiều ngang, tự động hiện scroll khi zoom lớn -->
+                <div class="w-full overflow-x-auto overflow-y-auto max-h-[60vh]">
+                    <table class="w-full table-fixed text-left border-collapse text-xs">
                         <thead id="table-head" class="bg-slate-900/90 text-slate-400 uppercase font-medium border-b border-slate-700 sticky top-0 z-10">
                             <!-- Injected by JS -->
                         </thead>
@@ -214,7 +214,7 @@
 
     <!-- Script Logic -->
     <script>
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzBc0S-2ix75a_FzbdgJQA6s7peZRrIAe7OJuVfd3rivT_43CvFuSttnpoyMFmyVknx/exec";
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwVok8qThyXH-98fJq3rQ7uVzdTSn2BDiJEbupXphhfpjNzJnKQsF36UsIsGdwyXtoB/exec";
 
         let appData = {
             Locations: [
@@ -498,8 +498,8 @@
             let rows = [...(appData[tabName] || [])];
 
             let headHtml = "<tr>";
-            headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
-            headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
+            headers.forEach(h => headHtml += `<th class="px-3 py-2.5 font-semibold">${h}</th>`);
+            headHtml += `<th class="px-3 py-2.5 text-right">Thao tác</th></tr>`;
             document.getElementById("table-head").innerHTML = headHtml;
 
             let bodyHtml = "";
@@ -528,22 +528,22 @@
                         }
 
                         bodyHtml += `<tr class="${rowBg} transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
-                        bodyHtml += `<td class="px-4 py-3 font-semibold">${index + 1}</td>`;
+                        bodyHtml += `<td class="px-3 py-2 font-semibold">${index + 1}</td>`;
                         
                         row.forEach((cell, cellIdx) => {
-                            let cellStyle = "px-4 py-3 truncate max-w-xs";
+                            let cellStyle = "px-3 py-2 break-words whitespace-normal";
                             if (cellIdx === 4) {
-                                if (mpiExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-2 rounded";
-                                else if (mpiExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-2 rounded";
+                                if (mpiExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded";
+                                else if (mpiExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-1.5 py-0.5 rounded";
                             }
                             if (cellIdx === 6) {
-                                if (ltExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-2 rounded";
-                                else if (ltExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-2 rounded";
+                                if (ltExp.status === 'expired') cellStyle += " bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded";
+                                else if (ltExp.status === 'warning') cellStyle += " bg-amber-500 text-slate-900 font-bold px-1.5 py-0.5 rounded";
                             }
                             bodyHtml += `<td class="${cellStyle}">${cell || ''}</td>`;
                         });
 
-                        bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                        bodyHtml += `<td class="px-3 py-2 text-right space-x-1.5" onclick="event.stopPropagation()">
                             <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition"><i class="fa-solid fa-circle-info"></i></button>
                             <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition"><i class="fa-solid fa-pen-to-square"></i></button>
                             <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition"><i class="fa-solid fa-trash-can"></i></button>
@@ -552,9 +552,9 @@
                 } else {
                     rows.forEach((row, index) => {
                         bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
-                        bodyHtml += `<td class="px-4 py-3 text-slate-400 font-medium">${index + 1}</td>`;
-                        row.forEach(cell => bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell}</td>`);
-                        bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                        bodyHtml += `<td class="px-3 py-2 text-slate-400 font-medium">${index + 1}</td>`;
+                        row.forEach(cell => bodyHtml += `<td class="px-3 py-2 text-slate-300 break-words whitespace-normal">${cell || ''}</td>`);
+                        bodyHtml += `<td class="px-3 py-2 text-right space-x-1.5" onclick="event.stopPropagation()">
                             <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
                             <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
                             <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
@@ -596,11 +596,11 @@
 
             document.getElementById("table-head").innerHTML = `
                 <tr>
-                    <th class="px-4 py-3 font-semibold">STT</th>
-                    <th class="px-4 py-3 font-semibold">Mã ID</th>
-                    <th class="px-4 py-3 font-semibold">Nhóm Thiết Bị</th>
-                    <th class="px-4 py-3 font-semibold">Tên / Mô Tả</th>
-                    <th class="px-4 py-3 text-right">Thao tác</th>
+                    <th class="px-3 py-2.5 font-semibold">STT</th>
+                    <th class="px-3 py-2.5 font-semibold">Mã ID</th>
+                    <th class="px-3 py-2.5 font-semibold">Nhóm Thiết Bị</th>
+                    <th class="px-3 py-2.5 font-semibold">Tên / Mô Tả</th>
+                    <th class="px-3 py-2.5 text-right">Thao tác</th>
                 </tr>
             `;
 
@@ -611,11 +611,11 @@
                 combinedList.forEach((item, idx) => {
                     bodyHtml += `
                         <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${item.origTab}', '${item.id}')">
-                            <td class="px-4 py-3 font-semibold text-slate-400">${idx + 1}</td>
-                            <td class="px-4 py-3 text-sky-400 font-medium">${item.id}</td>
-                            <td class="px-4 py-3 text-amber-300">${item.category}</td>
-                            <td class="px-4 py-3 text-slate-200 truncate max-w-xs">${item.name}</td>
-                            <td class="px-4 py-3 text-right">
+                            <td class="px-3 py-2 font-semibold text-slate-400">${idx + 1}</td>
+                            <td class="px-3 py-2 text-sky-400 font-medium">${item.id}</td>
+                            <td class="px-3 py-2 text-amber-300">${item.category}</td>
+                            <td class="px-3 py-2 text-slate-200 break-words whitespace-normal">${item.name}</td>
+                            <td class="px-3 py-2 text-right">
                                 <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition"><i class="fa-solid fa-circle-info"></i></button>
                             </td>
                         </tr>
