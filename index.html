@@ -128,15 +128,18 @@
                         <i class="fa-solid fa-wrench mr-1"></i> Cơ Khí Khác
                     </button>
 
-                    <!-- Dropdown: Logging (Battery, PPS Gauge, MPLT) -->
+                    <!-- Dropdown: Logging (MPLT, PPS Gauge, Battery, ART, Cement Dump, Other) -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown(event, 'dropdown-logging')" class="tab-dropdown-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1">
                             <i class="fa-solid fa-microchip text-purple-400"></i> Logging <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
                         </button>
                         <div id="dropdown-logging" class="hidden absolute left-0 mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-30 py-1 divide-y divide-slate-800">
-                            <button onclick="switchTab('Electronic_Logging_Tools'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-microchip text-purple-400"></i> MPLT / Tools</button>
+                            <button onclick="switchTab('Electronic_Logging_Tools'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-microchip text-purple-400"></i> MPLT</button>
                             <button onclick="switchTab('PPS_Gauge'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-gauge text-sky-400"></i> PPS Gauge</button>
                             <button onclick="switchTab('Battery_List'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-battery-full text-emerald-400"></i> Battery (Pin)</button>
+                            <button onclick="switchTab('ART_List'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-amber-400"></i> ART</button>
+                            <button onclick="switchTab('Cement_Dump'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-fill-drip text-rose-400"></i> Cement Dump</button>
+                            <button onclick="switchTab('Logging_Other'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-box-archive text-slate-400"></i> Other</button>
                         </div>
                     </div>
 
@@ -193,10 +196,13 @@
                         <option value="Slickline_Wires">6. Sợi Cáp (Wires)</option>
                         <option value="PCE_Equipment">7. PCE Equipment</option>
                         <option value="Mechanical_Tools">8. Dụng Cụ Cơ Khí</option>
-                        <option value="Electronic_Logging_Tools">9. MPLT / Tools</option>
+                        <option value="Electronic_Logging_Tools">9. MPLT</option>
                         <option value="PPS_Gauge">10. PPS Gauge</option>
                         <option value="Battery_List">11. Battery (Pin)</option>
-                        <option value="MPI_LT">12. Quản Lý Bảo Dưỡng MPI / LT</option>
+                        <option value="ART_List">12. ART</option>
+                        <option value="Cement_Dump">13. Cement Dump</option>
+                        <option value="Logging_Other">14. Other</option>
+                        <option value="MPI_LT">15. Quản Lý Bảo Dưỡng MPI / LT</option>
                     </select>
                 </div>
 
@@ -291,6 +297,9 @@
             Battery_List: [
                 ["BAT001", "High-Temp Lithium Pack", "LTC-7PN", "2025-05-10", "2025-06-01", "2027-06-01", "Good", "LOC_BASE", "2026-02-12: Sử dụng cho tool MPLT-01"]
             ],
+            ART_List: [],
+            Cement_Dump: [],
+            Logging_Other: [],
             MPI_LT: [
                 ["MPIL001", "ASEP WIRELINE UNIT", "101373", "16-Dec-25", "16-Dec-26", "22-Jun-26", "21-Jun-28", "", "LOC_BASE", "Active"],
                 ["MPIL002", "FLYLINE WINCH UNIT FRAME", "103358-F", "13-Apr-26", "11-Oct-26", "8-Nov-25", "8-Nov-26", "", "LOC_BASE", "Warehouse"]
@@ -309,6 +318,9 @@
             Electronic_Logging_Tools: ["STT", "Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location ID", "Status"],
             PPS_Gauge: ["STT", "Gauge ID", "Equipment Name", "Serial No (Asset)", "Max Temp", "Max Pressure", "Location ID", "Status", "Lịch sử sử dụng & Ngày tháng"],
             Battery_List: ["STT", "Battery ID", "Part Number / Chủng loại", "Serial Number", "Ngày sản xuất", "Ngày mua", "Hạn sử dụng", "Tình trạng", "Location ID", "Lịch sử sử dụng"],
+            ART_List: ["STT", "ART ID", "Equipment Name", "Serial No", "Specs", "Location ID", "Status", "Lịch sử sử dụng"],
+            Cement_Dump: ["STT", "Dump ID", "Equipment Name", "Serial No", "Capacity / Size", "Location ID", "Status", "Lịch sử sử dụng"],
+            Logging_Other: ["STT", "Item ID", "Equipment Name", "Serial No", "Description", "Location ID", "Status", "Lịch sử sử dụng"],
             MPI_LT: ["STT", "ID", "Equipment Name", "Asset NO", "MPI Test Date", "MPI Expire Date", "LT Test Date", "LT Expire Date", "Pressure Test Expire", "Location ID", "Status"]
         };
 
@@ -324,6 +336,9 @@
             Electronic_Logging_Tools: 8,
             PPS_Gauge: 6,
             Battery_List: 8,
+            ART_List: 5,
+            Cement_Dump: 5,
+            Logging_Other: 5,
             MPI_LT: 8
         };
 
@@ -334,7 +349,6 @@
         function toggleDropdown(event, dropdownId) {
             event.stopPropagation();
             const el = document.getElementById(dropdownId);
-            // Ẩn các dropdown khác trước
             document.querySelectorAll("[id^='dropdown-']").forEach(d => {
                 if (d.id !== dropdownId) d.classList.add("hidden");
             });
@@ -713,7 +727,7 @@
             findChildren(locId);
 
             const combinedList = [];
-            const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums", "Slickline_Units_Mast", "Slickline_Wires", "Electronic_Logging_Tools", "PPS_Gauge", "Battery_List", "MPI_LT"];
+            const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums", "Slickline_Units_Mast", "Slickline_Wires", "Electronic_Logging_Tools", "PPS_Gauge", "Battery_List", "ART_List", "Cement_Dump", "Logging_Other", "MPI_LT"];
             
             checkTabs.forEach(tName => {
                 const locIdx = locationColMap[tName] ?? 2;
@@ -839,21 +853,21 @@
                     </div>
                     <div><label class="block text-xs text-slate-300 mb-1">Tình trạng</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6, 'Good')}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f7" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(7)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Lịch sử sử dụng (Ngày - Chi tiết)</label><textarea name="f8" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 2026-02-12: Sử dụng cho tool MPLT">${val(8)}</textarea></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Lịch sử sử dụng</label><textarea name="f8" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 2026-02-12: Sử dụng">${val(8)}</textarea></div>
                 `;
-            } else if (tab === "PPS_Gauge") {
+            } else if (tab === "PPS_Gauge" || tab === "ART_List" || tab === "Cement_Dump" || tab === "Logging_Other") {
                 html = `
                     <datalist id="dl-loc-parents">${optionsParent}</datalist>
-                    <div><label class="block text-xs text-slate-300 mb-1">Gauge ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-850 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Equipment Name / Chủng loại</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Mã ID Thiết Bị</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-850 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Tên Thiết Bị / Chủng loại</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Serial Number (Asset No)</label><input type="text" name="f2" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2)}"></div>
                     <div class="grid grid-cols-2 gap-2">
-                        <div><label class="block text-xs text-slate-300 mb-1">Nhiệt độ (Temperature)</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 150°C" value="${val(3)}"></div>
-                        <div><label class="block text-xs text-slate-300 mb-1">Áp suất (Pressure)</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 10k PSI" value="${val(4)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">Thông số 1 (Nhiệt độ / Specs)</label><input type="text" name="f3" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(3)}"></div>
+                        <div><label class="block text-xs text-slate-300 mb-1">Thông số 2 (Áp suất / Size)</label><input type="text" name="f4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(4)}"></div>
                     </div>
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f5" list="dl-loc-parents" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(5)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Status</label><input type="text" name="f6" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(6, 'Active')}"></div>
-                    <div><label class="block text-xs text-slate-300 mb-1">Lịch sử sử dụng & Ngày tháng</label><textarea name="f7" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 2026-01-10: Hạ giàn TGT-H1">${val(7)}</textarea></div>
+                    <div><label class="block text-xs text-slate-300 mb-1">Lịch sử sử dụng & Ngày tháng</label><textarea name="f7" rows="2" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="VD: 2026-01-10: Hạ giàn">${val(7)}</textarea></div>
                 `;
             } else if (tab === "MPI_LT") {
                 html = `
