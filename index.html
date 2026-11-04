@@ -101,7 +101,7 @@
             <!-- Filter Tabs -->
             <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md flex flex-wrap gap-2 items-center justify-between">
                 <div class="flex flex-wrap gap-1.5" id="tab-buttons">
-                    <button onclick="switchTab('Locations_Clients')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations_Clients">
+                    <button onclick="switchTab('Locations')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations">
                         <i class="fa-solid fa-location-dot mr-1"></i> AMS & Clients
                     </button>
                     <button onclick="switchTab('Slickline_Toolstrings')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Slickline_Toolstrings">
@@ -170,7 +170,7 @@
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Chọn Nhóm Quản Lý (Tab mục tiêu)</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
-                        <option value="Locations_Clients">1. Locations (Locations)</option>
+                        <option value="Locations">1. Locations (Locations)</option>
                         <option value="Slickline_Toolstrings">2. Slickline Tools</option>
                         <option value="Containers_Units">3. Container & Box</option>
                         <option value="Slickline_Units_Mast">4. Slickline Unit & Mast</option>
@@ -243,7 +243,7 @@
         const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwVok8qThyXH-98fJq3rQ7uVzdTSn2BDiJEbupXphhfpjNzJnKQsF36UsIsGdwyXtoB/exec";
 
         let appData = {
-            Locations_Clients: [
+            Locations: [
                 ["LOC001", "Kho", "AMSITO", "Kho số 1 (Vũng Tàu Base)", "Active"],
                 ["LOC001_R1", "Giá Kệ Kho", "AMSITO", "Kho số 1 - Giá kệ A1", "LOC001"],
                 ["LOC002", "Kho", "AMSITO", "Kho số 2 (Phụ trợ)", "Active"],
@@ -281,7 +281,7 @@
         };
 
         const tableHeaders = {
-            Locations_Clients: ["STT", "Location ID", "Phân loại", "AMSITO / Client", "Tên Vị Trí / Kho / Giá / Platform", "Trạng thái"],
+            Locations: ["STT", "Location ID", "Phân loại", "AMSITO / Client", "Tên Vị Trí / Kho / Giá / Platform", "Trạng thái"],
             Slickline_Toolstrings: ["STT", "Tool ID", "Description", "Contract Inquire", "Qty", "Length (m)", "Weight (Lbs)", "Part NO", "Asset NO", "Location", "Brand", "Status / Remark"],
             Containers_Units: ["STT", "Container ID", "Asset / Serial No", "Type / Equipment", "Location ID", "MPI Expiry", "Load Test Expiry", "Status"],
             Slickline_Units_Mast: ["STT", "Unit ID", "Equipment Name", "Serial No", "Power / Capacity", "Location ID", "Recert Expiry", "Status"],
@@ -292,14 +292,14 @@
             Electronic_Logging_Tools: ["STT", "Tool ID", "Equipment Name", "Serial No", "OD Size", "Firmware / Specs", "Calibration Status", "Parent Container", "Location ID", "Status"]
         };
 
-        let currentActiveTab = "Locations_Clients";
+        let currentActiveTab = "Locations";
         let editingItemId = null;
         let movingItem = { tabName: null, itemId: null };
         let contextTarget = { tabName: null, itemId: null };
 
         function getLocationName(locId) {
             if (!locId) return "N/A";
-            const found = (appData.Locations_Clients || []).find(l => l[0] === locId);
+            const found = (appData.Locations || []).find(l => l[0] === locId);
             return found ? `${locId} (${found[3]})` : locId;
         }
 
@@ -369,7 +369,7 @@
             });
 
             let validLocIds = [locId];
-            (appData.Locations_Clients || []).forEach(l => { if (l[4] === locId) validLocIds.push(l[0]); });
+            (appData.Locations || []).forEach(l => { if (l[4] === locId) validLocIds.push(l[0]); });
 
             const combinedList = [];
             (appData.Slickline_Toolstrings || []).forEach(t => {
@@ -435,7 +435,7 @@
             const container = document.getElementById("tree-container");
             let html = "";
             let totalNodes = 0;
-            const locs = appData.Locations_Clients || [];
+            const locs = appData.Locations || [];
 
             locs.forEach(loc => {
                 totalNodes++;
@@ -467,7 +467,7 @@
             const val = (idx, defaultVal = "") => rowData ? (rowData[idx] || "") : defaultVal;
             const statuses = ["Active", "New", "Ready", "Offshore"];
 
-            if (tab === "Locations_Clients") {
+            if (tab === "Locations") {
                 html = `
                     <div><label class="block text-xs text-slate-300 mb-1">Location ID</label><input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}"></div>
                     <div><label class="block text-xs text-slate-300 mb-1">Phân loại</label><input type="text" name="f1" required autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(1)}"></div>
