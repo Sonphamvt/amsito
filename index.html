@@ -286,11 +286,12 @@
             MPI_LT: ["STT", "ID", "Equipment Name", "Asset NO", "MPI Test Date", "MPI Expire Date", "LT Test Date", "LT Expire Date", "Pressure Test Expire", "Location ID", "Status"]
         };
 
+        // ĐỊNH NGHĨA CHUẨN CHỈ SỐ CỘT LOCATION ID CHO TỪNG BẢNG
         const locationColMap = {
             Locations: 4,
             Slickline_Toolstrings: 9,
             Containers_Units: 4,
-            Slickline_Units_Mast: 5,
+            Slickline_Units_Mast: 4, // Cột Location ID trong Slickline_Units_Mast nằm ở index 4
             Slickline_Drums: 7,
             Slickline_Wires: 7,
             PCE_Equipment: 8,
@@ -353,11 +354,10 @@
 
                 if (upperName.includes("UNIT") || upperName.includes("WINCH") || upperName.includes("MAST")) {
                     targetTab = "Slickline_Units_Mast";
-                    // Cấu trúc: [Unit ID, Equipment Name, Serial No, Power/Capacity, Location ID, Recert Expiry, Status]
+                    // Cấu trúc chuẩn 7 cột: [Unit ID (0), Equipment Name (1), Serial No (2), Power/Capacity (3), Location ID (4), Recert Expiry (5), Status (6)]
                     newRow = [id, eqName, assetNo, "", locId, "", status];
                 } else if (upperName.includes("CONTAINER") || upperName.includes("SKID") || upperName.includes("BOX")) {
                     targetTab = "Containers_Units";
-                    // Cấu trúc: [Container ID, Asset/Serial No, Type/Equipment, Location ID, MPI Expiry, Load Test Expiry, Status]
                     newRow = [id, assetNo, eqName, locId, item[4] || "", item[6] || "", status];
                 } else if (upperName.includes("SLING") || upperName.includes("SHACKLE") || upperName.includes("TOOL")) {
                     targetTab = "Slickline_Toolstrings";
@@ -373,12 +373,11 @@
                 if (targetTab && appData[targetTab]) {
                     const existingIdx = appData[targetTab].findIndex(r => r[0] === id);
                     if (existingIdx !== -1) {
-                        // Cập nhật lại đúng các thông tin chuẩn từ MPI/LT sang tab chuyên ngành
                         appData[targetTab][existingIdx][0] = id;
                         appData[targetTab][existingIdx][1] = eqName;
                         if (targetTab === "Slickline_Units_Mast") {
-                            appData[targetTab][existingIdx][2] = assetNo; // Gán đúng Asset No vào Serial No
-                            appData[targetTab][existingIdx][4] = locId;   // Gán đúng Location ID
+                            appData[targetTab][existingIdx][2] = assetNo; // Đảm bảo Serial No là Asset No
+                            appData[targetTab][existingIdx][4] = locId;   // Đảm bảo Location ID đúng index 4
                         }
                     } else {
                         appData[targetTab].push(newRow);
@@ -682,8 +681,9 @@
             const checkTabs = ["Slickline_Toolstrings", "Mechanical_Tools", "PCE_Equipment", "Containers_Units", "Slickline_Drums", "Slickline_Units_Mast", "Slickline_Wires", "Electronic_Logging_Tools", "MPI_LT"];
             
             checkTabs.forEach(tName => {
+                const locIdx = locationColMap[tName] ?? 2;
                 (appData[tName] || []).forEach(item => {
-                    const locField = item[8] || item[7] || item[6] || item[4] || item[2] || "";
+                    const locField = item[locIdx] || item[8] || item[7] || item[6] || item[4] || item[2] || "";
                     if (validLocIds.some(id => locField.includes(id))) {
                         combinedList.push({ id: item[0], name: item[1] || item[2] || 'Equipment', category: tName, origTab: tName });
                     }
