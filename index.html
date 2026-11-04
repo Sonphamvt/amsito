@@ -26,27 +26,27 @@
 </head>
 <body class="bg-darkbg text-slate-100 min-h-screen font-sans" onclick="hideContextMenu()">
 
-    <!-- Header -->
-    <header class="bg-cardbg border-b border-slate-700 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
-        <div class="flex items-center space-x-3">
-            <div class="bg-accent/10 p-3 rounded-lg border border-accent/20">
+    <!-- Header Header -->
+    <header class="bg-cardbg border-b border-slate-700 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
+        <div class="flex items-center space-x-3 w-full md:w-auto">
+            <div class="bg-accent/10 p-2.5 rounded-lg border border-accent/20">
                 <i class="fa-solid fa-oil-well text-accent text-2xl"></i>
             </div>
             <div>
-                <h1 class="text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-xs text-slate-400">Hệ thống quản lý phân cấp Kho - Khách hàng - Toolstrings & Thiết bị</p>
+                <h1 class="text-base md:text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
+                <p class="text-[11px] text-slate-400">Hệ thống quản lý phân cấp Kho - Khách hàng - Toolstrings & Thiết bị</p>
             </div>
         </div>
         
-        <div class="flex items-center gap-3">
-            <span id="sync-status" class="text-xs px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected
+        <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-end">
+            <span id="sync-status" class="text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Connected
             </span>
-            <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-4 py-2 rounded-lg font-medium text-sm flex items-center gap-2 transition shadow-md">
+            <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm flex items-center gap-1.5 transition shadow-md">
                 <i class="fa-solid fa-plus"></i> Thêm Thiết Bị / Vị Trí
             </button>
-            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-2 rounded-lg text-sm flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-download"></i> Backup JSON
+            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-download"></i> Backup
             </button>
         </div>
     </header>
@@ -68,12 +68,12 @@
     </div>
 
     <!-- Main Dashboard Container -->
-    <main class="p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <main class="p-4 md:p-6 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-4 gap-6">
         
-        <!-- Sidebar: Hierarchy Tree -->
-        <aside class="lg:col-span-1 bg-cardbg border border-slate-700/60 rounded-xl p-4 shadow-xl flex flex-col h-[78vh]">
+        <!-- Sidebar: Hierarchy Tree (Khung Tổng Quan Vị Trí) -->
+        <aside class="lg:col-span-1 bg-cardbg border border-slate-700/60 rounded-xl p-4 shadow-xl flex flex-col h-[65vh] lg:h-[78vh]">
             <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-3">
-                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                <h2 class="text-xs md:text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
                     <i class="fa-solid fa-sitemap text-accent"></i> Vị Trí & Cây Phân Cấp
                 </h2>
                 <span id="total-nodes-badge" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">0 vị trí</span>
@@ -82,21 +82,21 @@
             <div class="mb-3">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                    <input type="text" id="tree-search" placeholder="Tìm vị trí / thiết bị..." oninput="filterTree(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-accent">
+                    <input type="text" id="tree-search" placeholder="Tìm kiếm vị trí..." oninput="filterTree(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-accent">
                 </div>
             </div>
 
             <div id="tree-container" class="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs select-none">
-                <!-- Dynamic Hierarchy Tree Injected Here -->
+                <!-- Cây vị trí phân cấp được tự động vẽ ở đây -->
             </div>
         </aside>
 
         <!-- Content Area: Tables & Detail View -->
-        <section class="lg:col-span-3 flex flex-col gap-6">
+        <section class="lg:col-span-3 flex flex-col gap-4 md:gap-6">
             
             <!-- Filter Tabs -->
-            <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md flex flex-wrap gap-2 items-center justify-between">
-                <div class="flex flex-wrap gap-1.5" id="tab-buttons">
+            <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md overflow-x-auto">
+                <div class="flex flex-nowrap md:flex-wrap gap-1.5 min-w-max" id="tab-buttons">
                     <button onclick="switchTab('Locations')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations">
                         <i class="fa-solid fa-location-dot mr-1"></i> Locations
                     </button>
@@ -131,7 +131,7 @@
             <div class="bg-cardbg border border-slate-700/60 rounded-xl shadow-xl flex-1 flex flex-col overflow-hidden">
                 <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
                     <div class="flex items-center gap-2">
-                        <h3 id="current-table-title" class="font-semibold text-sm text-white uppercase tracking-wide">Danh sách</h3>
+                        <h3 id="current-table-title" class="font-semibold text-xs md:text-sm text-white uppercase tracking-wide">Danh sách</h3>
                         <span id="tree-filter-badge" class="hidden text-[11px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-md">
                             Lọc theo Vị Trí Cây <button onclick="resetTreeFilter()" class="ml-1 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
                         </span>
@@ -213,13 +213,17 @@
 
         let appData = {
             Locations: [
-                ["LOC_BASE", "Base", "AMSITO", "Xưởng Vũng Tàu Base", "", "Active"],
-                ["LOC_PLAT_TGT", "Platform", "Vietsovpetro", "Giàn Platform TGT-H1", "", "Active"],
-                ["CONT_C22", "Container", "AMSITO", "Container AMS-C22", "LOC_BASE", "Active"],
-                ["UNIT_101373", "Winch Unit", "AMSITO", "Máy tời UNIT 101373", "LOC_BASE", "Active"],
-                ["UNIT_101490", "Winch Unit", "AMSITO", "Máy tời UNIT 101490", "LOC_PLAT_TGT", "Active"],
-                ["BASKET_MAST01", "Mast Basket", "AMSITO", "Basket chứa MAST01", "LOC_PLAT_TGT", "Active"],
-                ["DRAWER_01", "Ngăn Kéo", "AMSITO", "Ngăn kéo số 1", "CONT_C22", "Active"]
+                ["LOC_BASE", "Base", "AMSITO", "AMS Base (Kho / Xưởng Vũng Tàu)", "", "Active"],
+                ["LOC_TGT_H1", "Platform", "HLHV", "Giàn Platform TGT-H1", "", "Active"],
+                ["LOC_PLAT_E1", "Platform", "JVPC", "Giàn Platform E1", "", "Active"],
+                ["RIG_PVD1", "Rig", "PVD", "Giàn khoan PVD1", "", "Active"],
+                ["AMS_C22", "Container", "AMSITO", "Container AMS-C22", "LOC_BASE", "Active"],
+                ["UNIT_101373", "Winch Unit", "AMSITO", "ASEP Wireline Unit 101373", "LOC_BASE", "Active"],
+                ["UNIT_101490", "Winch Unit", "AMSITO", "ASEP Wireline Unit 101490", "LOC_TGT_H1", "Active"],
+                ["BASKET_MAST01", "Mast Basket", "AMSITO", "Basket chứa MAST01", "LOC_TGT_H1", "Active"],
+                ["AMS_R29", "PCE Frame", "AMSITO", "PCE Frame AMS-R29", "LOC_PLAT_E1", "Active"],
+                ["DRAW_1", "Ngăn kéo", "AMSITO", "Draw 1 (Trong AMS-C22)", "AMS_C22", "Active"],
+                ["WINCH_FRONT", "Winch Drum Pos", "AMSITO", "Tang cáp Phía Trước", "UNIT_101373", "Active"]
             ],
             Slickline_Toolstrings: [],
             Containers_Units: [],
@@ -272,7 +276,7 @@
                 const found = locs.find(l => l[0] === currId);
                 if (found) {
                     path.unshift(found[3] || found[0]);
-                    currId = found[4]; // Nhảy lên Parent ID
+                    currId = found[4];
                 } else {
                     path.unshift(currId);
                     break;
@@ -287,14 +291,14 @@
 
             if (GOOGLE_SHEET_API_URL) {
                 try {
-                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading from Sheet...`;
+                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading...`;
                     const response = await fetch(GOOGLE_SHEET_API_URL);
                     const data = await response.json();
                     
                     if (data && data.Locations && data.Locations.length > 0) {
                         appData = data;
                         loadedFromServer = true;
-                        indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
+                        indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
                     }
                 } catch (e) {
                     console.log("Không tải được từ Google Sheet:", e);
@@ -306,7 +310,7 @@
                 if (saved) {
                     try { 
                         appData = JSON.parse(saved); 
-                        indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode (Local)`;
+                        indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode`;
                     } catch (err) { console.error(err); }
                 }
             } else {
@@ -338,7 +342,7 @@
                 }).catch(err => console.log("Background sync triggered"));
 
                 setTimeout(() => {
-                    indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Google Sheet Connected`;
+                    indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
                 }, 800);
             } catch (error) {
                 console.error("Lỗi đồng bộ Google Sheet:", error);
@@ -375,7 +379,7 @@
             if (t.includes("basket") || t.includes("mast")) return "fa-solid fa-layer-group";
             if (t.includes("drum")) return "fa-solid fa-dharmachakra";
             if (t.includes("toolbox") || t.includes("hộp")) return "fa-solid fa-toolbox";
-            if (t.includes("rack") || t.includes("kệ")) return "fa-solid fa-bars-staggered";
+            if (t.includes("rack") || t.includes("kệ") || t.includes("pce frame")) return "fa-solid fa-bars-staggered";
             return "fa-solid fa-folder-tree";
         }
 
@@ -553,7 +557,7 @@
                         <option value="Vị trí Cáp Phía Trước (Winch Front)">
                         <option value="Vị trí Cáp Phía Sau (Winch Rear)">
                     </datalist>
-                    <datalist id="dl-loc-clients">${optionsClient}<option value="AMSITO"><option value="Vietsovpetro"></datalist>
+                    <datalist id="dl-loc-clients">${optionsClient}<option value="AMSITO"><option value="HLHV"><option value="JVPC"><option value="PVD"></datalist>
                     <datalist id="dl-loc-parents">${optionsParent}</datalist>
 
                     <div>
@@ -561,11 +565,11 @@
                         <input type="text" name="f0" required autocomplete="off" ${rowData ? 'readonly class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-400 cursor-not-allowed"' : 'class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white"'} value="${val(0)}">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1">Phân loại (Base, Container, Winch Unit, Basket...)</label>
+                        <label class="block text-xs text-slate-300 mb-1">Phân loại (Base, Platform, Container, Winch Unit, Draw...)</label>
                         <input type="text" name="f1" required list="dl-loc-types" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" placeholder="Chọn có sẵn hoặc gõ mới..." value="${val(1)}">
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1">AMSITO / Client Name</label>
+                        <label class="block text-xs text-slate-300 mb-1">AMSITO / Client Name (HLHV, JVPC, PVD...)</label>
                         <input type="text" name="f2" required list="dl-loc-clients" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white" value="${val(2, 'AMSITO')}">
                     </div>
                     <div>
