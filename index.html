@@ -223,7 +223,7 @@
             
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1" id="move-item-label">Thiết bị đang chọn:</label>
+                    <label class="block text-xs text-slate-300 mb-1">Thiết bị đang chọn:</label>
                     <input type="text" id="move-item-id" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-400 font-semibold cursor-not-allowed">
                 </div>
                 <div>
@@ -243,7 +243,7 @@
 
     <!-- Script Logic -->
     <script>
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxNNM0crlKUz3a1HUqJAOKKFBZsViDn5wgtf5cYVNwnQ9ukKSM101kl5od9epIzaTgj/exec";
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbwMDTOYtAqzbv7oyMUZyo1CnMklu4LE8h7UZoG469Tg1gMTb1SIQc6WrweOWCi1um40/exec";
 
         let appData = {
             Locations: [
@@ -286,18 +286,17 @@
             MPI_LT: ["STT", "ID", "Equipment Name", "Asset NO", "MPI Test Date", "MPI Expire Date", "LT Test Date", "LT Expire Date", "Pressure Test Expire", "Location ID", "Status"]
         };
 
-        // Chỉ mục cột chứa Location ID trong từng bảng
         const locationColMap = {
-            Locations: 4,               // Parent ID
-            Slickline_Toolstrings: 9,   // Location
-            Containers_Units: 4,        // Location ID
-            Slickline_Units_Mast: 5,    // Location ID
-            Slickline_Drums: 7,         // Location
-            Slickline_Wires: 7,         // Parent Drum ID
-            PCE_Equipment: 8,           // Location ID
-            Mechanical_Tools: 7,        // Location ID
-            Electronic_Logging_Tools: 8,// Location ID
-            MPI_LT: 8                   // Location ID
+            Locations: 4,
+            Slickline_Toolstrings: 9,
+            Containers_Units: 4,
+            Slickline_Units_Mast: 5,
+            Slickline_Drums: 7,
+            Slickline_Wires: 7,
+            PCE_Equipment: 8,
+            Mechanical_Tools: 7,
+            Electronic_Logging_Tools: 8,
+            MPI_LT: 8
         };
 
         let currentActiveTab = "Locations";
@@ -586,7 +585,7 @@
                             bodyHtml += `<td class="${cellStyle}">${cell || ''}</td>`;
                         });
 
-                        bodyHtml += `<td class="px-4 py-3 text-right space-x-1.5" onclick="event.stopPropagation()">
+                        bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
                             <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
                             <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
                             <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -598,7 +597,7 @@
                         bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
                         bodyHtml += `<td class="px-4 py-3 text-slate-400 font-medium">${index + 1}</td>`;
                         row.forEach(cell => bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cell || ''}</td>`);
-                        bodyHtml += `<td class="px-4 py-3 text-right space-x-1.5" onclick="event.stopPropagation()">
+                        bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
                             <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
                             <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
                             <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
@@ -660,9 +659,11 @@
                             <td class="px-4 py-3 text-sky-400 font-medium">${item.id}</td>
                             <td class="px-4 py-3 text-amber-300">${item.category}</td>
                             <td class="px-4 py-3 text-slate-200 truncate max-w-xs">${item.name}</td>
-                            <td class="px-4 py-3 text-right space-x-1.5" onclick="event.stopPropagation()">
+                            <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
                                 <button onclick="openMoveModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
                                 <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
+                                <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deleteItem('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
                             </td>
                         </tr>
                     `;
@@ -696,8 +697,9 @@
         }
 
         function closeMoveModal() {
-            document.getElementById("move-modal").classList.remove("flex");
+            document.getElementById("move-modal").classList.remove("hidden");
             document.getElementById("move-modal").classList.add("hidden");
+            document.getElementById("move-modal").classList.remove("flex");
         }
 
         function confirmMoveItem() {
