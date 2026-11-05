@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +34,7 @@
             </div>
             <div>
                 <h1 class="text-base md:text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-[11px] text-slate-400">Hệ thống quản lý tài sản & bảo dưỡng</p>
+                <p class="text-[11px] text-slate-400">Asset & Maintenance Management System</p>
             </div>
         </div>
         
@@ -43,7 +43,7 @@
                 <i class="fa-solid fa-cloud-arrow-up"></i> Connected
             </span>
             <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm flex items-center gap-1.5 transition shadow-md">
-                <i class="fa-solid fa-plus"></i> Thêm Thiết Bị / Vị Trí
+                <i class="fa-solid fa-plus"></i> Add Equipment / Location
             </button>
             <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-download"></i> Backup
@@ -58,20 +58,20 @@
         <aside class="lg:col-span-1 bg-cardbg border border-slate-700/60 rounded-xl p-4 shadow-xl flex flex-col h-[65vh] lg:h-[78vh]">
             <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-3">
                 <h2 class="text-xs md:text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                    <i class="fa-solid fa-sitemap text-accent"></i> Vị Trí & Cây Phân Cấp
+                    <i class="fa-solid fa-sitemap text-accent"></i> Locations & Hierarchy
                 </h2>
-                <span id="total-nodes-badge" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">0 vị trí</span>
+                <span id="total-nodes-badge" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">0 nodes</span>
             </div>
             
             <div class="mb-3">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                    <input type="text" id="tree-search" placeholder="Tìm kiếm vị trí & thiết bị..." oninput="filterTree(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-accent">
+                    <input type="text" id="tree-search" placeholder="Search locations & equipment..." oninput="filterTree(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-accent">
                 </div>
             </div>
 
             <div id="tree-container" class="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs select-none">
-                <!-- Cây vị trí phân cấp -->
+                <!-- Hierarchy tree -->
             </div>
         </aside>
 
@@ -103,14 +103,14 @@
                         </div>
                     </div>
                     
-                    <!-- Dropdown: Tang Cáp & Sợi Cáp -->
+                    <!-- Dropdown: Drums & Wires -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown(event, 'dropdown-drums-wires')" class="tab-dropdown-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1">
-                            <i class="fa-solid fa-dharmachakra text-amber-400"></i> Tang Cáp & Sợi Cáp <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
+                            <i class="fa-solid fa-dharmachakra text-amber-400"></i> Drums & Wires <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
                         </button>
                         <div id="dropdown-drums-wires" class="hidden absolute left-0 mt-1 w-44 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-30 py-1 divide-y divide-slate-800">
-                            <button onclick="switchTab('Slickline_Drums'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-dharmachakra text-amber-400"></i> Tang Cáp (Drums)</button>
-                            <button onclick="switchTab('Wires'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-circle-notch text-sky-400"></i> Sợi Cáp (Wires)</button>
+                            <button onclick="switchTab('Slickline_Drums'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-dharmachakra text-amber-400"></i> Slickline Drums</button>
+                            <button onclick="switchTab('Wires'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-circle-notch text-sky-400"></i> Wires</button>
                         </div>
                     </div>
 
@@ -118,7 +118,7 @@
                         <i class="fa-solid fa-shield-halved mr-1"></i> PCE
                     </button>
                     <button onclick="switchTab('Mechanical_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Mechanical_Tools">
-                        <i class="fa-solid fa-wrench mr-1"></i> Cơ Khí Khác
+                        <i class="fa-solid fa-wrench mr-1"></i> Mechanical Tools
                     </button>
 
                     <!-- Dropdown: Logging -->
@@ -128,7 +128,7 @@
                         </button>
                         <div id="dropdown-logging" class="hidden absolute left-0 mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-30 py-1 divide-y divide-slate-800">
                             <button onclick="switchTab('PPS'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-gauge text-sky-400"></i> PPS Gauge</button>
-                            <button onclick="switchTab('Battery'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-battery-full text-emerald-400"></i> Battery (Pin)</button>
+                            <button onclick="switchTab('Battery'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-battery-full text-emerald-400"></i> Battery</button>
                             <button onclick="switchTab('ART'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-amber-400"></i> ART</button>
                             <button onclick="switchTab('Cement'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-fill-drip text-rose-400"></i> Cement Dump</button>
                             <button onclick="switchTab('Other'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-box-archive text-slate-400"></i> Other</button>
@@ -145,12 +145,12 @@
             <div class="bg-cardbg border border-slate-700/60 rounded-xl shadow-xl flex-1 flex flex-col overflow-hidden">
                 <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
                     <div class="flex items-center gap-2">
-                        <h3 id="current-table-title" class="font-semibold text-xs md:text-sm text-white uppercase tracking-wide">Danh sách</h3>
+                        <h3 id="current-table-title" class="font-semibold text-xs md:text-sm text-white uppercase tracking-wide">List</h3>
                         <span id="tree-filter-badge" class="hidden text-[11px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-md">
-                            Lọc theo Vị Trí Cây <button onclick="resetTreeFilter()" class="ml-1 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                            Filtered by Tree Node <button onclick="resetTreeFilter()" class="ml-1 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
                         </span>
                     </div>
-                    <div class="text-xs text-slate-400" id="record-count">0 bản ghi</div>
+                    <div class="text-xs text-slate-400" id="record-count">0 records</div>
                 </div>
 
                 <div class="w-full overflow-x-auto overflow-y-auto max-h-[60vh]">
@@ -168,38 +168,38 @@
         </section>
     </main>
 
-    <!-- Modal Form Thêm / Sửa Thiết Bị -->
+    <!-- Modal Form Add / Edit -->
     <div id="equipment-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
-                <h3 id="modal-title" class="font-bold text-base text-white">Thêm Mới Thiết Bị / Vị Trí</h3>
+                <h3 id="modal-title" class="font-bold text-base text-white">Add New Equipment / Location</h3>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <form id="dynamic-form" onsubmit="handleFormSubmit(event)" autocomplete="off" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Chọn Nhóm Quản Lý (Sheet mục tiêu)</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Select Management Group (Target Sheet)</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent">
-                        <!-- Sẽ được điền tự động từ danh sách sheet -->
+                        <!-- Injected dynamically -->
                     </select>
                 </div>
 
                 <div id="dynamic-fields-container" class="space-y-4"></div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition">Hủy</button>
-                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Lưu & Đồng Bộ Sheet</button>
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition">Cancel</button>
+                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Save & Sync Sheet</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Chi Tiết -->
+    <!-- Detail Modal -->
     <div id="detail-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-sky-400"></i> Thông Tin Chi Tiết Thiết Bị
+                    <i class="fa-solid fa-circle-info text-sky-400"></i> Equipment Details
                 </h3>
                 <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -207,29 +207,29 @@
             <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="detail-modal-content"></div>
 
             <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Đóng</button>
-                <button type="button" id="detail-edit-btn" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Chỉnh Sửa Thiết Bị</button>
+                <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Close</button>
+                <button type="button" id="detail-edit-btn" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Edit Equipment</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Move Thiết Bị -->
+    <!-- Move Item Modal -->
     <div id="move-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-right-left text-accent"></i> Di Chuyển Vị Trí Thiết Bị
+                    <i class="fa-solid fa-right-left text-accent"></i> Move Equipment Location
                 </h3>
                 <button onclick="closeMoveModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Thiết bị đang chọn:</label>
+                    <label class="block text-xs text-slate-300 mb-1">Selected Equipment:</label>
                     <input type="text" id="move-item-id" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-400 font-semibold cursor-not-allowed">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Chọn Vị Trí / Container Đích Đến Mới:</label>
+                    <label class="block text-xs text-slate-300 mb-1">Select New Destination / Container:</label>
                     <select id="move-target-location" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                         <!-- Injected by JS -->
                     </select>
@@ -237,8 +237,8 @@
             </div>
 
             <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeMoveModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Hủy</button>
-                <button type="button" onclick="confirmMoveItem()" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Xác Nhận Di Chuyển</button>
+                <button type="button" onclick="closeMoveModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Cancel</button>
+                <button type="button" onclick="confirmMoveItem()" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Confirm Move</button>
             </div>
         </div>
     </div>
@@ -267,22 +267,22 @@
         };
 
         let tableHeaders = {
-            Locations: ['Location ID', 'Phân loại / Type', 'AMSITO / Client', 'Tên Vị Trí / Mô tả', 'Parent ID', 'Trạng thái'],
-            Unit: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Ghi chú'],
-            Mast: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Ghi chú'],
-            MastPP: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Ghi chú'],
-            Container: ['STT', 'ID', 'Equipment Name', 'Serial No', 'Location', 'Capacity & Size', 'Location ID', 'Status', 'Ghi chú'],
+            Locations: ['Location ID', 'Type', 'AMSITO / Client', 'Location Name / Description', 'Parent ID', 'Status'],
+            Unit: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Remarks'],
+            Mast: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Remarks'],
+            MastPP: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Remarks'],
+            Container: ['No.', 'ID', 'Equipment Name', 'Serial No', 'Location', 'Capacity & Size', 'Location ID', 'Status', 'Remarks'],
             Slickline_Tools: ['Tool ID', 'Description', 'Location ID', 'Contract Inquire', 'Qty', 'Length (m)', 'Weight (Lbs)', 'Part NO', 'Asset NO', 'Location ID', 'Brand', 'Status / Remark'],
             Slickline_Drums: ['Drum ID', 'DRUM Description', 'Wire Information', 'Cert Number', 'Spool Date', 'Length (m)', 'Location', 'Location ID', 'Remark'],
             Wires: ['Wire ID', 'Wire Type', 'Wire Size', 'Serial No', 'Breaking Strength', 'Actual Length (ft)', 'Parent Drum ID', 'Location ID', 'Status'],
-            PCE_Equipment: ['STT', 'ASSET NO.', 'Equipment Type', 'Serial No', 'WP (PSI)', 'Service', 'Connection', 'Location', 'Location ID', 'Pressure Test Expire', 'Status', 'Ghi chú'],
-            Mechanical_Tools: ['STT', 'Tool ID', 'Category', 'OD Size', 'Asset / Serial No', 'Connection Thread', 'Location', 'Location ID', 'Status'],
-            PPS: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No (Asset)', 'Location', 'Max Temp (degC)', 'Max Pressure (psi)', 'Location ID', 'Calibration date', 'Expire date', 'Status', 'Lịch sử sử dụng và bảo dưỡng', 'Ghi chú'],
-            Battery: ['STT', 'ASSET NO.', 'Part Number / Chủng loại', 'Serial Number', 'Ngày sản xuất', 'Ngày mua', 'Hạn sử dụng', 'Tình trạng', 'Location', 'Location ID', 'Lịch sử sử dụng', 'Ghi chú'],
-            ART: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Specs', 'Location', 'Location ID', 'Status', 'Lịch sử sử dụng', 'Ghi chú'],
-            Cement: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Capacity / Size', 'Location', 'Location ID', 'Status', 'Lịch sử sử dụng', 'Ghi chú'],
+            PCE_Equipment: ['No.', 'ASSET NO.', 'Equipment Type', 'Serial No', 'WP (PSI)', 'Service', 'Connection', 'Location', 'Location ID', 'Pressure Test Expire', 'Status', 'Remarks'],
+            Mechanical_Tools: ['No.', 'Tool ID', 'Category', 'OD Size', 'Asset / Serial No', 'Connection Thread', 'Location', 'Location ID', 'Status'],
+            PPS: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No (Asset)', 'Location', 'Max Temp (degC)', 'Max Pressure (psi)', 'Location ID', 'Calibration date', 'Expire date', 'Status', 'Maintenance History', 'Remarks'],
+            Battery: ['No.', 'ASSET NO.', 'Part Number / Type', 'Serial Number', 'Mfg Date', 'Purchase Date', 'Expiry Date', 'Condition', 'Location', 'Location ID', 'Usage History', 'Remarks'],
+            ART: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Specs', 'Location', 'Location ID', 'Status', 'Usage History', 'Remarks'],
+            Cement: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Capacity / Size', 'Location', 'Location ID', 'Status', 'Usage History', 'Remarks'],
             MPI_LT: ['ID', 'Equipment Name', 'Asset NO', 'MPI Date', 'MPI Expire', 'LT Date', 'LT Expire', 'Pressure Test Expire', 'Location ID', 'Status / Remark'],
-            Other: ['STT', 'ASSET NO.', 'Equipment Name', 'Serial No (Asset)', 'Location', 'Location ID', 'Status', 'Lịch sử sử dụng & Ngày tháng', 'Ghi chú']
+            Other: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No (Asset)', 'Location', 'Location ID', 'Status', 'Usage History & Dates', 'Remarks']
         };
 
         let currentActiveTab = "Locations";
@@ -318,7 +318,7 @@
         }
 
         function getLocationPath(locId) {
-            if (!locId || locId === "N/A" || locId === "NaN") return "Vị trí không xác định (N/A)";
+            if (!locId || locId === "N/A" || locId === "NaN") return "Unknown Location (N/A)";
             const locs = appData.Locations || [];
             let path = [];
             let currId = locId;
@@ -384,7 +384,7 @@
                         indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
                     }
                 } catch (e) {
-                    console.log("Không tải được trực tiếp từ Google Sheet API:", e);
+                    console.log("Could not load directly from Google Sheet API:", e);
                 }
             }
 
@@ -430,7 +430,7 @@
                     indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
                 }, 800);
             } catch (error) {
-                console.error("Lỗi đồng bộ Google Sheet:", error);
+                console.error("Google Sheet sync error:", error);
             }
         }
 
@@ -531,7 +531,6 @@
                 
                 let html = `<div id="tree-child-${parentId}" class="hidden pl-3 space-y-1 border-l border-slate-700/60 mt-1">`;
                 
-                // A. Vẽ các vị trí con trong bảng Locations
                 childrenLocs.forEach(child => {
                     const icon = getLocIcon(child[1]);
                     html += `
@@ -548,13 +547,10 @@
                     `;
                 });
 
-                // B. Vẽ các thiết bị trực thuộc vị trí (Unit, Container, PCE Frame...)
                 attachedEquipments.forEach(eq => {
                     let subItems = [];
-                    // Đặt nodeKey chuẩn theo Serial No hoặc Asset No để không bị lỗi ID (như X.7 vs AMS-R29)
                     let nodeKey = eq.serialNo || eq.assetNo || eq.id;
 
-                    // 1. Nếu là Unit -> Quét các Cuộn cáp (Slickline_Drums)
                     if (eq.category === 'Unit') {
                         (appData.Slickline_Drums || []).forEach(drum => {
                             if (!drum || !Array.isArray(drum)) return;
@@ -585,7 +581,6 @@
                         });
                     }
 
-                    // 2. Quét TẤT CẢ các thiết bị con khác (PCE Equipment, Slickline Tools, Mechanical Tools...)
                     Object.keys(appData).forEach(tName => {
                         if (tName === "Locations" || tName === "_headers" || (eq.category === 'Unit' && tName === 'Slickline_Drums')) return;
                         const locIdx = getLocationColIndex(tName);
@@ -594,9 +589,8 @@
                             if (!subItem || !Array.isArray(subItem)) return;
                             const subLoc = String(subItem[locIdx] || "");
                             
-                            // So khớp Location ID của thiết bị con với Serial No (AMS-R29), Asset No hoặc ID (X.7) của Container/Frame
                             if (subLoc && subLoc !== "N/A" && (subLoc === eq.serialNo || subLoc === eq.assetNo || subLoc === eq.id)) {
-                                if (subItem[0] !== eq.id && subItem[0] !== eq.serialNo) { // Tránh trùng chính nó
+                                if (subItem[0] !== eq.id && subItem[0] !== eq.serialNo) {
                                     let childName = subItem[2] || subItem[1] || 'Equipment';
                                     if (tName === 'Slickline_Tools' || tName === 'Slickline_Drums' || tName === 'Wires') childName = subItem[1] || 'N/A';
 
@@ -625,7 +619,6 @@
                             </div>
                     `;
 
-                    // Vẽ nhánh con chứa danh sách thiết bị bên trong AMS-R29 / AMS-C24
                     if (hasSubBranch) {
                         html += `<div id="tree-child-eq-${nodeKey}" class="hidden pl-3 space-y-1 border-l border-slate-700/60 mt-1">`;
                         subItems.forEach(sub => {
@@ -667,8 +660,8 @@
                 `;
             });
 
-            container.innerHTML = rootHtml || '<div class="text-slate-500 italic p-2">Chưa có vị trí phân cấp.</div>';
-            document.getElementById("total-nodes-badge").innerText = `${totalNodes} vị trí`;
+            container.innerHTML = rootHtml || '<div class="text-slate-500 italic p-2">No location hierarchy found.</div>';
+            document.getElementById("total-nodes-badge").innerText = `${totalNodes} nodes`;
         }
 
         function filterTree(query) {
@@ -742,12 +735,12 @@
 
             let headHtml = "<tr>";
             headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
-            headHtml += `<th class="px-4 py-3 text-right">Thao tác</th></tr>`;
+            headHtml += `<th class="px-4 py-3 text-right">Actions</th></tr>`;
             document.getElementById("table-head").innerHTML = headHtml;
 
             let bodyHtml = "";
             if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">Không có dữ liệu trong mục này.</td></tr>`;
+                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">No data available in this section.</td></tr>`;
             } else {
                 rows.forEach((row, index) => {
                     bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
@@ -756,21 +749,21 @@
                         bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cellVal}</td>`;
                     });
                     bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                        <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
-                        <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                        <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                        <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
+                        <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="View Details"><i class="fa-solid fa-circle-info"></i></button>
+                        <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
                     </td></tr>`;
                 });
             }
             document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("current-table-title").innerText = `Quản lý: ${tabName.replace(/_/g, ' ')}`;
-            document.getElementById("record-count").innerText = `${rows.length} bản ghi`;
+            document.getElementById("current-table-title").innerText = `Management: ${tabName.replace(/_/g, ' ')}`;
+            document.getElementById("record-count").innerText = `${rows.length} records`;
         }
 
         function renderLocationCombinedTable(locId) {
             const locName = getLocationName(locId);
-            document.getElementById("current-table-title").innerText = `THIẾT BỊ TẠI VỊ TRÍ: ${locName.toUpperCase()}`;
+            document.getElementById("current-table-title").innerText = `EQUIPMENT AT LOCATION: ${locName.toUpperCase()}`;
             
             let validLocIds = [locId];
             function findChildren(pId) {
@@ -817,17 +810,17 @@
 
             document.getElementById("table-head").innerHTML = `
                 <tr>
-                    <th class="px-4 py-3 font-semibold">STT</th>
-                    <th class="px-4 py-3 font-semibold">Tên thiết bị</th>
+                    <th class="px-4 py-3 font-semibold">No.</th>
+                    <th class="px-4 py-3 font-semibold">Equipment Name</th>
                     <th class="px-4 py-3 font-semibold">Serial Number</th>
-                    <th class="px-4 py-3 font-semibold">Nhóm thiết bị</th>
-                    <th class="px-4 py-3 text-right">Thao tác</th>
+                    <th class="px-4 py-3 font-semibold">Category</th>
+                    <th class="px-4 py-3 text-right">Actions</th>
                 </tr>
             `;
 
             let bodyHtml = "";
             if (combinedList.length === 0) {
-                bodyHtml = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 italic">Không tìm thấy thiết bị nào ở cấp vị trí này.</td></tr>`;
+                bodyHtml = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 italic">No equipment found at this location level.</td></tr>`;
             } else {
                 combinedList.forEach((item, idx) => {
                     bodyHtml += `
@@ -837,25 +830,25 @@
                             <td class="px-4 py-3 text-sky-400 font-medium">${item.serialNo}</td>
                             <td class="px-4 py-3 text-amber-300 font-medium">${item.category}</td>
                             <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                                <button onclick="openMoveModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Di chuyển vị trí"><i class="fa-solid fa-right-left"></i></button>
-                                <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
-                                <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition" title="Chỉnh sửa"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteItem('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-red-400 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                                <button onclick="openMoveModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
+                                <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="View Details"><i class="fa-solid fa-circle-info"></i></button>
+                                <button onclick="openEditModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-400 transition" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deleteItem('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-red-400 transition" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
                             </td>
                         </tr>
                     `;
                 });
             }
             document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("record-count").innerText = `${combinedList.length} thiết bị`;
+            document.getElementById("record-count").innerText = `${combinedList.length} items`;
         }
 
         function getAllLocationOptions(currentSelected = "") {
-            let optionsHtml = `<option value="N/A">N/A (Không xác định)</option>`;
+            let optionsHtml = `<option value="N/A">N/A (Unknown)</option>`;
             
             (appData.Locations || []).forEach(loc => {
                 const isSelected = loc[0] === currentSelected ? "selected" : "";
-                optionsHtml += `<option value="${loc[0]}" ${isSelected}>[Kho/Giàn] ${loc[0]} - ${loc[3] || loc[1]}</option>`;
+                optionsHtml += `<option value="${loc[0]}" ${isSelected}>[Base/Rig] ${loc[0]} - ${loc[3] || loc[1]}</option>`;
             });
 
             ['Unit', 'Container', 'Mast', 'PCE_Equipment'].forEach(tName => {
@@ -970,8 +963,8 @@
 
         function openAddModal() {
             editingItemId = null;
-            document.getElementById("modal-title").innerText = "Thêm Mới Thiết Bị / Vị Trí";
-            document.getElementById("submit-btn").innerText = "Lưu & Đồng Bộ Sheet";
+            document.getElementById("modal-title").innerText = "Add New Equipment / Location";
+            document.getElementById("submit-btn").innerText = "Save & Sync Sheet";
             document.getElementById("form-target-tab").disabled = false;
             document.getElementById("form-target-tab").value = currentActiveTab;
             document.getElementById("equipment-modal").classList.remove("hidden");
@@ -984,8 +977,8 @@
             editingItemId = itemId;
             const targetRow = (appData[tabName] || []).find(r => r[0] === itemId);
             if (!targetRow) return;
-            document.getElementById("modal-title").innerText = `Chỉnh Sửa: ${itemId}`;
-            document.getElementById("submit-btn").innerText = "Cập Nhật & Đồng Bộ Sheet";
+            document.getElementById("modal-title").innerText = `Edit: ${itemId}`;
+            document.getElementById("submit-btn").innerText = "Update & Sync Sheet";
             document.getElementById("form-target-tab").value = tabName;
             document.getElementById("form-target-tab").disabled = true;
             document.getElementById("equipment-modal").classList.remove("hidden");
@@ -1022,7 +1015,7 @@
             renderTree();
         }
 
-       function openDetailModal(tabName, itemId) {
+        function openDetailModal(tabName, itemId) {
             const row = (appData[tabName] || []).find(r => r[0] === itemId);
             if (!row) return;
 
@@ -1067,17 +1060,17 @@
             let contentHtml = `
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-4">
                     <div class="flex justify-between items-center pb-2 border-b border-slate-800">
-                        <span class="text-xs uppercase font-semibold text-sky-400">Mã Định Danh (ID): ${row[0]}</span>
-                        <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-700">Nhóm: ${tabName.replace(/_/g, ' ')}</span>
+                        <span class="text-xs uppercase font-semibold text-sky-400">ID: ${row[0]}</span>
+                        <span class="text-xs bg-slate-800 text-slate-300 px-2.5 py-0.5 rounded-full border border-slate-700">Group: ${tabName.replace(/_/g, ' ')}</span>
                     </div>
 
                     <div class="bg-sky-950/40 border border-sky-500/30 p-3 rounded-lg flex justify-between items-center">
                         <div>
-                            <span class="text-sky-400 block text-[10px] uppercase font-bold mb-1"><i class="fa-solid fa-route mr-1"></i> Đường Đi Vị Trí Lưu Trữ:</span>
+                            <span class="text-sky-400 block text-[10px] uppercase font-bold mb-1"><i class="fa-solid fa-route mr-1"></i> Storage Location Path:</span>
                             <span class="text-white font-semibold text-xs">${fullPath}</span>
                         </div>
                         <button onclick="closeDetailModal(); openMoveModal('${tabName}', '${itemId}');" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition shadow">
-                            <i class="fa-solid fa-right-left"></i> Chuyển Vị Trí
+                            <i class="fa-solid fa-right-left"></i> Move Location
                         </button>
                     </div>
 
@@ -1086,7 +1079,7 @@
 
             row.forEach((val, idx) => {
                 if (idx === 0) return;
-                let headerName = headers[idx] || `Thuộc tính ${idx}`;
+                let headerName = headers[idx] || `Property ${idx}`;
                 let displayVal = val || 'N/A';
 
                 if (headerName.toUpperCase() === 'LOCATION' && (displayVal === 'N/A' || !displayVal)) {
@@ -1109,17 +1102,17 @@
                     <div class="pt-3 border-t border-slate-800">
                         <div class="flex justify-between items-center mb-2">
                             <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                                <i class="fa-solid fa-boxes-stacked"></i> Danh Sách Thiết Bị / Dụng Cụ Bên Trong (${containedItems.length})
+                                <i class="fa-solid fa-boxes-stacked"></i> Contained Equipment / Tools (${containedItems.length})
                             </h4>
                         </div>
                         <div class="overflow-x-auto border border-slate-700/70 rounded-lg max-h-48 overflow-y-auto">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-slate-800 text-slate-300 uppercase sticky top-0 font-semibold text-[11px]">
                                     <tr>
-                                        <th class="px-3 py-2">STT</th>
-                                        <th class="px-3 py-2">Tên thiết bị</th>
+                                        <th class="px-3 py-2">No.</th>
+                                        <th class="px-3 py-2">Equipment Name</th>
                                         <th class="px-3 py-2">Serial No</th>
-                                        <th class="px-3 py-2">Nhóm</th>
+                                        <th class="px-3 py-2">Category</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-800 bg-slate-900/40">
@@ -1161,7 +1154,7 @@
         }
 
         function deleteItem(tabName, id) {
-            if (!confirm(`Bạn có chắc muốn xóa bản ghi [${id}] này không?`)) return;
+            if (!confirm(`Are you sure you want to delete record [${id}]?`)) return;
             appData[tabName] = appData[tabName].filter(row => row[0] !== id);
             saveDataLocal();
             syncToGoogleSheet("delete", tabName, [], id);
