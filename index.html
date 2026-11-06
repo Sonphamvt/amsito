@@ -365,15 +365,12 @@
         let editingRowIndex = null;
         let movingItemContext = { tabName: null, rowIndex: null };
 
-        function cleanVal(v) {
-            if (v === null || v === undefined || String(v).trim() === "" || String(v).trim() === "NaN" || String(v).trim() === "None") {
-                return "";
-            }
-            return String(v).trim();
-        }
-
-        function getRowUniqueKey(row, idx) {
-            return cleanVal(row[1]) || cleanVal(row[3]) || cleanVal(row[0]) || String(idx + 1);
+       function cleanVal(v) {
+            if (v === null || v === undefined) return "";
+            if (typeof v === 'object') return ""; // Chặn đứng lỗi nếu dữ liệu truyền vào là object/array lỗi
+            let s = String(v).trim();
+            if (s === "" || s === "NaN" || s === "None") return "";
+            return s;
         }
 
         function toggleDropdown(event, dropdownId) {
