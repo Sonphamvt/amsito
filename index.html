@@ -134,6 +134,7 @@
                             <i class="fa-solid fa-microchip text-purple-400"></i> Logging <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
                         </button>
                         <div id="dropdown-logging" class="hidden absolute left-0 mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-30 py-1 divide-y divide-slate-800">
+                            <button onclick="switchTab('MPLT'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-chart-line text-cyan-400"></i> MPLT</button>
                             <button onclick="switchTab('PPS_Gauge'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-gauge text-sky-400"></i> PPS Gauge</button>
                             <button onclick="switchTab('Battery'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-battery-full text-emerald-400"></i> Battery</button>
                             <button onclick="switchTab('ART'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-bolt text-amber-400"></i> ART</button>
@@ -144,6 +145,11 @@
 
                     <button onclick="switchTab('MPI_LT')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-rose-900/60 border border-rose-500/40 text-rose-200 hover:bg-rose-800 transition" data-tab="MPI_LT">
                         <i class="fa-solid fa-file-contract mr-1 text-rose-400"></i> MPI / LT
+                    </button>
+
+                    <!-- Tab Paper Work mới -->
+                    <button onclick="switchTab('Paper_Work')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Paper_Work">
+                        <i class="fa-solid fa-folder-open mr-1 text-emerald-400"></i> Paper Work
                     </button>
                 </div>
             </div>
@@ -209,7 +215,7 @@
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-sky-400"></i> Equipment Details (Standardized 29-Cols)
+                    <i class="fa-solid fa-circle-info text-sky-400"></i> Equipment & Container Details
                 </h3>
                 <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -253,10 +259,54 @@
         </div>
     </div>
 
+    <!-- Upload Paper Work Modal -->
+    <div id="paperwork-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
+                <h3 class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up text-emerald-400"></i> Upload Hồ Sơ / Biểu Mẫu
+                </h3>
+                <button onclick="closePaperworkModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <form onsubmit="handlePaperworkUpload(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Tên hồ sơ / Biểu mẫu hiển thị *</label>
+                    <input type="text" id="pw-doc-name" required placeholder="VD: Timesheet Mẫu 2026..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Phân loại</label>
+                    <select id="pw-category" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                        <option value="Timesheet">Timesheet</option>
+                        <option value="Job Report / Log">Job Report / Log</option>
+                        <option value="Safety / JSA">Safety / JSA</option>
+                        <option value="Certificate / MPI">Certificate / MPI</option>
+                        <option value="Handover / Delivery">Handover / Delivery</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Chọn file từ máy tính (Excel, Word, PDF...) *</label>
+                    <input type="file" id="pw-file-input" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-300 file:mr-3 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-accent file:text-white hover:file:bg-sky-600">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 mb-1">Ghi chú (Remarks)</label>
+                    <input type="text" id="pw-remarks" placeholder="Ghi chú thêm nếu có..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
+                    <button type="button" onclick="closePaperworkModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Hủy</button>
+                    <button type="submit" id="pw-submit-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium transition shadow-md flex items-center gap-1.5">
+                        <i class="fa-solid fa-upload"></i> Tải lên Drive
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Script Logic -->
     <script>
-        // URL Google Apps Script của ông chủ Sơn
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxRaLVcS8RzYW41BoUuZXLPjexiRgvK4AKrDMZ1CBjaT8hPRxo-WO6PXserVgSXJzzotA/exec";
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbw3VBguW5Ha2ZS6T3bo90IPmO9P_TkTnkBkdRUvFD6b-GnwPMOZUM5JKDo8MXZWKnbnSw/exec";
 
         const UNIFIED_HEADERS = [
             'STT / Item No',           // 0
@@ -290,9 +340,9 @@
             'Remarks / Notes'          // 28
         ];
 
-        // Tên key khớp 100% với tên tab trong Google Sheet & Excel của ông
         let appData = {
             "Locations": [],
+            "MPLT": [],
             "PPS_Gauge": [],
             "ART": [],
             "Cement": [],
@@ -307,7 +357,8 @@
             "Wires": [],
             "PCE_Equipment": [],
             "Mechanical_Tools": [],
-            "Other": []
+            "Other": [],
+            "Paper_Work": []
         };
 
         let currentActiveTab = "Locations";
@@ -334,8 +385,18 @@
             el.classList.toggle("hidden");
         }
 
+        function toggleRowActionDropdown(event, dropdownId) {
+            event.stopPropagation();
+            const el = document.getElementById(dropdownId);
+            document.querySelectorAll("[id^='row-dropdown-']").forEach(d => {
+                if (d.id !== dropdownId) d.classList.add("hidden");
+            });
+            el.classList.toggle("hidden");
+        }
+
         function hideAllDropdowns(event) {
             document.querySelectorAll("[id^='dropdown-']").forEach(d => d.classList.add("hidden"));
+            document.querySelectorAll("[id^='row-dropdown-']").forEach(d => d.classList.add("hidden"));
         }
 
         function getLocationName(locId) {
@@ -398,7 +459,6 @@
                     
                     if (data && typeof data === "object") {
                         if (data._headers) delete data._headers;
-                        // Hỗ trợ tự map nếu Google Sheet vẫn còn tên cũ
                         if (data["Power_Pack"] && !data["Power Pack"]) data["Power Pack"] = data["Power_Pack"];
                         if (data["Slickline_Toolstrings"] && !data["Slickline_Tools"]) data["Slickline_Tools"] = data["Slickline_Toolstrings"];
                         
@@ -463,7 +523,7 @@
             let html = "";
             const keys = Object.keys(appData);
             keys.forEach((key, idx) => {
-                if (key === "_headers") return;
+                if (key === "_headers" || key === "Paper_Work") return;
                 html += `<option value="${key}">${idx + 1}. ${key.replace(/_/g, ' ')}</option>`;
             });
             select.innerHTML = html;
@@ -481,10 +541,9 @@
                 }
             });
 
-            // Highlight dropdown button nếu tab con đang được chọn
             const unitGroup = ['Unit', 'Mast', 'Power Pack'];
             const drumsGroup = ['Drums', 'Wires'];
-            const loggingGroup = ['PPS_Gauge', 'Battery', 'ART', 'Cement', 'Other'];
+            const loggingGroup = ['MPLT', 'PPS_Gauge', 'Battery', 'ART', 'Cement', 'Other'];
 
             document.getElementById("btn-group-unit-mast").className = unitGroup.includes(tabName)
                 ? "tab-dropdown-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition flex items-center gap-1"
@@ -553,25 +612,36 @@
             const locs = appData["Locations"] || [];
             let totalNodes = locs.length;
 
-            // Đếm tổng số thiết bị có gán vị trí để hiển thị trên huy hiệu
-            const assetTabs = ['Unit', 'Mast', 'Power Pack', 'Containers_Units', 'PCE_Equipment'];
+            const assetTabs = ['Unit', 'Mast', 'Power Pack', 'Containers_Units', 'PCE_Equipment', 'Slickline_Tools', 'PPS_Gauge', 'Battery', 'ART', 'Cement', 'MPLT', 'Other'];
             assetTabs.forEach(t => { totalNodes += (appData[t] || []).length; });
 
-            function buildBranch(parentId) {
+            // Hàm buildBranch được bổ sung bộ nhớ vết (ancestors) chống vòng lặp vô hạn
+            function buildBranch(parentId, ancestors = new Set()) {
                 const cleanParent = cleanVal(parentId);
+                if (!cleanParent || ancestors.has(cleanParent)) return "";
+                
+                const currentAncestors = new Set(ancestors);
+                currentAncestors.add(cleanParent);
+
                 const childrenLocs = locs.filter(l => cleanVal(l[14]) === cleanParent);
                 
-                // Hiển thị các thiết bị lớn nằm trực tiếp dưới Location này ở cây bên trái
                 let attachedEquipments = [];
-                const categoriesToScan = [
+                const allScanCategories = [
+                    { key: 'Containers_Units', icon: 'fa-solid fa-box text-orange-400', color: 'text-orange-300' },
                     { key: 'Unit', icon: 'fa-solid fa-truck-monster text-sky-400', color: 'text-sky-300' },
                     { key: 'Mast', icon: 'fa-solid fa-tower-cell text-emerald-400', color: 'text-emerald-300' },
                     { key: 'Power Pack', icon: 'fa-solid fa-car-battery text-amber-400', color: 'text-amber-300' },
-                    { key: 'Containers_Units', icon: 'fa-solid fa-box text-orange-400', color: 'text-orange-300' },
-                    { key: 'PCE_Equipment', icon: 'fa-solid fa-shield-halved text-purple-400', color: 'text-purple-300' }
+                    { key: 'PCE_Equipment', icon: 'fa-solid fa-shield-halved text-purple-400', color: 'text-purple-300' },
+                    { key: 'Slickline_Tools', icon: 'fa-solid fa-screwdriver-wrench text-sky-300', color: 'text-sky-200' },
+                    { key: 'PPS_Gauge', icon: 'fa-solid fa-gauge text-sky-400', color: 'text-sky-300' },
+                    { key: 'Battery', icon: 'fa-solid fa-battery-full text-emerald-400', color: 'text-emerald-300' },
+                    { key: 'ART', icon: 'fa-solid fa-bolt text-amber-400', color: 'text-amber-300' },
+                    { key: 'MPLT', icon: 'fa-solid fa-chart-line text-cyan-400', color: 'text-cyan-300' },
+                    { key: 'Cement', icon: 'fa-solid fa-fill-drip text-rose-400', color: 'text-rose-300' },
+                    { key: 'Other', icon: 'fa-solid fa-box-archive text-slate-400', color: 'text-slate-300' }
                 ];
 
-                categoriesToScan.forEach(cat => {
+                allScanCategories.forEach(cat => {
                     (appData[cat.key] || []).forEach((item, rIdx) => {
                         if (!item || !Array.isArray(item)) return;
                         if (cleanVal(item[14]) === cleanParent) {
@@ -607,7 +677,7 @@
                                     <span class="truncate font-medium">${locId} - ${locName}</span>
                                 </div>
                             </div>
-                            ${buildBranch(locId)}
+                            ${buildBranch(locId, currentAncestors)}
                         </div>
                     `;
                 });
@@ -625,6 +695,8 @@
                                     <span class="truncate font-medium">${displayTitle}</span>
                                 </div>
                             </div>
+                            ${buildBranch(eq.id, currentAncestors)}
+                            ${buildBranch(eq.serialNo, currentAncestors)}
                         </div>
                     `;
                 });
@@ -675,63 +747,206 @@
 
         function filterCurrentTable(query) {
             const q = query.toLowerCase().trim();
-            const trs = document.querySelectorAll("#table-body tr");
+            const trs = document.querySelectorAll("#table-body tr.main-item-row, #table-body tr.paperwork-row");
             trs.forEach(tr => {
                 const text = tr.innerText.toLowerCase();
                 tr.style.display = (!q || text.includes(q)) ? "" : "none";
             });
         }
 
+        function getContainedItems(tabName, row, rowIndex) {
+            const currentId = cleanVal(row[1]) || cleanVal(row[0]);
+            const currentSerial = cleanVal(row[3]);
+            let containedItems = [];
+
+            Object.keys(appData).forEach(tName => {
+                if (tName === "Locations" || tName === "_headers" || tName === "Paper_Work") return;
+                
+                (appData[tName] || []).forEach((childRow, cIdx) => {
+                    if (!childRow || !Array.isArray(childRow)) return;
+                    const childLoc = cleanVal(childRow[14]);
+
+                    if (childLoc && childLoc !== "N/A" && ((currentId && childLoc === currentId) || (currentSerial && childLoc === currentSerial))) {
+                        if (!(tName === tabName && cIdx === rowIndex)) {
+                            containedItems.push({
+                                origTab: tName,
+                                rowIndex: cIdx,
+                                name: cleanVal(childRow[2]) || cleanVal(childRow[4]) || 'Equipment',
+                                serialNo: cleanVal(childRow[3]) || '-',
+                                category: tName
+                            });
+                        }
+                    }
+                });
+            });
+            return containedItems;
+        }
+
+        function toggleSubTable(event, rowKey) {
+            event.stopPropagation();
+            const subRow = document.getElementById(`sub-row-${rowKey}`);
+            const icon = document.getElementById(`expand-icon-${rowKey}`);
+            if (subRow) {
+                if (subRow.classList.contains("hidden")) {
+                    subRow.classList.remove("hidden");
+                    if (icon) icon.className = "fa-solid fa-chevron-down text-accent text-xs";
+                } else {
+                    subRow.classList.add("hidden");
+                    if (icon) icon.className = "fa-solid fa-chevron-right text-slate-400 text-xs";
+                }
+            }
+        }
+
         function renderTable(tabName) {
+            // Xử lý riêng giao diện cho Tab Paper Work
+            if (tabName === "Paper_Work") {
+                let rows = [...(appData["Paper_Work"] || [])];
+                document.getElementById("table-head").innerHTML = `
+                    <tr>
+                        <th class="px-4 py-3 font-semibold">No.</th>
+                        <th class="px-4 py-3 font-semibold">Document Name</th>
+                        <th class="px-4 py-3 font-semibold">Category</th>
+                        <th class="px-4 py-3 font-semibold">File Name</th>
+                        <th class="px-4 py-3 font-semibold">Upload Date</th>
+                        <th class="px-4 py-3 font-semibold">Remarks</th>
+                        <th class="px-4 py-3 text-right">
+                            <button onclick="openPaperworkModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-semibold normal-case shadow">
+                                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Upload File
+                            </button>
+                        </th>
+                    </tr>
+                `;
+
+                let bodyHtml = "";
+                if (rows.length === 0) {
+                    bodyHtml = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">Chưa có hồ sơ nào. Bấm nút "Upload File" ở góc phải để tải biểu mẫu lên Google Drive.</td></tr>`;
+                } else {
+                    rows.forEach((row, index) => {
+                        const stt = cleanVal(row[0]) || (index + 1);
+                        const docName = cleanVal(row[1]) || '-';
+                        const category = cleanVal(row[2]) || '-';
+                        const fileName = cleanVal(row[3]) || '-';
+                        const downloadLink = cleanVal(row[4]);
+                        const viewLink = cleanVal(row[5]);
+                        const uploadDate = cleanVal(row[6]) || '-';
+                        const remarks = cleanVal(row[7]) || '-';
+
+                        bodyHtml += `
+                            <tr class="paperwork-row hover:bg-slate-800/40 border-b border-slate-800 transition">
+                                <td class="px-4 py-3 font-semibold text-slate-400">${stt}</td>
+                                <td class="px-4 py-3 text-white font-semibold">${docName}</td>
+                                <td class="px-4 py-3"><span class="bg-slate-800 text-sky-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${category}</span></td>
+                                <td class="px-4 py-3 text-slate-300">${fileName}</td>
+                                <td class="px-4 py-3 text-slate-400">${uploadDate}</td>
+                                <td class="px-4 py-3 text-slate-400 truncate max-w-xs">${remarks}</td>
+                                <td class="px-4 py-3 text-right space-x-2">
+                                    ${downloadLink ? `<a href="${downloadLink}" target="_blank" class="inline-flex items-center gap-1 bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 rounded text-xs font-medium transition" title="Tải trực tiếp về máy"><i class="fa-solid fa-download"></i> Tải về</a>` : ''}
+                                    ${viewLink ? `<a href="${viewLink}" target="_blank" class="inline-flex items-center gap-1 bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-1 rounded text-xs transition" title="Mở xem trên Drive"><i class="fa-solid fa-eye"></i></a>` : ''}
+                                    <button onclick="deleteItemByIndex('Paper_Work', ${index})" class="text-slate-400 hover:text-rose-400 px-1.5 py-1 transition" title="Xóa"><i class="fa-solid fa-trash-can"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                document.getElementById("table-body").innerHTML = bodyHtml;
+                document.getElementById("current-table-title").innerText = "Management: Paper Work & Templates";
+                document.getElementById("record-count").innerText = `${rows.length} files`;
+                return;
+            }
+
+            // Giao diện quản lý thiết bị thông thường
             let rows = [...(appData[tabName] || [])];
 
-            document.getElementById("table-head").innerHTML = `
-                <tr>
-                    <th class="px-4 py-3 font-semibold">No.</th>
-                    <th class="px-4 py-3 font-semibold">Asset ID</th>
-                    <th class="px-4 py-3 font-semibold">Equipment Name / Description</th>
-                    <th class="px-4 py-3 font-semibold">Serial No</th>
-                    <th class="px-4 py-3 font-semibold">Storage Location</th>
-                    <th class="px-4 py-3 font-semibold">Status / Condition</th>
-                    <th class="px-4 py-3 font-semibold">Remarks / Notes</th>
-                    <th class="px-4 py-3 text-right">Actions</th>
-                </tr>
-            `;
+            let activeColIndices = [0, 2, 3, 15, 26, 28]; // STT, Name, Serial, Location, Status, Remarks
+            for (let c = 0; c < UNIFIED_HEADERS.length; c++) {
+                if (c === 1) continue;
+                let hasData = rows.some(r => cleanVal(r[c]) !== "" && cleanVal(r[c]) !== "-");
+                if (hasData && !activeColIndices.includes(c)) {
+                    activeColIndices.push(c);
+                }
+            }
+            activeColIndices.sort((a, b) => a - b);
+
+            let headHtml = `<tr><th class="px-3 py-3 font-semibold w-10 text-center">></th><th class="px-3 py-3 font-semibold">No.</th>`;
+            activeColIndices.forEach(idx => {
+                if (idx === 0) return;
+                headHtml += `<th class="px-3 py-3 font-semibold">${UNIFIED_HEADERS[idx]}</th>`;
+            });
+            headHtml += `<th class="px-3 py-3 text-right">Actions</th></tr>`;
+            document.getElementById("table-head").innerHTML = headHtml;
 
             let bodyHtml = "";
             if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="8" class="px-4 py-8 text-center text-slate-500 italic">No data available in [${tabName}].</td></tr>`;
+                bodyHtml = `<tr><td colspan="${activeColIndices.length + 3}" class="px-4 py-8 text-center text-slate-500 italic">No data available in [${tabName}].</td></tr>`;
             } else {
                 rows.forEach((row, index) => {
                     const stt = cleanVal(row[0]) || (index + 1);
-                    const assetId = cleanVal(row[1]) || '-';
-                    const eqName = cleanVal(row[2]) || cleanVal(row[4]) || 'Equipment';
-                    const serialNo = cleanVal(row[3]) || '-';
-                    
-                    let parentLocId = cleanVal(row[14]);
-                    let storageLoc = cleanVal(row[15]) || getLocationName(parentLocId);
-                    if (!storageLoc || storageLoc === 'N/A') storageLoc = parentLocId || '-';
-
-                    const statusVal = cleanVal(row[26]) || 'Active';
-                    const remarkVal = cleanVal(row[28]) || cleanVal(row[27]) || '-';
+                    const rowKey = `${tabName}-${index}`;
+                    const contained = getContainedItems(tabName, row, index);
+                    const hasChildren = contained.length > 0;
 
                     bodyHtml += `
-                        <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('${tabName}', ${index})">
-                            <td class="px-4 py-3 font-semibold text-slate-400">${stt}</td>
-                            <td class="px-4 py-3 text-sky-400 font-medium">${assetId}</td>
-                            <td class="px-4 py-3 text-slate-200 font-medium truncate max-w-xs" title="${eqName}">${eqName}</td>
-                            <td class="px-4 py-3 text-amber-300 font-medium truncate max-w-[160px]" title="${serialNo}">${serialNo}</td>
-                            <td class="px-4 py-3 text-slate-300 truncate max-w-xs">${storageLoc}</td>
-                            <td class="px-4 py-3 text-emerald-400 font-medium">${statusVal}</td>
-                            <td class="px-4 py-3 text-slate-400 truncate max-w-xs">${remarkVal}</td>
-                            <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                                <button onclick="openMoveModalByIndex('${tabName}', ${index})" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
-                                <button onclick="openDetailModalByIndex('${tabName}', ${index})" class="text-slate-400 hover:text-sky-300 transition" title="View Details"><i class="fa-solid fa-circle-info"></i></button>
-                                <button onclick="openEditModalByIndex('${tabName}', ${index})" class="text-slate-400 hover:text-sky-400 transition" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteItemByIndex('${tabName}', ${index})" class="text-slate-400 hover:text-red-400 transition" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                        <tr class="main-item-row hover:bg-slate-800/40 border-b border-slate-800 transition">
+                            <td class="px-3 py-3 text-center">
+                                ${hasChildren ? `<button onclick="toggleSubTable(event, '${rowKey}')" class="w-6 h-6 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition" title="Toggle contained items"><i id="expand-icon-${rowKey}" class="fa-solid fa-chevron-right text-slate-400 text-xs"></i></button>` : `<span class="text-slate-600">-</span>`}
+                            </td>
+                            <td class="px-3 py-3 font-semibold text-slate-400">${stt}</td>
+                    `;
+
+                    activeColIndices.forEach(idx => {
+                        if (idx === 0) return;
+                        let val = cleanVal(row[idx]) || '-';
+                        if (idx === 15 && val === '-') {
+                            val = getLocationName(row[14]) || '-';
+                        }
+                        bodyHtml += `<td class="px-3 py-3 text-slate-200 truncate max-w-xs" title="${val}">${val}</td>`;
+                    });
+
+                    bodyHtml += `
+                            <td class="px-3 py-3 text-right relative" onclick="event.stopPropagation()">
+                                <button onclick="toggleRowActionDropdown(event, 'row-dropdown-${rowKey}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1.5 ml-auto border border-slate-700">
+                                    <i class="fa-solid fa-bars text-accent"></i> Action <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                                </button>
+                                <div id="row-dropdown-${rowKey}" class="hidden absolute right-4 mt-1 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-40 py-1.5 text-left divide-y divide-slate-800">
+                                    <button onclick="openDetailModalByIndex('${tabName}', ${index}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-circle-info text-sky-400 w-4"></i> 1. Thông tin thiết bị</button>
+                                    <button onclick="openDetailModalByIndex('${tabName}', ${index}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-boxes-stacked text-amber-400 w-4"></i> 2. Danh mục thiết bị bên trong</button>
+                                    <button onclick="openMoveModalByIndex('${tabName}', ${index}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-right-left text-emerald-400 w-4"></i> 3. Di chuyển</button>
+                                    <button onclick="openEditModalByIndex('${tabName}', ${index}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-sky-300 w-4"></i> 4. Sửa</button>
+                                    <button onclick="deleteItemByIndex('${tabName}', ${index}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-rose-400 hover:bg-rose-600 hover:text-white flex items-center gap-2"><i class="fa-solid fa-trash-can w-4"></i> 5. Xóa</button>
+                                </div>
                             </td>
                         </tr>
                     `;
+
+                    if (hasChildren) {
+                        bodyHtml += `
+                            <tr id="sub-row-${rowKey}" class="hidden bg-slate-900/60 border-b border-slate-800">
+                                <td colspan="${activeColIndices.length + 3}" class="p-3 pl-12">
+                                    <div class="text-[11px] font-bold text-amber-400 mb-2 uppercase tracking-wide flex items-center gap-1.5">
+                                        <i class="fa-solid fa-box-open"></i> Danh sách thiết bị chứa bên trong (${contained.length}):
+                                    </div>
+                                    <div class="bg-slate-950/60 rounded-lg p-2 border border-slate-800 space-y-1">
+                        `;
+                        contained.forEach((sub, sIdx) => {
+                            bodyHtml += `
+                                <div class="flex justify-between items-center text-xs p-1.5 hover:bg-slate-800/50 rounded transition">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-slate-500">${sIdx + 1}.</span>
+                                        <span class="text-sky-300 font-medium">${sub.name}</span>
+                                        <span class="text-amber-300 text-[11px]">(${sub.serialNo})</span>
+                                    </div>
+                                    <button onclick="openDetailModalByIndex('${sub.origTab}', ${sub.rowIndex})" class="text-slate-400 hover:text-white bg-slate-800 px-2 py-1 rounded text-[11px]">
+                                        <i class="fa-solid fa-circle-info mr-1 text-sky-400"></i> Xem chi tiết
+                                    </button>
+                                </div>
+                            `;
+                        });
+                        bodyHtml += `
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }
                 });
             }
             document.getElementById("table-body").innerHTML = bodyHtml;
@@ -759,7 +974,7 @@
 
             const combinedList = [];
             Object.keys(appData).forEach(tName => {
-                if (tName === "Locations" || tName === "_headers") return;
+                if (tName === "Locations" || tName === "_headers" || tName === "Paper_Work") return;
 
                 (appData[tName] || []).forEach((item, rIdx) => {
                     if (!item || !Array.isArray(item)) return;
@@ -770,7 +985,6 @@
                         combinedList.push({ 
                             rowIndex: rIdx,
                             stt: cleanVal(item[0]) || '-',
-                            id: cleanVal(item[1]) || "-", 
                             name: cleanVal(item[2]) || cleanVal(item[4]) || 'Equipment', 
                             serialNo: cleanVal(item[3]) || '-',
                             location: cleanVal(item[15]) || getLocationName(parentLoc),
@@ -786,7 +1000,6 @@
             document.getElementById("table-head").innerHTML = `
                 <tr>
                     <th class="px-4 py-3 font-semibold">No.</th>
-                    <th class="px-4 py-3 font-semibold">Asset ID</th>
                     <th class="px-4 py-3 font-semibold">Equipment Name</th>
                     <th class="px-4 py-3 font-semibold">Serial No</th>
                     <th class="px-4 py-3 font-semibold">Storage Location</th>
@@ -798,23 +1011,26 @@
 
             let bodyHtml = "";
             if (combinedList.length === 0) {
-                bodyHtml = `<tr><td colspan="8" class="px-4 py-8 text-center text-slate-500 italic">No equipment found at this location level.</td></tr>`;
+                bodyHtml = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No equipment found at this location level.</td></tr>`;
             } else {
                 combinedList.forEach((item, idx) => {
                     bodyHtml += `
-                        <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('${item.origTab}', ${item.rowIndex})">
+                        <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition">
                             <td class="px-4 py-3 font-semibold text-slate-400">${idx + 1}</td>
-                            <td class="px-4 py-3 text-sky-400 font-medium">${item.id}</td>
                             <td class="px-4 py-3 text-slate-200 font-medium truncate max-w-xs">${item.name}</td>
                             <td class="px-4 py-3 text-amber-300 font-medium truncate max-w-[160px]">${item.serialNo}</td>
                             <td class="px-4 py-3 text-slate-300 truncate max-w-xs">${item.location}</td>
                             <td class="px-4 py-3 text-emerald-400 font-medium">${item.status}</td>
                             <td class="px-4 py-3 text-slate-400 truncate max-w-xs">${item.remark}</td>
-                            <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                                <button onclick="openMoveModalByIndex('${item.origTab}', ${item.rowIndex})" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
-                                <button onclick="openDetailModalByIndex('${item.origTab}', ${item.rowIndex})" class="text-slate-400 hover:text-sky-300 transition" title="View Details"><i class="fa-solid fa-circle-info"></i></button>
-                                <button onclick="openEditModalByIndex('${item.origTab}', ${item.rowIndex})" class="text-slate-400 hover:text-sky-400 transition" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                                <button onclick="deleteItemByIndex('${item.origTab}', ${item.rowIndex})" class="text-slate-400 hover:text-red-400 transition" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                            <td class="px-4 py-3 text-right relative" onclick="event.stopPropagation()">
+                                <button onclick="toggleRowActionDropdown(event, 'row-dropdown-combined-${idx}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1.5 ml-auto border border-slate-700">
+                                    <i class="fa-solid fa-bars text-accent"></i> Action <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                                </button>
+                                <div id="row-dropdown-combined-${idx}" class="hidden absolute right-4 mt-1 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-40 py-1.5 text-left divide-y divide-slate-800">
+                                    <button onclick="openDetailModalByIndex('${item.origTab}', ${item.rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-circle-info text-sky-400 w-4"></i> 1. Thông tin thiết bị</button>
+                                    <button onclick="openMoveModalByIndex('${item.origTab}', ${item.rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-right-left text-emerald-400 w-4"></i> 3. Di chuyển</button>
+                                    <button onclick="openEditModalByIndex('${item.origTab}', ${item.rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-sky-300 w-4"></i> 4. Sửa</button>
+                                </div>
                             </td>
                         </tr>
                     `;
@@ -855,7 +1071,7 @@
             if (!row) return;
             movingItemContext = { tabName, rowIndex };
 
-            const displayId = cleanVal(row[1]) || cleanVal(row[3]) || cleanVal(row[0]) || `#${rowIndex + 1}`;
+            const displayId = cleanVal(row[3]) || cleanVal(row[0]) || `#${rowIndex + 1}`;
             document.getElementById("move-item-id").value = `${displayId} - ${cleanVal(row[2])}`;
 
             const currentLocation = cleanVal(row[14]) || cleanVal(row[15]);
@@ -896,6 +1112,7 @@
             const container = document.getElementById("dynamic-fields-container");
             let html = "";
             UNIFIED_HEADERS.forEach((headerName, idx) => {
+                if (idx === 1) return;
                 const val = rowData && rowData[idx] !== undefined && rowData[idx] !== null ? rowData[idx] : "";
                 html += `
                     <div>
@@ -922,7 +1139,7 @@
             const targetRow = (appData[tabName] || [])[rowIndex];
             if (!targetRow) return;
             editingRowIndex = rowIndex;
-            const displayId = cleanVal(targetRow[1]) || cleanVal(targetRow[3]) || cleanVal(targetRow[0]) || `#${rowIndex + 1}`;
+            const displayId = cleanVal(targetRow[3]) || cleanVal(targetRow[0]) || `#${rowIndex + 1}`;
             document.getElementById("modal-title").innerText = `Edit [${tabName}]: ${displayId}`;
             document.getElementById("submit-btn").innerText = "Update & Sync Sheet";
             document.getElementById("form-target-tab").value = tabName;
@@ -943,7 +1160,14 @@
             if (!appData[tab] || !Array.isArray(appData[tab])) appData[tab] = [];
 
             let rowData = [];
-            document.querySelectorAll("#dynamic-fields-container input").forEach(el => rowData.push(el.value));
+            UNIFIED_HEADERS.forEach((_, idx) => {
+                if (idx === 1) {
+                    rowData.push("");
+                } else {
+                    const inputEl = document.querySelector(`input[name="f${idx}"]`);
+                    rowData.push(inputEl ? inputEl.value : "");
+                }
+            });
 
             if (editingRowIndex !== null && appData[tab][editingRowIndex]) {
                 const syncKey = getRowUniqueKey(appData[tab][editingRowIndex], editingRowIndex);
@@ -967,33 +1191,7 @@
 
             const locId = cleanVal(row[14]);
             const fullPath = getLocationPath(locId);
-            const currentId = cleanVal(row[1]) || cleanVal(row[0]);
-            const currentSerial = cleanVal(row[3]);
-
-            let containedItems = [];
-            Object.keys(appData).forEach(tName => {
-                if (tName === "Locations" || tName === "_headers") return;
-                
-                (appData[tName] || []).forEach((childRow, cIdx) => {
-                    if (!childRow || !Array.isArray(childRow)) return;
-                    const childLoc = cleanVal(childRow[14]);
-
-                    if (childLoc && childLoc !== "N/A" && ((currentId && childLoc === currentId) || (currentSerial && childLoc === currentSerial))) {
-                        if (!(tName === tabName && cIdx === rowIndex)) {
-                            containedItems.push({
-                                origTab: tName,
-                                rowIndex: cIdx,
-                                id: cleanVal(childRow[1]) || cleanVal(childRow[0]) || "-",
-                                name: cleanVal(childRow[2]) || 'Equipment',
-                                serialNo: cleanVal(childRow[3]) || '-',
-                                category: tName
-                            });
-                        }
-                    }
-                });
-            });
-
-            const headerCode = cleanVal(row[1]) || cleanVal(row[3]) || cleanVal(row[0]) || `#${rowIndex + 1}`;
+            const headerCode = cleanVal(row[3]) || cleanVal(row[0]) || `#${rowIndex + 1}`;
 
             let contentHtml = `
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-4">
@@ -1008,7 +1206,7 @@
                             <span class="text-white font-semibold text-xs">${fullPath}</span>
                         </div>
                         <button onclick="closeDetailModal(); openMoveModalByIndex('${tabName}', ${rowIndex});" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition shadow">
-                            <i class="fa-solid fa-right-left"></i> Move Location
+                            <i class="fa-solid fa-right-left"></i> Di chuyển
                         </button>
                     </div>
 
@@ -1016,11 +1214,14 @@
             `;
 
             UNIFIED_HEADERS.forEach((headerName, idx) => {
-                let displayVal = cleanVal(row[idx]) || 'N/A';
+                if (idx === 1) return;
 
-                if (idx === 15 && displayVal === 'N/A') {
+                let displayVal = cleanVal(row[idx]);
+                if (idx === 15 && !displayVal) {
                     displayVal = getLocationName(row[14]);
                 }
+
+                if (!displayVal || displayVal === 'N/A' || displayVal === '-') return;
 
                 contentHtml += `
                     <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50">
@@ -1030,51 +1231,7 @@
                 `;
             });
 
-            contentHtml += `</div>`;
-
-            if (containedItems.length > 0) {
-                contentHtml += `
-                    <div class="pt-3 border-t border-slate-800">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                                <i class="fa-solid fa-boxes-stacked"></i> Contained Equipment / Tools (${containedItems.length})
-                            </h4>
-                        </div>
-                        <div class="overflow-x-auto border border-slate-700/70 rounded-lg max-h-48 overflow-y-auto">
-                            <table class="w-full text-left text-xs">
-                                <thead class="bg-slate-800 text-slate-300 uppercase sticky top-0 font-semibold text-[11px]">
-                                    <tr>
-                                        <th class="px-3 py-2">No.</th>
-                                        <th class="px-3 py-2">Asset ID</th>
-                                        <th class="px-3 py-2">Equipment Name</th>
-                                        <th class="px-3 py-2">Serial No</th>
-                                        <th class="px-3 py-2">Category</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-800 bg-slate-900/40">
-                `;
-
-                containedItems.forEach((sub, sIdx) => {
-                    contentHtml += `
-                        <tr class="hover:bg-slate-800/60 transition cursor-pointer" onclick="closeDetailModal(); openDetailModalByIndex('${sub.origTab}', ${sub.rowIndex});">
-                            <td class="px-3 py-2 text-slate-400 font-medium">${sIdx + 1}</td>
-                            <td class="px-3 py-2 text-sky-400 font-medium">${sub.id}</td>
-                            <td class="px-3 py-2 text-slate-200 font-medium">${sub.name}</td>
-                            <td class="px-3 py-2 text-amber-300">${sub.serialNo}</td>
-                            <td class="px-3 py-2 text-slate-400 text-[11px]">${sub.category.replace(/_/g, ' ')}</td>
-                        </tr>
-                    `;
-                });
-
-                contentHtml += `
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            }
-
-            contentHtml += `</div>`;
+            contentHtml += `</div></div>`;
 
             document.getElementById("detail-modal-content").innerHTML = contentHtml;
             document.getElementById("detail-edit-btn").onclick = function() {
@@ -1090,6 +1247,81 @@
             document.getElementById("detail-modal").classList.add("hidden");
         }
 
+        function openPaperworkModal() {
+            document.getElementById("pw-doc-name").value = "";
+            document.getElementById("pw-file-input").value = "";
+            document.getElementById("pw-remarks").value = "";
+            document.getElementById("paperwork-modal").classList.remove("hidden");
+            document.getElementById("paperwork-modal").classList.add("flex");
+        }
+
+        function closePaperworkModal() {
+            document.getElementById("paperwork-modal").classList.remove("flex");
+            document.getElementById("paperwork-modal").classList.add("hidden");
+        }
+
+        function handlePaperworkUpload(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById("pw-file-input");
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            if (file.size > 15 * 1024 * 1024) {
+                alert("File dung lượng hơi lớn (>15MB), ông nên nén nhẹ lại trước khi upload nhé ạ!");
+                return;
+            }
+
+            const submitBtn = document.getElementById("pw-submit-btn");
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang tải lên Drive...`;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Data = e.target.result.split(",")[1];
+                const payload = {
+                    action: "upload_paperwork",
+                    docName: document.getElementById("pw-doc-name").value,
+                    category: document.getElementById("pw-category").value,
+                    remarks: document.getElementById("pw-remarks").value,
+                    fileName: file.name,
+                    mimeType: file.type,
+                    fileData: base64Data
+                };
+
+                try {
+                    const tempRow = [
+                        (appData["Paper_Work"] || []).length + 1,
+                        payload.docName,
+                        payload.category,
+                        payload.fileName,
+                        "",
+                        "",
+                        new Date().toISOString().slice(0, 10),
+                        payload.remarks + " (Đang đồng bộ Drive...)"
+                    ];
+                    if (!appData["Paper_Work"]) appData["Paper_Work"] = [];
+                    appData["Paper_Work"].push(tempRow);
+                    renderTable("Paper_Work");
+                    closePaperworkModal();
+
+                    await fetch(GOOGLE_SHEET_API_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                    setTimeout(() => { initData(); }, 3500);
+                } catch (err) {
+                    alert("Lỗi khi upload file: " + err);
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fa-solid fa-upload"></i> Tải lên Drive`;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
         function deleteItemByIndex(tabName, rowIndex) {
             const row = (appData[tabName] || [])[rowIndex];
             if (!row) return;
@@ -1098,7 +1330,9 @@
 
             appData[tabName].splice(rowIndex, 1);
             saveDataLocal();
-            syncToGoogleSheet("delete", tabName, [], syncKey);
+            if (tabName !== "Paper_Work") {
+                syncToGoogleSheet("delete", tabName, [], syncKey);
+            }
             renderTable(currentActiveTab);
             renderTree();
         }
