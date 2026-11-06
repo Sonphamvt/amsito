@@ -115,8 +115,9 @@
                     </div>
 
                     <button onclick="switchTab('PCE_Equipment')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="PCE_Equipment">
-                        <i class="fa-solid fa-shield-halved mr-1"></i> PCE
+                        <i class="fa-solid fa-shield-halved mr-1 text-purple-400"></i> PCE Packages & Sets
                     </button>
+
                     <button onclick="switchTab('Mechanical_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Mechanical_Tools">
                         <i class="fa-solid fa-wrench mr-1"></i> Mechanical Tools
                     </button>
@@ -229,7 +230,7 @@
                     <input type="text" id="move-item-id" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-400 font-semibold cursor-not-allowed">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Select New Destination / Container:</label>
+                    <label class="block text-xs text-slate-300 mb-1">Select New Destination / Container / PCE Set:</label>
                     <select id="move-target-location" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                         <!-- Injected by JS -->
                     </select>
@@ -266,24 +267,7 @@
             Other: []
         };
 
-        let tableHeaders = {
-            Locations: ['Location ID', 'Type', 'AMSITO / Client', 'Location Name / Description', 'Parent ID', 'Status'],
-            Unit: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Remarks'],
-            Mast: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Remarks'],
-            MastPP: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Location', 'Power / Capacity & Size', 'Location ID', 'Status', 'Remarks'],
-            Container: ['No.', 'ID', 'Equipment Name', 'Serial No', 'Location', 'Capacity & Size', 'Location ID', 'Status', 'Remarks'],
-            Slickline_Tools: ['Tool ID', 'Description', 'Location ID', 'Contract Inquire', 'Qty', 'Length (m)', 'Weight (Lbs)', 'Part NO', 'Asset NO', 'Location ID', 'Brand', 'Status / Remark'],
-            Slickline_Drums: ['Drum ID', 'DRUM Description', 'Wire Information', 'Cert Number', 'Spool Date', 'Length (m)', 'Location', 'Location ID', 'Remark'],
-            Wires: ['Wire ID', 'Wire Type', 'Wire Size', 'Serial No', 'Breaking Strength', 'Actual Length (ft)', 'Parent Drum ID', 'Location ID', 'Status'],
-            PCE_Equipment: ['No.', 'ASSET NO.', 'Equipment Type', 'Serial No', 'WP (PSI)', 'Service', 'Connection', 'Location', 'Location ID', 'Pressure Test Expire', 'Status', 'Remarks'],
-            Mechanical_Tools: ['No.', 'Tool ID', 'Category', 'OD Size', 'Asset / Serial No', 'Connection Thread', 'Location', 'Location ID', 'Status'],
-            PPS: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No (Asset)', 'Location', 'Max Temp (degC)', 'Max Pressure (psi)', 'Location ID', 'Calibration date', 'Expire date', 'Status', 'Maintenance History', 'Remarks'],
-            Battery: ['No.', 'ASSET NO.', 'Part Number / Type', 'Serial Number', 'Mfg Date', 'Purchase Date', 'Expiry Date', 'Condition', 'Location', 'Location ID', 'Usage History', 'Remarks'],
-            ART: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Specs', 'Location', 'Location ID', 'Status', 'Usage History', 'Remarks'],
-            Cement: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No', 'Capacity / Size', 'Location', 'Location ID', 'Status', 'Usage History', 'Remarks'],
-            MPI_LT: ['ID', 'Equipment Name', 'Asset NO', 'MPI Date', 'MPI Expire', 'LT Date', 'LT Expire', 'Pressure Test Expire', 'Location ID', 'Status / Remark'],
-            Other: ['No.', 'ASSET NO.', 'Equipment Name', 'Serial No (Asset)', 'Location', 'Location ID', 'Status', 'Usage History & Dates', 'Remarks']
-        };
+        let tableHeaders = {};
 
         let currentActiveTab = "Locations";
         let editingItemId = null;
@@ -302,16 +286,68 @@
             document.querySelectorAll("[id^='dropdown-']").forEach(d => d.classList.add("hidden"));
         }
 
+        function getColIdxByKeywords(headers, priorityKeywords) {
+            if (!headers || !headers.length) return -1;
+            for (let kw of priorityKeywords) {
+                for (let i = 0; i < headers.length; i++) {
+                    const h = String(headers[i] || "").toLowerCase().trim();
+                    if (h === kw.toLowerCase() || h.includes(kw.toLowerCase())) return i;
+                }
+            }
+            return -1;
+        }
+
+        function getNameColIndex(tabName) {
+            const headers = tableHeaders[tabName] || [];
+            if (tabName === 'Slickline_Tools' || tabName === 'Slickline_Toolstrings') {
+                const idx = getColIdxByKeywords(headers, ['description', 'equipment name', 'part no']);
+                if (idx !== -1) return idx;
+            }
+            if (tabName === 'Slickline_Drums') {
+                const idx = getColIdxByKeywords(headers, ['drum description', 'description', 'wire information']);
+                if (idx !== -1) return idx;
+            }
+            if (tabName === 'PCE_Equipment') {
+                const idx = getColIdxByKeywords(headers, ['equipment type', 'equipment name', 'description']);
+                if (idx !== -1) return idx;
+            }
+            const found = getColIdxByKeywords(headers, ['equipment name', 'description', 'part number / chủng loại', 'wire type', 'category', 'type']);
+            return found !== -1 ? found : (headers.length > 2 ? 2 : 1);
+        }
+
+        function getSerialColIndex(tabName) {
+            const headers = tableHeaders[tabName] || [];
+            if (tabName === 'Slickline_Tools' || tabName === 'Slickline_Toolstrings') {
+                const idx = getColIdxByKeywords(headers, ['asset no', 'serial no', 'part no']);
+                if (idx !== -1) return idx;
+            }
+            const found = getColIdxByKeywords(headers, ['serial no', 'serial number', 'asset no.', 'asset no', 'cert number', 'wire size']);
+            return found !== -1 ? found : (headers.length > 3 ? 3 : 1);
+        }
+
+        function getLocationColIndex(tabName) {
+            const headers = tableHeaders[tabName] || [];
+            for (let i = 0; i < headers.length; i++) {
+                const h = String(headers[i] || "").toLowerCase();
+                if (h.includes("location id") || h.includes("pce id") || h.includes("parent drum id")) return i;
+            }
+            for (let i = 0; i < headers.length; i++) {
+                const h = String(headers[i] || "").toLowerCase();
+                if (h === "location") return i;
+            }
+            return headers.length > 1 ? 1 : 0;
+        }
+
         function getLocationName(locId) {
             if (!locId || locId === "N/A" || locId === "NaN") return "N/A";
             const foundLoc = (appData.Locations || []).find(l => l[0] === locId);
-            if (foundLoc) return `${locId} (${foundLoc[3] || foundLoc[1] || ''})`;
+            if (foundLoc) return foundLoc[3] || foundLoc[1] || locId;
 
             for (let tName of ['Unit', 'Container', 'Mast', 'MastPP', 'PCE_Equipment']) {
                 const foundItem = (appData[tName] || []).find(item => item && (item[0] === locId || item[3] === locId || item[1] === locId));
                 if (foundItem) {
-                    const itemName = foundItem[2] || foundItem[1] || '';
-                    return `${locId} (${itemName})`;
+                    const nameIdx = getNameColIndex(tName);
+                    return foundItem[nameIdx] || foundItem[1] || locId;
                 }
             }
             return locId;
@@ -335,7 +371,8 @@
                     for (let tName of ['Unit', 'Container', 'Mast', 'MastPP', 'PCE_Equipment']) {
                         const item = (appData[tName] || []).find(i => i && (i[0] === currId || i[3] === currId || i[1] === currId));
                         if (item) {
-                            path.unshift(item[2] || item[1] || currId);
+                            const nameIdx = getNameColIndex(tName);
+                            path.unshift(item[nameIdx] || item[1] || currId);
                             const locIdx = getLocationColIndex(tName);
                             parentLocId = item[locIdx] || "";
                             break;
@@ -351,19 +388,6 @@
             return path.join(" ➔ ");
         }
 
-        function getLocationColIndex(tabName) {
-            const headers = tableHeaders[tabName] || [];
-            for (let i = 0; i < headers.length; i++) {
-                const h = headers[i].toLowerCase();
-                if (h.includes("location id")) return i;
-            }
-            for (let i = 0; i < headers.length; i++) {
-                const h = headers[i].toLowerCase();
-                if (h.includes("location")) return i;
-            }
-            return headers.length > 1 ? 1 : 0;
-        }
-
         async function initData() {
             const indicator = document.getElementById("sync-status");
             let loadedFromServer = false;
@@ -376,7 +400,7 @@
                     
                     if (data) {
                         if (data._headers) {
-                            tableHeaders = { ...tableHeaders, ...data._headers };
+                            tableHeaders = data._headers;
                             delete data._headers;
                         }
                         appData = { ...appData, ...data };
@@ -389,7 +413,7 @@
             }
 
             if (!loadedFromServer) {
-                const saved = localStorage.getItem("slickline_master_v20");
+                const saved = localStorage.getItem("slickline_master_v25");
                 if (saved) {
                     try { 
                         const parsed = JSON.parse(saved);
@@ -401,13 +425,13 @@
             }
 
             populateFormTabSelect();
-            localStorage.setItem("slickline_master_v20", JSON.stringify({ appData, headers: tableHeaders }));
+            localStorage.setItem("slickline_master_v25", JSON.stringify({ appData, headers: tableHeaders }));
             renderTable(currentActiveTab);
             renderTree();
         }
 
         function saveDataLocal() {
-            localStorage.setItem("slickline_master_v20", JSON.stringify({ appData, headers: tableHeaders }));
+            localStorage.setItem("slickline_master_v25", JSON.stringify({ appData, headers: tableHeaders }));
             renderTable(currentActiveTab);
             renderTree();
         }
@@ -437,8 +461,9 @@
         function populateFormTabSelect() {
             const select = document.getElementById("form-target-tab");
             let html = "";
-            const keys = Object.keys(tableHeaders);
+            const keys = Object.keys(tableHeaders.length ? tableHeaders : appData);
             keys.forEach((key, idx) => {
+                if (key === "_headers") return;
                 html += `<option value="${key}">${idx + 1}. ${key.replace(/_/g, ' ')}</option>`;
             });
             select.innerHTML = html;
@@ -503,22 +528,21 @@
                 const categoriesToScan = [
                     { key: 'Unit', icon: 'fa-solid fa-truck-monster text-sky-400', color: 'text-sky-300' },
                     { key: 'Container', icon: 'fa-solid fa-box text-amber-400', color: 'text-amber-300' },
-                    { key: 'Mast', icon: 'fa-solid fa-tower-cell text-emerald-400', color: 'text-emerald-300' },
-                    { key: 'PCE_Equipment', icon: 'fa-solid fa-shield-halved text-purple-400', color: 'text-purple-300' }
+                    { key: 'Mast', icon: 'fa-solid fa-tower-cell text-emerald-400', color: 'text-emerald-300' }
                 ];
 
                 categoriesToScan.forEach(cat => {
                     (appData[cat.key] || []).forEach(item => {
                         if (!item || !Array.isArray(item)) return;
                         const locIdx = getLocationColIndex(cat.key);
-                        const itemLoc = String(item[locIdx] || "");
+                        const nameIdx = getNameColIndex(cat.key);
+                        const serialIdx = getSerialColIndex(cat.key);
 
-                        if (itemLoc === parentId) {
+                        if (String(item[locIdx] || "").trim() === parentId.trim()) {
                             attachedEquipments.push({
                                 id: String(item[0] || ""),
-                                assetNo: String(item[1] || ""),
-                                name: String(item[2] || item[1] || cat.key),
-                                serialNo: String(item[3] || item[1] || item[0] || ''),
+                                serialNo: String(item[serialIdx] || item[1] || ''),
+                                name: String(item[nameIdx] || item[1] || cat.key),
                                 category: cat.key,
                                 icon: cat.icon,
                                 textColor: cat.color
@@ -549,12 +573,13 @@
 
                 attachedEquipments.forEach(eq => {
                     let subItems = [];
-                    let nodeKey = eq.serialNo || eq.assetNo || eq.id;
+                    let nodeKey = eq.serialNo || eq.id;
 
                     if (eq.category === 'Unit') {
                         (appData.Slickline_Drums || []).forEach(drum => {
                             if (!drum || !Array.isArray(drum)) return;
-                            const drumLocField = String(drum[7] || ""); 
+                            const drumLocIdx = getLocationColIndex('Slickline_Drums');
+                            const drumLocField = String(drum[drumLocIdx] || ""); 
                             const drumRemark = String(drum[8] || "").toLowerCase(); 
 
                             if (drumLocField === eq.serialNo || drumLocField === eq.id || drumLocField.includes(eq.serialNo)) {
@@ -569,10 +594,12 @@
                                     badgeColor = "bg-amber-500/20 text-amber-300 border border-amber-500/30";
                                 }
 
+                                const drumNameIdx = getNameColIndex('Slickline_Drums');
+
                                 subItems.push({
                                     tab: 'Slickline_Drums',
                                     id: drum[0],
-                                    name: drum[1],
+                                    name: drum[drumNameIdx] || drum[1],
                                     label: positionLabel,
                                     badgeClass: badgeColor,
                                     icon: 'fa-solid fa-dharmachakra text-amber-400'
@@ -581,32 +608,8 @@
                         });
                     }
 
-                    Object.keys(appData).forEach(tName => {
-                        if (tName === "Locations" || tName === "_headers" || (eq.category === 'Unit' && tName === 'Slickline_Drums')) return;
-                        const locIdx = getLocationColIndex(tName);
-                        
-                        (appData[tName] || []).forEach(subItem => {
-                            if (!subItem || !Array.isArray(subItem)) return;
-                            const subLoc = String(subItem[locIdx] || "");
-                            
-                            if (subLoc && subLoc !== "N/A" && (subLoc === eq.serialNo || subLoc === eq.assetNo || subLoc === eq.id)) {
-                                if (subItem[0] !== eq.id && subItem[0] !== eq.serialNo) {
-                                    let childName = subItem[2] || subItem[1] || 'Equipment';
-                                    if (tName === 'Slickline_Tools' || tName === 'Slickline_Drums' || tName === 'Wires') childName = subItem[1] || 'N/A';
-
-                                    subItems.push({
-                                        tab: tName,
-                                        id: String(subItem[0] || 'N/A'),
-                                        name: String(childName),
-                                        icon: tName.includes('PCE') ? 'fa-solid fa-shield-halved text-purple-400' : 'fa-solid fa-screwdriver-wrench text-sky-300'
-                                    });
-                                }
-                            }
-                        });
-                    });
-
                     let hasSubBranch = subItems.length > 0;
-                    let displayTitle = `${eq.serialNo || eq.assetNo || eq.id} - ${eq.name}`;
+                    let displayTitle = `${eq.serialNo || eq.id} - ${eq.name}`;
 
                     html += `
                         <div class="tree-node-item pl-1 mt-1" data-loc-id="${nodeKey}">
@@ -670,94 +673,110 @@
 
             if (!q) {
                 nodeElements.forEach(el => { el.style.display = "block"; });
-                document.querySelectorAll("#tree-container [id^='tree-child-']").forEach(childEl => {
-                    childEl.classList.add("hidden");
-                });
-                document.querySelectorAll("#tree-container [id^='tree-icon-']").forEach(iconEl => {
-                    iconEl.className = "fa-solid fa-chevron-right text-slate-400 text-[10px] mr-1 hover:text-white p-0.5";
-                });
                 return;
             }
 
-            const matchedLocIds = new Set();
-            (appData.Locations || []).forEach(loc => {
-                const locText = `${loc[0]} ${loc[1]} ${loc[3]}`.toLowerCase();
-                if (locText.includes(q)) matchedLocIds.add(String(loc[0]));
-            });
-
-            Object.keys(appData).forEach(tName => {
-                if (tName === "Locations" || tName === "_headers") return;
-                const locIdx = getLocationColIndex(tName);
-                (appData[tName] || []).forEach(item => {
-                    if (!item || !Array.isArray(item)) return;
-                    const itemText = item.join(" ").toLowerCase();
-                    if (itemText.includes(q)) {
-                        const locField = String(item[locIdx] || "");
-                        if (locField && locField !== "N/A" && locField !== "NaN") {
-                            matchedLocIds.add(locField);
-                        }
-                    }
-                });
-            });
-
             nodeElements.forEach(el => {
-                const locId = el.getAttribute("data-loc-id");
-                let isMatch = matchedLocIds.has(locId) || el.innerText.toLowerCase().includes(q);
-                
-                if (isMatch) {
-                    el.style.display = "block";
-                    let parent = el.parentElement;
-                    while (parent && parent.id !== "tree-container") {
-                        if (parent.id && parent.id.startsWith("tree-child-")) {
-                            parent.classList.remove("hidden");
-                            const parentLocId = parent.id.replace("tree-child-", "");
-                            const iconEl = document.getElementById(`tree-icon-${parentLocId}`);
-                            if (iconEl) iconEl.className = "fa-solid fa-chevron-down text-accent text-[10px] mr-1";
-                        }
-                        if (parent.classList.contains("tree-node-item")) {
-                            parent.style.display = "block";
-                        }
-                        parent = parent.parentElement;
-                    }
-                } else {
-                    const childMatches = Array.from(el.querySelectorAll(".tree-node-item")).some(child => {
-                        const cId = child.getAttribute("data-loc-id");
-                        return matchedLocIds.has(cId) || child.innerText.toLowerCase().includes(q);
-                    });
-                    el.style.display = childMatches ? "block" : "none";
-                }
+                const text = el.innerText.toLowerCase();
+                el.style.display = text.includes(q) ? "block" : "none";
             });
         }
 
         function renderTable(tabName) {
-            const headers = tableHeaders[tabName] || [];
             let rows = [...(appData[tabName] || [])];
+            const headers = tableHeaders[tabName] || [];
 
-            let headHtml = "<tr>";
-            headers.forEach(h => headHtml += `<th class="px-4 py-3 font-semibold">${h}</th>`);
-            headHtml += `<th class="px-4 py-3 text-right">Actions</th></tr>`;
-            document.getElementById("table-head").innerHTML = headHtml;
+            if (tabName === 'Locations') {
+                document.getElementById("table-head").innerHTML = `
+                    <tr>
+                        <th class="px-4 py-3 font-semibold">No.</th>
+                        <th class="px-4 py-3 font-semibold">Location ID</th>
+                        <th class="px-4 py-3 font-semibold">Type</th>
+                        <th class="px-4 py-3 font-semibold">Location Name</th>
+                        <th class="px-4 py-3 font-semibold">Status</th>
+                        <th class="px-4 py-3 text-right">Actions</th>
+                    </tr>
+                `;
+                let bodyHtml = "";
+                if (rows.length === 0) {
+                    bodyHtml = `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500 italic">No data available in this section.</td></tr>`;
+                } else {
+                    rows.forEach((row, index) => {
+                        bodyHtml += `
+                            <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">
+                                <td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>
+                                <td class="px-4 py-3 text-sky-400 font-medium">${row[0] || ''}</td>
+                                <td class="px-4 py-3 text-slate-300">${row[1] || ''}</td>
+                                <td class="px-4 py-3 text-slate-200 font-medium">${row[3] || ''}</td>
+                                <td class="px-4 py-3 text-emerald-400 font-medium">${row[5] || 'Active'}</td>
+                                <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                                    <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="View Details"><i class="fa-solid fa-circle-info"></i></button>
+                                    <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                    <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                document.getElementById("table-body").innerHTML = bodyHtml;
+                document.getElementById("current-table-title").innerText = `Management: ${tabName.replace(/_/g, ' ')}`;
+                document.getElementById("record-count").innerText = `${rows.length} records`;
+                return;
+            }
+
+            const nameIdx = getNameColIndex(tabName);
+            const serialIdx = getSerialColIndex(tabName);
+            const locIdx = getLocationColIndex(tabName);
+            const statusIdx = getColIdxByKeywords(headers, ['status', 'tình trạng', 'condition']);
+            const remarkIdx = getColIdxByKeywords(headers, ['remark', 'remarks', 'lịch sử', 'note', 'usage']);
+
+            document.getElementById("table-head").innerHTML = `
+                <tr>
+                    <th class="px-4 py-3 font-semibold">No.</th>
+                    <th class="px-4 py-3 font-semibold">Equipment Name</th>
+                    <th class="px-4 py-3 font-semibold">Serial No</th>
+                    <th class="px-4 py-3 font-semibold">Location</th>
+                    <th class="px-4 py-3 font-semibold">Status</th>
+                    <th class="px-4 py-3 font-semibold">Remarks</th>
+                    <th class="px-4 py-3 text-right">Actions</th>
+                </tr>
+            `;
 
             let bodyHtml = "";
             if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${headers.length + 1}" class="px-4 py-8 text-center text-slate-500 italic">No data available in this section.</td></tr>`;
+                bodyHtml = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No data available in this section.</td></tr>`;
             } else {
                 rows.forEach((row, index) => {
-                    bodyHtml += `<tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">`;
-                    headers.forEach((h, cellIdx) => {
-                        const cellVal = row[cellIdx] !== undefined ? row[cellIdx] : '';
-                        bodyHtml += `<td class="px-4 py-3 text-slate-300 truncate max-w-xs">${cellVal}</td>`;
-                    });
-                    bodyHtml += `<td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
-                        <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
-                        <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="View Details"><i class="fa-solid fa-circle-info"></i></button>
-                        <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
-                    </td></tr>`;
+                    const eqName = nameIdx !== -1 ? (row[nameIdx] || 'Equipment') : (row[2] || row[1] || 'Equipment');
+                    const serialNo = serialIdx !== -1 ? (row[serialIdx] || 'N/A') : (row[3] || row[1] || 'N/A');
+                    
+                    let rawLoc = locIdx !== -1 ? row[locIdx] : '';
+                    let locVal = getLocationName(rawLoc);
+                    if (!locVal || locVal === 'N/A') locVal = rawLoc || 'N/A';
+
+                    const statusVal = statusIdx !== -1 ? (row[statusIdx] || 'Good') : 'Good';
+                    const remarkVal = remarkIdx !== -1 ? (row[remarkIdx] || '-') : '-';
+
+                    bodyHtml += `
+                        <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModal('${tabName}', '${row[0]}')">
+                            <td class="px-4 py-3 font-semibold text-slate-400">${index + 1}</td>
+                            <td class="px-4 py-3 text-slate-200 font-medium truncate max-w-xs">${eqName}</td>
+                            <td class="px-4 py-3 text-sky-400 font-medium">${serialNo}</td>
+                            <td class="px-4 py-3 text-slate-300 truncate max-w-xs">${locVal}</td>
+                            <td class="px-4 py-3 text-emerald-400 font-medium">${statusVal}</td>
+                            <td class="px-4 py-3 text-slate-400 truncate max-w-xs">${remarkVal}</td>
+                            <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
+                                <button onclick="openMoveModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
+                                <button onclick="openDetailModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-300 transition" title="View Details"><i class="fa-solid fa-circle-info"></i></button>
+                                <button onclick="openEditModal('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-sky-400 transition" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deleteItem('${tabName}', '${row[0]}')" class="text-slate-400 hover:text-red-400 transition" title="Delete"><i class="fa-solid fa-trash-can"></i></button>
+                            </td>
+                        </tr>
+                    `;
                 });
             }
             document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("current-table-title").innerText = `Management: ${tabName.replace(/_/g, ' ')}`;
+            document.getElementById("current-table-title").innerText = tabName === 'PCE_Equipment' ? `Management: PCE Packages & Sets` : `Management: ${tabName.replace(/_/g, ' ')}`;
             document.getElementById("record-count").innerText = `${rows.length} records`;
         }
 
@@ -780,27 +799,29 @@
             Object.keys(appData).forEach(tName => {
                 if (tName === "Locations" || tName === "_headers") return;
                 const locIdx = getLocationColIndex(tName);
+                const headers = tableHeaders[tName] || [];
+                const nameIdx = getNameColIndex(tName);
+                const serialIdx = getSerialColIndex(tName);
+                const statusIdx = getColIdxByKeywords(headers, ['status', 'tình trạng']);
+                const remarkIdx = getColIdxByKeywords(headers, ['remark', 'remarks', 'lịch sử', 'note']);
+
                 (appData[tName] || []).forEach(item => {
                     if (!item || !Array.isArray(item)) return;
                     const locField = String(item[locIdx] || "");
                     if (validLocIds.some(id => id && locField.includes(id))) {
-                        let serialNo = item[3] || item[3] || 'N/A';
-                        if (tName === 'Unit' || tName === 'Mast' || tName === 'MastPP' || tName === 'Container') serialNo = item[3] || 'N/A';
-                        else if (tName === 'Battery') serialNo = item[3] || 'N/A';
-                        else if (tName === 'Slickline_Tools') serialNo = item[8] || item[7] || 'N/A';
-                        else if (tName === 'Slickline_Drums') serialNo = item[3] || 'N/A';
-                        else if (tName === 'Wires') serialNo = item[3] || 'N/A';
-                        else if (tName === 'MPI_LT') serialNo = item[2] || 'N/A';
-
-                        let eqName = item[2] || item[1] || item[3] || 'Equipment';
-                        if (tName === 'Slickline_Tools') eqName = item[1] || 'N/A';
-                        else if (tName === 'Slickline_Drums') eqName = item[1] || 'N/A';
-                        else if (tName === 'Wires') eqName = item[1] || 'N/A';
+                        let serialNo = serialIdx !== -1 ? (item[serialIdx] || 'N/A') : 'N/A';
+                        let eqName = nameIdx !== -1 ? (item[nameIdx] || 'Equipment') : 'Equipment';
+                        let statusVal = statusIdx !== -1 ? (item[statusIdx] || 'Good') : 'Good';
+                        let remarkVal = remarkIdx !== -1 ? (item[remarkIdx] || '-') : '-';
+                        let locVal = getLocationName(locField);
 
                         combinedList.push({ 
                             id: String(item[0] || "N/A"), 
                             serialNo: String(serialNo),
                             name: String(eqName), 
+                            location: String(locVal),
+                            status: String(statusVal),
+                            remark: String(remarkVal),
                             category: tName, 
                             origTab: tName 
                         });
@@ -812,15 +833,17 @@
                 <tr>
                     <th class="px-4 py-3 font-semibold">No.</th>
                     <th class="px-4 py-3 font-semibold">Equipment Name</th>
-                    <th class="px-4 py-3 font-semibold">Serial Number</th>
-                    <th class="px-4 py-3 font-semibold">Category</th>
+                    <th class="px-4 py-3 font-semibold">Serial No</th>
+                    <th class="px-4 py-3 font-semibold">Location</th>
+                    <th class="px-4 py-3 font-semibold">Status</th>
+                    <th class="px-4 py-3 font-semibold">Remarks</th>
                     <th class="px-4 py-3 text-right">Actions</th>
                 </tr>
             `;
 
             let bodyHtml = "";
             if (combinedList.length === 0) {
-                bodyHtml = `<tr><td colspan="5" class="px-4 py-8 text-center text-slate-500 italic">No equipment found at this location level.</td></tr>`;
+                bodyHtml = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No equipment found at this location level.</td></tr>`;
             } else {
                 combinedList.forEach((item, idx) => {
                     bodyHtml += `
@@ -828,7 +851,9 @@
                             <td class="px-4 py-3 font-semibold text-slate-400">${idx + 1}</td>
                             <td class="px-4 py-3 text-slate-200 font-medium truncate max-w-xs">${item.name}</td>
                             <td class="px-4 py-3 text-sky-400 font-medium">${item.serialNo}</td>
-                            <td class="px-4 py-3 text-amber-300 font-medium">${item.category}</td>
+                            <td class="px-4 py-3 text-slate-300 truncate max-w-xs">${item.location}</td>
+                            <td class="px-4 py-3 text-emerald-400 font-medium">${item.status}</td>
+                            <td class="px-4 py-3 text-slate-400 truncate max-w-xs">${item.remark}</td>
                             <td class="px-4 py-3 text-right space-x-2" onclick="event.stopPropagation()">
                                 <button onclick="openMoveModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-emerald-400 transition" title="Move Location"><i class="fa-solid fa-right-left"></i></button>
                                 <button onclick="openDetailModal('${item.origTab}', '${item.id}')" class="text-slate-400 hover:text-sky-300 transition" title="View Details"><i class="fa-solid fa-circle-info"></i></button>
@@ -852,11 +877,13 @@
             });
 
             ['Unit', 'Container', 'Mast', 'PCE_Equipment'].forEach(tName => {
+                const nameIdx = getNameColIndex(tName);
+                const serialIdx = getSerialColIndex(tName);
                 (appData[tName] || []).forEach(item => {
                     if (!item || !item[0]) return;
                     const itemId = String(item[0]);
-                    const itemSerial = String(item[3] || item[1] || '');
-                    const itemName = item[2] || item[1] || '';
+                    const itemSerial = String(item[serialIdx] || item[1] || '');
+                    const itemName = item[nameIdx] || item[1] || '';
                     const isSelected = (itemId === currentSelected || itemSerial === currentSelected) ? "selected" : "";
                     optionsHtml += `<option value="${itemSerial || itemId}" ${isSelected}>[${tName}] ${itemSerial || itemId} - ${itemName}</option>`;
                 });
@@ -870,7 +897,8 @@
             const row = (appData[tabName] || []).find(r => r[0] === itemId);
             if (!row) return;
 
-            document.getElementById("move-item-id").value = `${itemId} - ${row[2] || row[1] || ''}`;
+            const nameIdx = getNameColIndex(tabName);
+            document.getElementById("move-item-id").value = `${itemId} - ${row[nameIdx] || row[1] || ''}`;
 
             const locIndex = getLocationColIndex(tabName);
             const currentLocation = row[locIndex] || "";
@@ -896,7 +924,7 @@
                 
                 row[locIdIdx] = newLocId;
 
-                const locNameIdx = headers.findIndex(h => h.toUpperCase() === 'LOCATION');
+                const locNameIdx = headers.findIndex(h => String(h).toUpperCase() === 'LOCATION');
                 if (locNameIdx !== -1) {
                     row[locNameIdx] = getLocationName(newLocId);
                 }
@@ -948,7 +976,7 @@
             headers.forEach((header, idx) => {
                 const val = rowData && rowData[idx] !== undefined ? rowData[idx] : "";
                 const isIdField = (idx === 0);
-                const isLocationField = header.toLowerCase().includes("location");
+                const isLocationField = String(header).toLowerCase().includes("location");
 
                 html += `
                     <div>
@@ -1015,6 +1043,7 @@
             renderTree();
         }
 
+        // ĐÃ SỬA: Hiển thị modal chi tiết ĐÚNG 100% theo tiêu đề Excel (headers) của từng sheet
         function openDetailModal(tabName, itemId) {
             const row = (appData[tabName] || []).find(r => r[0] === itemId);
             if (!row) return;
@@ -1024,26 +1053,26 @@
             const locId = row[locColIdx] || "";
             const fullPath = getLocationPath(locId);
 
+            const serialIdx = getSerialColIndex(tabName);
+            const nameIdx = getNameColIndex(tabName);
             const currentId = String(row[0] || "");
-            const currentSerial = String(row[3] || row[1] || "");
-            const currentAsset = String(row[1] || "");
+            const currentSerial = String(row[serialIdx] || row[1] || "");
 
             let containedItems = [];
             Object.keys(appData).forEach(tName => {
                 if (tName === "Locations" || tName === "_headers") return;
                 const childLocIdx = getLocationColIndex(tName);
+                const subNameIdx = getNameColIndex(tName);
+                const subSerialIdx = getSerialColIndex(tName);
                 
                 (appData[tName] || []).forEach(childRow => {
                     if (!childRow || !Array.isArray(childRow)) return;
                     const childLoc = String(childRow[childLocIdx] || "");
 
-                    if (childLoc && childLoc !== "N/A" && (childLoc === currentId || childLoc === currentSerial || childLoc === currentAsset)) {
+                    if (childLoc && childLoc !== "N/A" && (childLoc === currentId || childLoc === currentSerial)) {
                         if (!(tName === tabName && childRow[0] === itemId)) {
-                            let childSerial = childRow[3] || childRow[1] || 'N/A';
-                            let childName = childRow[2] || childRow[1] || 'Equipment';
-                            if (tName === 'Slickline_Tools') childName = childRow[1] || 'N/A';
-                            else if (tName === 'Slickline_Drums') childName = childRow[1] || 'N/A';
-                            else if (tName === 'Wires') childName = childRow[1] || 'N/A';
+                            let childSerial = childRow[subSerialIdx] || childRow[1] || 'N/A';
+                            let childName = childRow[subNameIdx] || childRow[1] || 'Equipment';
 
                             containedItems.push({
                                 origTab: tName,
@@ -1056,6 +1085,9 @@
                     }
                 });
             });
+
+            const mainName = nameIdx !== -1 ? (row[nameIdx] || 'Equipment') : (row[2] || row[1] || 'Equipment');
+            const mainSerial = serialIdx !== -1 ? (row[serialIdx] || 'N/A') : (row[3] || row[1] || 'N/A');
 
             let contentHtml = `
                 <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700 space-y-4">
@@ -1077,14 +1109,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1 text-xs">
             `;
 
-            row.forEach((val, idx) => {
-                if (idx === 0) return;
-                let headerName = headers[idx] || `Property ${idx}`;
-                let displayVal = val || 'N/A';
+            // Vòng lặp hiển thị ĐÚNG tên cột từ file Excel và giá trị tương ứng
+            headers.forEach((headerName, idx) => {
+                let displayVal = row[idx] !== undefined && row[idx] !== null && row[idx] !== "" ? row[idx] : 'N/A';
 
-                if (headerName.toUpperCase() === 'LOCATION' && (displayVal === 'N/A' || !displayVal)) {
-                    const currentLocId = row[locColIdx];
-                    if (currentLocId) displayVal = getLocationName(currentLocId);
+                if (String(headerName).toUpperCase().includes('LOCATION') && (displayVal === 'N/A' || displayVal.startsWith('LOC_'))) {
+                    displayVal = getLocationName(displayVal);
                 }
 
                 contentHtml += `
@@ -1149,7 +1179,7 @@
         }
 
         function closeDetailModal() {
-            document.getElementById("detail-modal").classList.remove("flex");
+            document.getElementById("detail-modal").classList.remove("hidden");
             document.getElementById("detail-modal").classList.add("hidden");
         }
 
