@@ -147,7 +147,7 @@
                         <i class="fa-solid fa-file-contract mr-1 text-rose-400"></i> MPI / LT
                     </button>
 
-                    <!-- Tab Paper Work mới -->
+                    <!-- Tab Paper Work -->
                     <button onclick="switchTab('Paper_Work')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Paper_Work">
                         <i class="fa-solid fa-folder-open mr-1 text-emerald-400"></i> Paper Work
                     </button>
@@ -306,7 +306,7 @@
 
     <!-- Script Logic -->
     <script>
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxBLwH3F8t0EH-44uhipyv91UffkYlgW7NlkwP5dhUF2XcqHH3OaPgqZCaGW7V9k00NaA/exec";
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyPwEKLXfXArExxr5qT2zxNIiHiEHf_K8mxnyPmjDH9ZHAosiI-mQqFRxGx5euAkUb37Q/exec";
 
         const UNIFIED_HEADERS = [
             'STT / Item No',           // 0
@@ -365,12 +365,18 @@
         let editingRowIndex = null;
         let movingItemContext = { tabName: null, rowIndex: null };
 
-       function cleanVal(v) {
+        function cleanVal(v) {
             if (v === null || v === undefined) return "";
-            if (typeof v === 'object') return ""; // Chặn đứng lỗi nếu dữ liệu truyền vào là object/array lỗi
+            if (typeof v === 'object') return "";
             let s = String(v).trim();
             if (s === "" || s === "NaN" || s === "None") return "";
             return s;
+        }
+
+        // Hàm định danh khóa dòng được bổ sung để khắc phục triệt để lỗi ReferenceError
+        function getRowUniqueKey(row, rowIndex = 0) {
+            if (!row || !Array.isArray(row)) return String(rowIndex + 1);
+            return cleanVal(row[1]) || cleanVal(row[3]) || cleanVal(row[0]) || String(rowIndex + 1);
         }
 
         function toggleDropdown(event, dropdownId) {
@@ -612,7 +618,6 @@
             const assetTabs = ['Unit', 'Mast', 'Power Pack', 'Containers_Units', 'PCE_Equipment', 'Slickline_Tools', 'PPS_Gauge', 'Battery', 'ART', 'Cement', 'MPLT', 'Other'];
             assetTabs.forEach(t => { totalNodes += (appData[t] || []).length; });
 
-            // Hàm buildBranch được bổ sung bộ nhớ vết (ancestors) chống vòng lặp vô hạn
             function buildBranch(parentId, ancestors = new Set()) {
                 const cleanParent = cleanVal(parentId);
                 if (!cleanParent || ancestors.has(cleanParent)) return "";
@@ -795,7 +800,6 @@
         }
 
         function renderTable(tabName) {
-            // Xử lý riêng giao diện cho Tab Paper Work
             if (tabName === "Paper_Work") {
                 let rows = [...(appData["Paper_Work"] || [])];
                 document.getElementById("table-head").innerHTML = `
@@ -851,10 +855,9 @@
                 return;
             }
 
-            // Giao diện quản lý thiết bị thông thường
             let rows = [...(appData[tabName] || [])];
 
-            let activeColIndices = [0, 2, 3, 15, 26, 28]; // STT, Name, Serial, Location, Status, Remarks
+            let activeColIndices = [0, 2, 3, 15, 26, 28];
             for (let c = 0; c < UNIFIED_HEADERS.length; c++) {
                 if (c === 1) continue;
                 let hasData = rows.some(r => cleanVal(r[c]) !== "" && cleanVal(r[c]) !== "-");
