@@ -100,7 +100,7 @@
                     <button onclick="switchTab('Slickline_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Slickline_Tools">
                         <i class="fa-solid fa-screwdriver-wrench mr-1 text-sky-300"></i> Slickline Tools
                     </button>
-                    <button onclick="switchTab('Containers_Units')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Containers_Units">
+                    <button onclick="switchTab('Container')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Container">
                         <i class="fa-solid fa-box mr-1 text-amber-400"></i> Container & Box
                     </button>
                     
@@ -417,7 +417,7 @@
 
         let appData = {
             "Locations": [], "MPLT": [], "PPS_Gauge": [], "ART": [], "Cement": [], "Battery": [], "MPI_LT": [], 
-            "Containers_Units": [], "Unit": [], "Mast": [], "Power Pack": [], "Slickline_Tools": [], "Drums": [], 
+            "Container": [], "Unit": [], "Mast": [], "Power Pack": [], "Slickline_Tools": [], "Drums": [], 
             "Wires": [], "PCE_Equipment": [], "Mechanical_Tools": [], "Other": [], "Paper_Work": [], "Paper_Work_Help": []
         };
 
@@ -474,40 +474,59 @@
             document.querySelectorAll("[id^='dropdown-'], [id^='row-dropdown-']").forEach(d => d.classList.add("hidden"));
         }
 
+        function normKey(v) {
+            return cleanVal(v).replace(/\s+/g, ' ').trim();
+        }
+
+        function matchNodeId(row, targetId) {
+            if (!row || !targetId) return false;
+            const t = normKey(targetId).toLowerCase();
+            if (!t) return false;
+            const c1 = normKey(row[1]).toLowerCase();
+            const c3 = normKey(row[3]).toLowerCase();
+            const c2 = normKey(row[2]).toLowerCase();
+            return (c1 && c1 === t) || (c3 && c3 === t) || (c2 && c2 === t);
+        }
+
+        function getNodePrimaryId(row, fallbackIdx = 0) {
+            if (!row) return String(fallbackIdx + 1);
+            return normKey(row[1]) || normKey(row[3]) || normKey(row[2]) || normKey(row[0]) || String(fallbackIdx + 1);
+        }
+
         function getLocationName(locId) {
-            const cleanId = cleanVal(locId);
+            const cleanId = normKey(locId);
             if (!cleanId || cleanId === "N/A") return "N/A";
-            const foundLoc = (appData["Locations"] || []).find(l => cleanVal(l[1]) === cleanId || cleanVal(l[0]) === cleanId);
-            if (foundLoc) return cleanVal(foundLoc[2]) || cleanVal(foundLoc[5]) || cleanId;
-            for (let tName of ['Containers_Units', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment']) {
-                const item = (appData[tName] || []).find(i => i && (cleanVal(i[1]) === cleanId || cleanVal(i[3]) === cleanId));
+            const foundLoc = (appData["Locations"] || []).find(l => matchNodeId(l, cleanId));
+            if (foundLoc) return cleanVal(foundLoc[2]) || cleanVal(foundLoc[1]) || cleanVal(foundLoc[3]) || cleanId;
+            for (let tName of ['Container', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment']) {
+                const item = (appData[tName] || []).find(i => matchNodeId(i, cleanId));
                 if (item) return cleanVal(item[2]) || cleanVal(item[3]) || cleanId;
             }
             return cleanId;
         }
 
         function getLocationPath(locId) {
-            const cleanId = cleanVal(locId);
+            const cleanId = normKey(locId);
             if (!cleanId || cleanId === "N/A") return "Unknown Location (N/A)";
             const locs = appData["Locations"] || [];
             let path = [], currId = cleanId, visited = new Set();
-            while (currId && !visited.has(currId)) {
-                visited.add(currId);
-                const found = locs.find(l => cleanVal(l[1]) === currId || cleanVal(l[0]) === currId);
+            while (currId && !visited.has(currId.toLowerCase())) {
+                visited.add(currId.toLowerCase());
+                const found = locs.find(l => matchNodeId(l, currId));
                 if (found) {
-                    path.unshift(`${cleanVal(found[2]) || cleanVal(found[1])}`);
-                    currId = cleanVal(found[14]);
+                    path.unshift(`${cleanVal(found[2]) || getNodePrimaryId(found)}`);
+                    currId = normKey(found[14]);
                 } else {
                     let parentLocId = "";
-                    for (let tName of ['Containers_Units', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment']) {
-                        const item = (appData[tName] || []).find(i => i && (cleanVal(i[1]) === currId || cleanVal(i[3]) === currId));
+                    for (let tName of ['Container', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment']) {
+                        const item = (appData[tName] || []).find(i => matchNodeId(i, currId));
                         if (item) {
                             path.unshift(`${cleanVal(item[2]) || cleanVal(item[3]) || currId}`);
-                            parentLocId = cleanVal(item[14]);
+                            parentLocId = normKey(item[14]);
                             break;
                         }
                     }
-                    if (parentLocId && parentLocId !== currId) currId = parentLocId;
+                    if (parentLocId && parentLocId.toLowerCase() !== currId.toLowerCase()) currId = parentLocId;
                     else break;
                 }
             }
@@ -526,6 +545,8 @@
                         if (data._headers) delete data._headers;
                         if (data["Power_Pack"] && !data["Power Pack"]) data["Power Pack"] = data["Power_Pack"];
                         if (data["Slickline_Toolstrings"] && !data["Slickline_Tools"]) data["Slickline_Tools"] = data["Slickline_Toolstrings"];
+                        if (data["Containers_Units"] && (!data["Container"] || data["Container"].length === 0)) data["Container"] = data["Containers_Units"];
+                        delete data["Containers_Units"];
                         appData = { ...appData, ...data };
                         loadedFromServer = true;
                         indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
@@ -586,25 +607,84 @@
             renderTable(tabName);
         }
 
+        let activeExplorerLocId = null;
+
         function resetTreeFilter() {
+            activeExplorerLocId = null;
             currentFilteredLocId = null;
             document.getElementById("tree-filter-badge").classList.add("hidden");
+            highlightTreeSelection(null);
             renderTable(currentActiveTab);
         }
 
         function filterByTreeNode(locId) {
+            activeExplorerLocId = locId;
             currentFilteredLocId = locId;
             document.getElementById("tree-filter-badge").classList.remove("hidden");
+            expandAncestorsInTree(locId);
+            highlightTreeSelection(locId);
             renderLocationCombinedTable(locId);
         }
 
-        function toggleTreeNode(event, childId) {
+        function highlightTreeSelection(locId) {
+            const target = normKey(locId).toLowerCase();
+            document.querySelectorAll(".tree-row-box").forEach(el => {
+                if (target && normKey(el.dataset.locId).toLowerCase() === target) {
+                    el.classList.add("bg-sky-600/35", "border-sky-500/70", "text-white");
+                    el.classList.remove("bg-slate-800/40", "bg-slate-800/90", "border-transparent", "border-slate-700/50");
+                } else {
+                    el.classList.remove("bg-sky-600/35", "border-sky-500/70");
+                    if (el.dataset.isRoot === "1") {
+                        el.classList.add("bg-slate-800/90", "border-slate-700/50");
+                    } else {
+                        el.classList.add("bg-slate-800/40", "border-transparent");
+                    }
+                }
+            });
+        }
+
+        function expandAncestorsInTree(locId) {
+            if (!locId) return;
+            const locs = appData["Locations"] || [];
+            let curr = normKey(locId);
+            let visited = new Set();
+            while (curr && !visited.has(curr.toLowerCase())) {
+                visited.add(curr.toLowerCase());
+                const found = locs.find(l => matchNodeId(l, curr));
+                let parentId = found ? normKey(found[14]) : "";
+                if (!parentId) {
+                    for (let tName of ['Container', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment']) {
+                        const eq = (appData[tName] || []).find(i => matchNodeId(i, curr));
+                        if (eq) { parentId = normKey(eq[14]); break; }
+                    }
+                }
+                if (parentId) {
+                    const safePid = makeSafeDomId(parentId);
+                    const childEl = document.getElementById(`tree-child-${safePid}`);
+                    const iconEl = document.getElementById(`tree-icon-${safePid}`);
+                    if (childEl) childEl.classList.remove("hidden");
+                    if (iconEl) iconEl.className = "fa-solid fa-chevron-down text-sky-400 text-[10px]";
+                }
+                curr = parentId;
+            }
+        }
+
+        function makeSafeDomId(str) {
+            return normKey(str).replace(/[^a-zA-Z0-9_-]/g, '_');
+        }
+
+        function toggleTreeNode(event, safeChildId) {
             event.stopPropagation();
-            const childEl = document.getElementById(`tree-child-${childId}`);
-            const iconEl = document.getElementById(`tree-icon-${childId}`);
+            const childEl = document.getElementById(`tree-child-${safeChildId}`);
+            const iconEl = document.getElementById(`tree-icon-${safeChildId}`);
             if (childEl) {
+                const willShow = childEl.classList.contains("hidden");
                 childEl.classList.toggle("hidden");
-                if (iconEl) iconEl.className = childEl.classList.contains("hidden") ? "fa-solid fa-chevron-right text-slate-400 text-[10px] mr-1 p-0.5" : "fa-solid fa-chevron-down text-accent text-[10px] mr-1 p-0.5";
+                if (iconEl) {
+                    iconEl.className = willShow 
+                        ? "fa-solid fa-chevron-down text-sky-400 text-[10px]" 
+                        : "fa-solid fa-chevron-right text-slate-400 text-[10px]";
+                }
             }
         }
 
@@ -612,269 +692,337 @@
             document.querySelectorAll("[id^='tree-child-']").forEach(el => {
                 if (expand) el.classList.remove("hidden"); else el.classList.add("hidden");
             });
+            document.querySelectorAll("[id^='tree-icon-']").forEach(icon => {
+                icon.className = expand 
+                    ? "fa-solid fa-chevron-down text-sky-400 text-[10px]" 
+                    : "fa-solid fa-chevron-right text-slate-400 text-[10px]";
+            });
         }
 
-        // --- HÀM RENDER TREE ĐÃ ĐƯỢC TỐI ƯU CHỐNG LỖI MẤT KẾT NỐI ROOT ---
+        function getRootLocationNodes() {
+            const locs = appData["Locations"] || [];
+            let roots = locs.filter(l => {
+                const pId = normKey(l[14]);
+                if (!pId || pId === "-") return true;
+                return !locs.some(parent => matchNodeId(parent, pId));
+            });
+            if (roots.length === 0 && locs.length > 0) roots = [locs[0]];
+            return roots;
+        }
+
+        function getDirectChildrenOfNode(parentId) {
+            const cleanParent = normKey(parentId);
+            const targetLower = cleanParent.toLowerCase();
+            if (!targetLower) return { subLocations: [], equipments: [] };
+
+            const locs = appData["Locations"] || [];
+            const subLocations = locs
+                .map((row, idx) => ({ row, rowIndex: idx }))
+                .filter(item => {
+                    const p = normKey(item.row[14]).toLowerCase();
+                    const selfId = getNodePrimaryId(item.row, item.rowIndex).toLowerCase();
+                    return p === targetLower && selfId !== targetLower;
+                });
+
+            const equipmentCategories = [
+                { key: 'Container', label: 'Container / Box', icon: 'fa-solid fa-box text-amber-400', color: 'text-amber-300', isFolderLike: true },
+                { key: 'Unit', label: 'Unit', icon: 'fa-solid fa-truck-monster text-sky-400', color: 'text-sky-300', isFolderLike: true },
+                { key: 'Mast', label: 'Mast / Basket', icon: 'fa-solid fa-tower-cell text-emerald-400', color: 'text-emerald-300', isFolderLike: true },
+                { key: 'Power Pack', label: 'Power Pack', icon: 'fa-solid fa-car-battery text-amber-400', color: 'text-amber-300', isFolderLike: true },
+                { key: 'PCE_Equipment', label: 'PCE Equipment', icon: 'fa-solid fa-shield-halved text-purple-400', color: 'text-purple-300', isFolderLike: true },
+                { key: 'Drums', label: 'Drum', icon: 'fa-solid fa-dharmachakra text-amber-400', color: 'text-amber-300', isFolderLike: false },
+                { key: 'Wires', label: 'Wire', icon: 'fa-solid fa-circle-notch text-sky-400', color: 'text-sky-300', isFolderLike: false },
+                { key: 'Slickline_Tools', label: 'Slickline Tool', icon: 'fa-solid fa-screwdriver-wrench text-sky-300', color: 'text-sky-200', isFolderLike: false },
+                { key: 'Mechanical_Tools', label: 'Mechanical Tool', icon: 'fa-solid fa-wrench text-slate-300', color: 'text-slate-200', isFolderLike: false },
+                { key: 'MPLT', label: 'MPLT', icon: 'fa-solid fa-chart-line text-cyan-400', color: 'text-cyan-300', isFolderLike: false },
+                { key: 'PPS_Gauge', label: 'PPS Gauge', icon: 'fa-solid fa-gauge text-sky-400', color: 'text-sky-300', isFolderLike: false },
+                { key: 'Battery', label: 'Battery', icon: 'fa-solid fa-battery-full text-emerald-400', color: 'text-emerald-300', isFolderLike: false },
+                { key: 'ART', label: 'ART', icon: 'fa-solid fa-bolt text-amber-400', color: 'text-amber-300', isFolderLike: false },
+                { key: 'Cement', label: 'Cement Dump', icon: 'fa-solid fa-fill-drip text-rose-400', color: 'text-rose-300', isFolderLike: false },
+                { key: 'Other', label: 'Other', icon: 'fa-solid fa-box-archive text-slate-400', color: 'text-slate-300', isFolderLike: false }
+            ];
+
+            let equipments = [];
+            equipmentCategories.forEach(cat => {
+                (appData[cat.key] || []).forEach((item, rIdx) => {
+                    if (!item) return;
+                    const p = normKey(item[14]).toLowerCase();
+                    const selfId = getNodePrimaryId(item, rIdx);
+                    if (p === targetLower && selfId.toLowerCase() !== targetLower) {
+                        equipments.push({
+                            row: item,
+                            rowIndex: rIdx,
+                            id: selfId,
+                            code: normKey(item[1]),
+                            serialNo: normKey(item[3]),
+                            name: cleanVal(item[2]) || cat.label,
+                            category: cat.key,
+                            categoryLabel: cat.label,
+                            icon: cat.icon,
+                            textColor: cat.color,
+                            isFolderLike: cat.isFolderLike,
+                            status: cleanVal(item[26]) || 'Active'
+                        });
+                    }
+                });
+            });
+
+            return { subLocations, equipments };
+        }
+
+        // --- WINDOWS EXPLORER LEFT TREE (NAVIGATION PANE) ---
         function renderTree() {
             const container = document.getElementById("tree-container");
             const locs = appData["Locations"] || [];
             let totalNodes = locs.length;
-            ['Unit', 'Mast', 'Power Pack', 'Containers_Units', 'PCE_Equipment', 'Slickline_Tools', 'PPS_Gauge', 'Battery', 'ART', 'Cement', 'MPLT', 'Other'].forEach(t => { totalNodes += (appData[t] || []).length; });
+            ['Unit', 'Mast', 'Power Pack', 'Container', 'PCE_Equipment', 'Slickline_Tools', 'Drums', 'Wires', 'Mechanical_Tools', 'PPS_Gauge', 'Battery', 'ART', 'Cement', 'MPLT', 'Other'].forEach(t => {
+                totalNodes += (appData[t] || []).length;
+            });
 
             function buildBranch(parentId, ancestors = new Set()) {
-                const cleanParent = cleanVal(parentId);
-                if (!cleanParent || ancestors.has(cleanParent)) return "";
+                const cleanParent = normKey(parentId);
+                if (!cleanParent || ancestors.has(cleanParent.toLowerCase())) return "";
                 const currentAncestors = new Set(ancestors);
-                currentAncestors.add(cleanParent);
-                
-                // Lấy các Location con trực thuộc parentId
-                const childrenLocs = locs.filter(l => cleanVal(l[14]) === cleanParent);
-                
-                let attachedEquipments = [];
-                [
-                    { key: 'Containers_Units', icon: 'fa-solid fa-box text-orange-400', color: 'text-orange-300' },
-                    { key: 'Unit', icon: 'fa-solid fa-truck-monster text-sky-400', color: 'text-sky-300' },
-                    { key: 'PCE_Equipment', icon: 'fa-solid fa-shield-halved text-purple-400', color: 'text-purple-300' },
-                    { key: 'Slickline_Tools', icon: 'fa-solid fa-screwdriver-wrench text-sky-300', color: 'text-sky-200' }
-                ].forEach(cat => {
-                    (appData[cat.key] || []).forEach((item, rIdx) => {
-                        if (item && cleanVal(item[14]) === cleanParent) {
-                            attachedEquipments.push({ rowIndex: rIdx, id: cleanVal(item[1]) || cleanVal(item[3]), serialNo: cleanVal(item[3]), name: cleanVal(item[2]) || cat.key, category: cat.key, icon: cat.icon, textColor: cat.color });
-                        }
-                    });
-                });
+                currentAncestors.add(cleanParent.toLowerCase());
 
-                if (childrenLocs.length === 0 && attachedEquipments.length === 0) return "";
-                let html = `<div id="tree-child-${cleanParent}" class="pl-3 space-y-1 border-l border-slate-700/60 mt-1">`;
-                childrenLocs.forEach(child => {
-                    const locId = cleanVal(child[1]) || cleanVal(child[0]);
+                const { subLocations, equipments } = getDirectChildrenOfNode(cleanParent);
+                if (subLocations.length === 0 && equipments.length === 0) return "";
+
+                const safeParent = makeSafeDomId(cleanParent);
+                let html = `<div id="tree-child-${safeParent}" class="hidden pl-3.5 space-y-0.5 border-l border-slate-700/60 ml-2 mt-0.5">`;
+
+                // 1. Sub-locations
+                subLocations.forEach(({ row: child, rowIndex }) => {
+                    const locId = getNodePrimaryId(child, rowIndex);
+                    const safeId = makeSafeDomId(locId);
                     const locName = cleanVal(child[2]) || locId;
+                    const displayLabel = (locId && locId !== locName && !locId.startsWith("LOC_")) ? `${locName} (${locId})` : locName;
+                    const kids = getDirectChildrenOfNode(locId);
+                    const totalKids = kids.subLocations.length + kids.equipments.length;
+
+                    const chevronHtml = totalKids > 0
+                        ? `<span onclick="toggleTreeNode(event, '${safeId}')" class="w-4 h-4 inline-flex items-center justify-center rounded hover:bg-slate-600/70 shrink-0 mr-1"><i id="tree-icon-${safeId}" class="fa-solid fa-chevron-right text-slate-400 text-[10px]"></i></span>`
+                        : `<span class="w-4 h-4 inline-block shrink-0 mr-1"></span>`;
+
                     html += `
                         <div class="tree-node-item" data-loc-id="${locId}">
-                            <div class="flex items-center justify-between text-slate-200 bg-slate-800/40 hover:bg-slate-700/60 p-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${locId}')">
-                                <div class="flex items-center gap-1 truncate">
-                                    <i id="tree-icon-${locId}" onclick="toggleTreeNode(event, '${locId}')" class="fa-solid fa-chevron-down text-accent text-[10px] mr-1 p-0.5"></i>
-                                    <i class="fa-solid fa-warehouse text-accent text-xs mr-1"></i>
-                                    <span class="truncate font-medium">${locId} - ${locName}</span>
+                            <div data-loc-id="${locId}" data-is-root="0" class="tree-row-box flex items-center justify-between text-slate-200 bg-slate-800/40 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')">
+                                <div class="flex items-center truncate">
+                                    ${chevronHtml}
+                                    <i class="fa-solid fa-folder text-amber-400 text-xs mr-1.5 shrink-0"></i>
+                                    <span class="truncate font-medium">${displayLabel}</span>
                                 </div>
+                                ${totalKids > 0 ? `<span class="text-[10px] text-slate-500 ml-1 shrink-0">${totalKids}</span>` : ''}
                             </div>
-                            ${buildBranch(locId, currentAncestors)}
+                            ${totalKids > 0 ? buildBranch(locId, currentAncestors) : ''}
                         </div>`;
                 });
-                attachedEquipments.forEach(eq => {
-                    html += `
-                        <div class="tree-node-item pl-1 mt-1">
-                            <div class="flex items-center justify-between ${eq.textColor} bg-slate-800/60 hover:bg-slate-700 p-1.5 rounded transition cursor-pointer" onclick="openDetailModalByIndex('${eq.category}', ${eq.rowIndex})">
-                                <div class="flex items-center gap-1 truncate">
-                                    <i class="${eq.icon} text-xs mr-1"></i>
-                                    <span class="truncate font-medium">${eq.serialNo || eq.id} - ${eq.name}</span>
+
+                // 2. Equipments (Container, Unit, Mast, PCE Frame, Tools...)
+                equipments.forEach(eq => {
+                    const eqKids = getDirectChildrenOfNode(eq.id);
+                    const totalEqKids = eqKids.subLocations.length + eqKids.equipments.length;
+                    const safeEqId = makeSafeDomId(eq.id);
+                    const eqTitle = eq.serialNo && eq.serialNo !== eq.name ? `${eq.name} [${eq.serialNo}]` : eq.name;
+
+                    if (totalEqKids > 0) {
+                        // Equipment that acts as a parent container (e.g., Unit 25H08527, Mast Basket AMS-B19, Container AMS-C24)
+                        html += `
+                            <div class="tree-node-item" data-loc-id="${eq.id}">
+                                <div data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-center justify-between ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\'")}')">
+                                    <div class="flex items-center truncate">
+                                        <span onclick="toggleTreeNode(event, '${safeEqId}')" class="w-4 h-4 inline-flex items-center justify-center rounded hover:bg-slate-600/70 shrink-0 mr-1"><i id="tree-icon-${safeEqId}" class="fa-solid fa-chevron-right text-slate-400 text-[10px]"></i></span>
+                                        <i class="${eq.icon} text-[11px] mr-1.5 shrink-0"></i>
+                                        <span class="truncate font-medium">${eqTitle}</span>
+                                    </div>
+                                    <span class="text-[10px] text-slate-500 ml-1 shrink-0">${totalEqKids}</span>
                                 </div>
-                            </div>
-                        </div>`;
+                                ${buildBranch(eq.id, currentAncestors)}
+                            </div>`;
+                    } else {
+                        html += `
+                            <div class="tree-node-item">
+                                <div class="flex items-center justify-between ${eq.textColor} hover:bg-slate-800/80 px-1.5 py-1 rounded transition cursor-pointer" onclick="openDetailModalByIndex('${eq.category}', ${eq.rowIndex})">
+                                    <div class="flex items-center truncate">
+                                        <span class="w-4 h-4 inline-block shrink-0 mr-1"></span>
+                                        <i class="${eq.icon} text-[11px] mr-1.5 shrink-0"></i>
+                                        <span class="truncate">${eqTitle}</span>
+                                    </div>
+                                </div>
+                            </div>`;
+                    }
                 });
+
                 html += '</div>';
                 return html;
             }
 
             let rootHtml = "";
-            // Tự động tìm các nút gốc: có parentId trống hoặc parentId trỏ đến một ID không tồn tại trong sheet Locations
-            let rootNodes = locs.filter(l => {
-                const pId = cleanVal(l[14]);
-                if (!pId || pId === "-") return true;
-                return !locs.some(parent => cleanVal(parent[1]) === pId || cleanVal(parent[0]) === pId);
-            });
+            const rootNodes = getRootLocationNodes();
 
-            // Nếu dự phòng trường hợp tất cả đều có parentId mà không có nút gốc chuẩn, lấy mặc định bản ghi đầu tiên làm gốc
-            if (rootNodes.length === 0 && locs.length > 0) {
-                rootNodes = [locs[0]];
-            }
-
-            rootNodes.forEach(root => {
-                const locId = cleanVal(root[1]) || cleanVal(root[0]);
+            rootNodes.forEach((root, idx) => {
+                const locId = getNodePrimaryId(root, idx);
+                const safeId = makeSafeDomId(locId);
                 const locName = cleanVal(root[2]) || locId;
+                const rootKids = getDirectChildrenOfNode(locId);
+                const totalKids = rootKids.subLocations.length + rootKids.equipments.length;
+
+                const chevronHtml = totalKids > 0
+                    ? `<span onclick="toggleTreeNode(event, '${safeId}')" class="w-4 h-4 inline-flex items-center justify-center rounded hover:bg-slate-600/70 shrink-0 mr-1"><i id="tree-icon-${safeId}" class="fa-solid fa-chevron-right text-slate-400 text-[10px]"></i></span>`
+                    : `<span class="w-4 h-4 inline-block shrink-0 mr-1"></span>`;
+
                 rootHtml += `
-                    <div class="mb-1.5 tree-node-item">
-                        <div class="flex items-center justify-between text-white bg-slate-800/90 hover:bg-slate-700 p-2 rounded transition cursor-pointer font-semibold border border-slate-700/50" onclick="filterByTreeNode('${locId}')">
-                            <div class="flex items-center gap-1 truncate">
-                                <i id="tree-icon-${locId}" onclick="toggleTreeNode(event, '${locId}')" class="fa-solid fa-chevron-down text-accent text-[10px] mr-1 p-0.5"></i>
-                                <i class="fa-solid fa-warehouse text-emerald-400 text-xs mr-1"></i>
-                                <span class="truncate">${locId} - ${locName}</span>
+                    <div class="mb-1 tree-node-item" data-loc-id="${locId}">
+                        <div data-loc-id="${locId}" data-is-root="1" class="tree-row-box flex items-center justify-between text-white bg-slate-800/90 hover:bg-slate-700 px-2 py-1.5 rounded transition cursor-pointer font-semibold border border-slate-700/50" onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')">
+                            <div class="flex items-center truncate">
+                                ${chevronHtml}
+                                <i class="fa-solid fa-warehouse text-emerald-400 text-xs mr-1.5 shrink-0"></i>
+                                <span class="truncate">${locName}</span>
                             </div>
+                            ${totalKids > 0 ? `<span class="text-[10px] text-slate-400 ml-1 shrink-0">${totalKids}</span>` : ''}
                         </div>
-                        ${buildBranch(locId)}
+                        ${totalKids > 0 ? buildBranch(locId) : ''}
                     </div>`;
             });
+
             container.innerHTML = rootHtml || '<div class="text-slate-500 italic p-2">No location hierarchy found.</div>';
             document.getElementById("total-nodes-badge").innerText = `${totalNodes} nodes`;
+            if (activeExplorerLocId) {
+                expandAncestorsInTree(activeExplorerLocId);
+                highlightTreeSelection(activeExplorerLocId);
+            }
         }
 
         function filterTree(query) {
             const q = query.toLowerCase().trim();
+            if (q) expandAllTree(true);
+            else expandAllTree(false);
             document.querySelectorAll("#tree-container .tree-node-item").forEach(el => {
                 el.style.display = !q || el.innerText.toLowerCase().includes(q) ? "block" : "none";
             });
         }
 
         function filterCurrentTable(query) {
-            if (currentActiveTab === "Locations" && !currentFilteredLocId) {
-                renderLocationsTreeTable();
-            }
             const q = query.toLowerCase().trim();
             document.querySelectorAll("#table-body tr").forEach(tr => {
                 tr.style.display = !q || tr.innerText.toLowerCase().includes(q) ? "" : "none";
             });
         }
 
-        let expandedLocTableNodes = new Set();
-
-        function toggleLocationTableRow(event, locId) {
-            event.stopPropagation();
-            if (expandedLocTableNodes.has(locId)) {
-                expandedLocTableNodes.delete(locId);
-            } else {
-                expandedLocTableNodes.add(locId);
+        function buildLocationBreadcrumbHtml(locId) {
+            if (!locId) {
+                return `
+                    <div class="flex items-center gap-1.5 text-xs">
+                        <span class="text-sky-400 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-desktop"></i> Locations (Root Folders)</span>
+                    </div>`;
             }
-            renderLocationsTreeTable();
-        }
-
-        function expandAllLocationsTable(expand) {
             const locs = appData["Locations"] || [];
-            if (expand) {
-                locs.forEach(l => {
-                    const id = cleanVal(l[1]) || cleanVal(l[0]);
-                    if (id) expandedLocTableNodes.add(id);
-                });
-            } else {
-                expandedLocTableNodes.clear();
+            let chain = [];
+            let curr = normKey(locId);
+            let visited = new Set();
+            while (curr && !visited.has(curr.toLowerCase())) {
+                visited.add(curr.toLowerCase());
+                const found = locs.find(l => matchNodeId(l, curr));
+                if (found) {
+                    chain.unshift({ id: getNodePrimaryId(found), name: cleanVal(found[2]) || curr });
+                    curr = normKey(found[14]);
+                } else {
+                    let parentLocId = "";
+                    for (let tName of ['Container', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment']) {
+                        const eq = (appData[tName] || []).find(i => matchNodeId(i, curr));
+                        if (eq) {
+                            chain.unshift({ id: getNodePrimaryId(eq), name: cleanVal(eq[2]) || cleanVal(eq[3]) || curr });
+                            parentLocId = normKey(eq[14]);
+                            break;
+                        }
+                    }
+                    if (!parentLocId) {
+                        chain.unshift({ id: curr, name: getLocationName(curr) });
+                        break;
+                    }
+                    curr = parentLocId;
+                }
             }
-            renderLocationsTreeTable();
+
+            const parentLocId = chain.length > 1 ? chain[chain.length - 2].id : null;
+            const upBtn = parentLocId
+                ? `<button onclick="filterByTreeNode('${parentLocId.replace(/'/g, "\'")}')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition" title="Lên 1 cấp thư mục"><i class="fa-solid fa-arrow-up"></i></button>`
+                : `<button onclick="resetTreeFilter()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition" title="Về thư mục gốc"><i class="fa-solid fa-arrow-up"></i></button>`;
+
+            let partsHtml = `${upBtn}<button onclick="resetTreeFilter()" class="text-slate-400 hover:text-sky-400 transition font-medium"><i class="fa-solid fa-house text-[11px] mr-1"></i>Locations</button>`;
+            chain.forEach((node, idx) => {
+                const isLast = idx === chain.length - 1;
+                partsHtml += ` <i class="fa-solid fa-chevron-right text-[9px] text-slate-600 mx-1"></i> `;
+                if (isLast) {
+                    partsHtml += `<span class="text-white font-semibold">${node.name}</span>`;
+                } else {
+                    partsHtml += `<button onclick="filterByTreeNode('${node.id.replace(/'/g, "\'")}')" class="text-sky-400 hover:underline font-medium">${node.name}</button>`;
+                }
+            });
+            return `<div class="flex flex-wrap items-center gap-0.5 text-xs">${partsHtml}</div>`;
         }
 
+        // --- WINDOWS EXPLORER RIGHT PANE: ROOT VIEW ---
         function renderLocationsTreeTable() {
+            const roots = getRootLocationNodes();
             const locs = appData["Locations"] || [];
-            const searchQuery = (document.getElementById("table-search")?.value || "").toLowerCase().trim();
+
+            document.getElementById("current-table-title").innerHTML = buildLocationBreadcrumbHtml(null);
 
             document.getElementById("table-head").innerHTML = `
                 <tr>
                     <th class="px-3 py-3 w-12 text-center">No.</th>
-                    <th class="px-3 py-3 min-w-[280px]">
-                        <div class="flex items-center justify-between">
-                            <span>Asset Name / Location Hierarchy</span>
-                            <div class="flex gap-1">
-                                <button onclick="expandAllLocationsTable(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded text-[10px] border border-slate-700" title="Mở rộng tất cả"><i class="fa-solid fa-plus"></i> Mở hết</button>
-                                <button onclick="expandAllLocationsTable(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded text-[10px] border border-slate-700" title="Thu gọn tất cả"><i class="fa-solid fa-minus"></i> Thu gọn</button>
-                            </div>
-                        </div>
-                    </th>
-                    <th class="px-3 py-3">Asset ID / Code</th>
-                    <th class="px-3 py-3">Category / Type</th>
-                    <th class="px-3 py-3">Storage Location</th>
+                    <th class="px-3 py-3 min-w-[260px]">Name (Folder / Location)</th>
+                    <th class="px-3 py-3">Code / Serial No</th>
+                    <th class="px-3 py-3">Type</th>
+                    <th class="px-3 py-3">Items Inside</th>
                     <th class="px-3 py-3">Status</th>
                     <th class="px-3 py-3 text-right">Actions</th>
                 </tr>`;
 
-            if (locs.length === 0) {
-                document.getElementById("table-body").innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No data available in [Locations].</td></tr>`;
-                document.getElementById("current-table-title").innerText = "Management: Locations (Tree View)";
-                document.getElementById("record-count").innerText = "0 records";
+            if (roots.length === 0) {
+                document.getElementById("table-body").innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No root locations found.</td></tr>`;
+                document.getElementById("record-count").innerText = "0 folders";
                 return;
             }
 
-            // Build map of items with their original row index
-            const locItems = locs.map((row, idx) => ({
-                row,
-                index: idx,
-                id: cleanVal(row[1]) || cleanVal(row[0]),
-                name: cleanVal(row[2]) || cleanVal(row[1]) || cleanVal(row[0]),
-                parentId: cleanVal(row[14]),
-                category: cleanVal(row[5]) || '-',
-                storage: cleanVal(row[15]) || '-',
-                status: cleanVal(row[26]) || 'Active'
-            }));
-
-            const idSet = new Set(locItems.map(item => item.id).filter(Boolean));
-
-            // Identify root nodes (level 0): parentId is empty, "-", or not found in Locations
-            let roots = locItems.filter(item => !item.parentId || item.parentId === "-" || !idSet.has(item.parentId));
-            if (roots.length === 0 && locItems.length > 0) roots = [locItems[0]];
-
             let bodyHtml = "";
-            let visibleCount = 0;
+            roots.forEach((row, idx) => {
+                const origIndex = locs.indexOf(row);
+                const locId = getNodePrimaryId(row, origIndex);
+                const locName = cleanVal(row[2]) || locId;
+                const { subLocations, equipments } = getDirectChildrenOfNode(locId);
 
-            function renderNodeRows(nodes, level, ancestors = new Set()) {
-                nodes.forEach(item => {
-                    if (!item.id || ancestors.has(item.id)) return;
-                    const nextAncestors = new Set(ancestors);
-                    nextAncestors.add(item.id);
-
-                    const children = locItems.filter(c => c.parentId === item.id && c.id !== item.id);
-                    const hasChildren = children.length > 0;
-                    const isExpanded = searchQuery ? true : expandedLocTableNodes.has(item.id);
-
-                    const indentPx = level * 24;
-                    const levelBadge = level === 0 
-                        ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mr-1.5">Cấp 1</span>`
-                        : (level === 1 
-                            ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30 mr-1.5">Cấp 2</span>`
-                            : `<span class="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-300 mr-1.5">Cấp ${level + 1}</span>`);
-
-                    const toggleBtn = hasChildren
-                        ? `<button onclick="toggleLocationTableRow(event, '${item.id}')" class="w-5 h-5 inline-flex items-center justify-center rounded bg-slate-800 hover:bg-accent text-slate-200 hover:text-white border border-slate-600 mr-2 transition" title="${isExpanded ? 'Thu gọn' : 'Mở rộng'}">
-                               <i class="fa-solid ${isExpanded ? 'fa-minus' : 'fa-plus'} text-[10px]"></i>
-                           </button>`
-                        : `<span class="w-5 h-5 inline-flex items-center justify-center mr-2 text-slate-600"><i class="fa-solid fa-turn-up rotate-90 text-[10px]"></i></span>`;
-
-                    const folderIcon = level === 0
-                        ? `<i class="fa-solid fa-warehouse text-emerald-400 mr-1.5"></i>`
-                        : (hasChildren ? `<i class="fa-solid fa-folder-open text-amber-400 mr-1.5"></i>` : `<i class="fa-solid fa-box text-sky-400 mr-1.5"></i>`);
-
-                    visibleCount++;
-                    const rowBg = level === 0 ? "bg-slate-800/50 font-semibold" : "hover:bg-slate-800/40";
-
-                    bodyHtml += `
-                        <tr class="main-item-row ${rowBg} border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('Locations', ${item.index})">
-                            <td class="px-3 py-3 font-semibold text-slate-400 text-center">${cleanVal(item.row[0]) || (item.index + 1)}</td>
-                            <td class="px-3 py-3 text-slate-200 min-w-[280px] whitespace-nowrap">
-                                <div style="padding-left: ${indentPx}px;" class="flex items-center">
-                                    ${toggleBtn}
-                                    ${folderIcon}
-                                    ${levelBadge}
-                                    <span>${item.name}</span>
-                                    ${hasChildren ? `<span class="ml-2 text-[10px] text-slate-400">(${children.length} mục con)</span>` : ''}
-                                </div>
-                            </td>
-                            <td class="px-3 py-3 text-amber-300 font-mono whitespace-nowrap">${item.id}</td>
-                            <td class="px-3 py-3 text-slate-300 whitespace-nowrap">${item.category}</td>
-                            <td class="px-3 py-3 text-slate-300 whitespace-nowrap">${item.storage}</td>
-                            <td class="px-3 py-3 text-emerald-400 whitespace-nowrap">${item.status}</td>
-                            <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap relative" onclick="event.stopPropagation()">
-                                <div class="inline-block relative">
-                                    <button onclick="toggleRowActionDropdown(event, 'row-dropdown-Locations-${item.index}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded text-xs inline-flex items-center gap-1">
-                                        <i class="fa-solid fa-circle-info text-sky-400"></i> Xem <i class="fa-solid fa-chevron-down text-[9px]"></i>
-                                    </button>
-                                    <div id="row-dropdown-Locations-${item.index}" class="hidden absolute right-0 mt-1 w-52 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-30 py-1 divide-y divide-slate-800 text-left">
-                                        <button onclick="openDetailModalByIndex('Locations', ${item.index}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2">
-                                            <i class="fa-solid fa-eye text-sky-400"></i> Xem thông tin chi tiết
-                                        </button>
-                                        <button onclick="filterByTreeNode('${item.id}'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-amber-300 hover:bg-accent hover:text-white flex items-center gap-2">
-                                            <i class="fa-solid fa-boxes-stacked text-amber-400"></i> Xem danh sách thiết bị bên trong
-                                        </button>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>`;
-
-                    if (hasChildren && isExpanded) {
-                        renderNodeRows(children, level + 1, nextAncestors);
-                    }
-                });
-            }
-
-            renderNodeRows(roots, 0);
+                bodyHtml += `
+                    <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer select-none" onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')">
+                        <td class="px-3 py-3 text-slate-400 text-center font-medium">${idx + 1}</td>
+                        <td class="px-3 py-3 text-slate-100 font-semibold whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-warehouse text-emerald-400 text-sm"></i>
+                                <span>${locName}</span>
+                            </div>
+                        </td>
+                        <td class="px-3 py-3 text-amber-300 font-mono whitespace-nowrap">${locId}</td>
+                        <td class="px-3 py-3 text-slate-400 whitespace-nowrap">${cleanVal(row[5]) || 'Root Base / Location'}</td>
+                        <td class="px-3 py-3 whitespace-nowrap">
+                            <span class="bg-slate-800 text-sky-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">
+                                ${subLocations.length} folders, ${equipments.length} items
+                            </span>
+                        </td>
+                        <td class="px-3 py-3 text-emerald-400 whitespace-nowrap">${cleanVal(row[26]) || 'Active'}</td>
+                        <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap" onclick="event.stopPropagation()">
+                            <button onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition">
+                                <i class="fa-solid fa-folder-open mr-1"></i> Mở
+                            </button>
+                            <button onclick="openDetailModalByIndex('Locations', ${origIndex})" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded text-xs transition" title="Thông tin chi tiết">
+                                <i class="fa-solid fa-circle-info text-sky-400"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+            });
 
             document.getElementById("table-body").innerHTML = bodyHtml;
-            document.getElementById("current-table-title").innerText = "Management: Locations (Tree View)";
-            document.getElementById("record-count").innerText = `${visibleCount} / ${locs.length} locations`;
+            document.getElementById("record-count").innerText = `${roots.length} folders`;
         }
 
         function renderTable(tabName) {
@@ -951,7 +1099,9 @@
                 bodyHtml = `<tr><td colspan="${activeColIndices.length + 2}" class="px-4 py-8 text-center text-slate-500 italic">No data available in [${tabName}].</td></tr>`;
             } else {
                 rows.forEach((row, index) => {
-                    const rowUniqueId = getRowUniqueKey(row, index);
+                    const rowUniqueId = getNodePrimaryId(row, index);
+                    const subCheck = getDirectChildrenOfNode(rowUniqueId);
+                    const hasSubItems = (subCheck.subLocations.length + subCheck.equipments.length) > 0;
                     bodyHtml += `
                         <tr class="main-item-row hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('${tabName}', ${index})">
                             <td class="px-3 py-3 font-semibold text-slate-400 text-center">${cleanVal(row[0]) || (index + 1)}</td>`;
@@ -978,8 +1128,8 @@
                                         <button onclick="openDetailModalByIndex('${tabName}', ${index}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2">
                                             <i class="fa-solid fa-eye text-sky-400"></i> Xem thông tin chi tiết
                                         </button>
-                                        ${tabName === 'Locations' || tabName === 'Containers_Units' ? `
-                                        <button onclick="filterByTreeNode('${rowUniqueId}'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-amber-300 hover:bg-accent hover:text-white flex items-center gap-2">
+                                        ${hasSubItems || tabName === 'Container' ? `
+                                        <button onclick="filterByTreeNode('${rowUniqueId.replace(/'/g, "\'")}'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-amber-300 hover:bg-accent hover:text-white flex items-center gap-2">
                                             <i class="fa-solid fa-boxes-stacked text-amber-400"></i> Xem danh sách thiết bị bên trong
                                         </button>` : ''}
                                     </div>
@@ -993,79 +1143,113 @@
             document.getElementById("record-count").innerText = `${rows.length} records`;
         }
 
+        // --- WINDOWS EXPLORER RIGHT PANE: FOLDER CONTENTS VIEW ---
         function renderLocationCombinedTable(locId) {
-            const locName = getLocationName(locId);
-            document.getElementById("current-table-title").innerText = `EQUIPMENT AT LOCATION: ${locName.toUpperCase()} (${locId})`;
-            let combinedList = [];
-            Object.keys(appData).forEach(tName => {
-                if (['Locations', '_headers', 'Paper_Work', 'Paper_Work_Help'].includes(tName)) return;
-                (appData[tName] || []).forEach((item, rIdx) => {
-                    if (item) {
-                        const itemParentId = cleanVal(item[14]);
-                        const itemLocText = cleanVal(item[15]).toLowerCase();
-                        if (itemParentId === locId || itemLocText.includes(locId.toLowerCase()) || itemLocText.includes(locName.toLowerCase())) {
-                            combinedList.push({ 
-                                rowIndex: rIdx, 
-                                name: cleanVal(item[2]), 
-                                serialNo: cleanVal(item[3]), 
-                                location: cleanVal(item[15]) || getLocationPath(item[14]), 
-                                status: cleanVal(item[26]) || 'Active', 
-                                origTab: tName 
-                            });
-                        }
-                    }
-                });
-            });
+            document.getElementById("current-table-title").innerHTML = buildLocationBreadcrumbHtml(locId);
+
+            const { subLocations, equipments } = getDirectChildrenOfNode(locId);
+
+            document.getElementById("table-head").innerHTML = `
+                <tr>
+                    <th class="px-3 py-3 w-12 text-center">No.</th>
+                    <th class="px-3 py-3 min-w-[250px] max-w-[340px]">Name (Folder / Equipment)</th>
+                    <th class="px-3 py-3">Code / Serial No</th>
+                    <th class="px-3 py-3">Type / Group</th>
+                    <th class="px-3 py-3">Status</th>
+                    <th class="px-3 py-3 text-right">Actions</th>
+                </tr>`;
 
             let bodyHtml = "";
-            combinedList.forEach((item, idx) => {
+            let rowNum = 0;
+
+            // 1. Sub-Locations (Folders) first
+            subLocations.forEach(({ row, rowIndex }) => {
+                rowNum++;
+                const subId = getNodePrimaryId(row, rowIndex);
+                const subName = cleanVal(row[2]) || subId;
+                const grandKids = getDirectChildrenOfNode(subId);
+                const countText = `${grandKids.subLocations.length + grandKids.equipments.length} items`;
+
                 bodyHtml += `
-                    <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('${item.origTab}', ${item.rowIndex})">
-                        <td class="px-3 py-3 font-semibold text-slate-400 w-12 text-center align-top">${idx + 1}</td>
-                        <td class="px-3 py-3 text-slate-200 font-medium min-w-[220px] max-w-[300px] whitespace-normal break-words leading-snug align-top">${item.name}</td>
-                        <td class="px-3 py-3 text-amber-300 font-medium whitespace-nowrap align-top">${item.serialNo || '-'}</td>
-                        <td class="px-3 py-3 text-sky-300 min-w-[150px] max-w-[220px] whitespace-normal break-words align-top">${item.location || '-'}</td>
-                        <td class="px-3 py-3 text-emerald-400 whitespace-nowrap align-top">${item.status}</td>
-                        <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap align-top" onclick="event.stopPropagation()">
-                            <button onclick="openMoveModal('${item.origTab}', ${item.rowIndex})" class="bg-amber-600/20 hover:bg-amber-600 text-amber-300 hover:text-white border border-amber-500/30 px-2 py-1 rounded text-xs transition" title="Move Location">
+                    <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer select-none bg-slate-800/20" onclick="filterByTreeNode('${subId.replace(/'/g, "\'")}')">
+                        <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
+                        <td class="px-3 py-3 text-amber-200 font-semibold min-w-[250px] max-w-[340px] whitespace-normal break-words align-middle">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-folder text-amber-400 text-sm shrink-0"></i>
+                                <span>${subName}</span>
+                                <span class="text-[10px] text-slate-400 font-normal">(${countText})</span>
+                            </div>
+                        </td>
+                        <td class="px-3 py-3 text-amber-300 font-mono whitespace-nowrap align-middle">${subId}</td>
+                        <td class="px-3 py-3 text-slate-400 whitespace-nowrap align-middle"><span class="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded text-[11px]">${cleanVal(row[5]) || 'Sub-Location'}</span></td>
+                        <td class="px-3 py-3 text-emerald-400 whitespace-nowrap align-middle">${cleanVal(row[26]) || 'Active'}</td>
+                        <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap align-middle" onclick="event.stopPropagation()">
+                            <button onclick="filterByTreeNode('${subId.replace(/'/g, "\'")}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition">
+                                <i class="fa-solid fa-folder-open mr-1"></i> Mở
+                            </button>
+                            <button onclick="openDetailModalByIndex('Locations', ${rowIndex})" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded text-xs transition" title="Xem chi tiết vị trí">
+                                <i class="fa-solid fa-circle-info text-sky-400"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+            });
+
+            // 2. Equipments inside this folder
+            equipments.forEach(item => {
+                rowNum++;
+                const kidsCheck = getDirectChildrenOfNode(item.id);
+                const hasInside = (kidsCheck.subLocations.length + kidsCheck.equipments.length) > 0;
+                const rowAction = hasInside
+                    ? `filterByTreeNode('${item.id.replace(/'/g, "\'")}')`
+                    : `openDetailModalByIndex('${item.category}', ${item.rowIndex})`;
+
+                bodyHtml += `
+                    <tr class="hover:bg-slate-800/50 border-b border-slate-800/80 transition cursor-pointer" onclick="${rowAction}">
+                        <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
+                        <td class="px-3 py-3 text-slate-200 font-medium min-w-[250px] max-w-[340px] whitespace-normal break-words leading-snug align-middle">
+                            <div class="flex items-center gap-2">
+                                <i class="${item.icon} text-sm shrink-0"></i>
+                                <span>${item.name}</span>
+                                ${hasInside ? `<span class="text-[10px] text-amber-300 font-normal">(${kidsCheck.subLocations.length + kidsCheck.equipments.length} items)</span>` : ''}
+                            </div>
+                        </td>
+                        <td class="px-3 py-3 text-sky-300 font-mono whitespace-nowrap align-middle">${item.serialNo || item.code || item.id || '-'}</td>
+                        <td class="px-3 py-3 text-slate-400 whitespace-nowrap align-middle"><span class="bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${item.categoryLabel}</span></td>
+                        <td class="px-3 py-3 text-emerald-400 whitespace-nowrap align-middle">${item.status}</td>
+                        <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap align-middle" onclick="event.stopPropagation()">
+                            ${hasInside ? `<button onclick="filterByTreeNode('${item.id.replace(/'/g, "\'")}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2 py-1 rounded text-xs transition" title="Mở bên trong"><i class="fa-solid fa-folder-open mr-1"></i> Mở</button>` : ''}
+                            <button onclick="openMoveModal('${item.category}', ${item.rowIndex})" class="bg-amber-600/20 hover:bg-amber-600 text-amber-300 hover:text-white border border-amber-500/30 px-2 py-1 rounded text-xs transition" title="Move Location">
                                 <i class="fa-solid fa-right-left"></i> Move
                             </button>
-                            <button onclick="openDetailModalByIndex('${item.origTab}', ${item.rowIndex})" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-xs text-sky-400">
+                            <button onclick="openDetailModalByIndex('${item.category}', ${item.rowIndex})" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-xs text-sky-400">
                                 <i class="fa-solid fa-circle-info mr-1"></i> Xem
                             </button>
                         </td>
                     </tr>`;
             });
-            
-            document.getElementById("table-head").innerHTML = `
-                <tr>
-                    <th class="px-3 py-3 w-12 text-center">No.</th>
-                    <th class="px-3 py-3 min-w-[220px] max-w-[300px]">Equipment Name</th>
-                    <th class="px-3 py-3">Serial No</th>
-                    <th class="px-3 py-3 min-w-[150px]">Storage Location</th>
-                    <th class="px-3 py-3">Status</th>
-                    <th class="px-3 py-3 text-right">Action</th>
-                </tr>`;
-            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500 italic">Không có thiết bị nào bên trong vị trí này.</td></tr>`;
-            document.getElementById("record-count").innerText = `${combinedList.length} items`;
+
+            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500 italic">Thư mục này hiện đang trống (0 mục con).</td></tr>`;
+            document.getElementById("record-count").innerText = `${subLocations.length} folders, ${equipments.length} items`;
         }
 
         // --- CASCADING LOCATION NODES ---
         function getAllLocationNodes() {
             let nodes = [];
-            (appData["Locations"] || []).forEach(l => {
-                const id = cleanVal(l[1]) || cleanVal(l[0]);
+            (appData["Locations"] || []).forEach((l, idx) => {
+                const id = getNodePrimaryId(l, idx);
                 const name = cleanVal(l[2]) || id;
-                const parentId = cleanVal(l[14]);
-                if (id) nodes.push({ id, name, parentId, type: cleanVal(l[5]) || 'Location' });
+                const parentId = normKey(l[14]);
+                if (id && !nodes.some(n => n.id.toLowerCase() === id.toLowerCase())) {
+                    nodes.push({ id, name, parentId, type: cleanVal(l[5]) || 'Location' });
+                }
             });
-            ['Containers_Units'].forEach(cat => {
-                (appData[cat] || []).forEach(item => {
-                    const id = cleanVal(item[1]) || cleanVal(item[3]);
+            ['Container', 'Unit', 'Mast', 'Power Pack'].forEach(cat => {
+                (appData[cat] || []).forEach((item, idx) => {
+                    const id = getNodePrimaryId(item, idx);
                     const name = cleanVal(item[2]) || cleanVal(item[3]) || id;
-                    const parentId = cleanVal(item[14]);
-                    if (id && !nodes.some(n => n.id === id)) {
-                        nodes.push({ id, name: `[Container] ${name}`, parentId, type: cat });
+                    const parentId = normKey(item[14]);
+                    if (id && !nodes.some(n => n.id.toLowerCase() === id.toLowerCase())) {
+                        nodes.push({ id, name: `[${cat}] ${name}`, parentId, type: cat });
                     }
                 });
             });
