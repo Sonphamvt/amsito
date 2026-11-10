@@ -44,22 +44,33 @@
             </div>
             <div>
                 <h1 class="text-base md:text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-[11px] text-slate-400">Asset & Maintenance Management System (Standardized 29-Cols)</p>
+                <p class="text-[11px] text-slate-400" data-i18n="subtitle">Asset & Maintenance Management System (Standardized 29-Cols)</p>
             </div>
         </div>
         
         <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-end">
+            <!-- Language Switcher (UK Flag = English, VN Flag = Vietnamese) -->
+            <div class="flex items-center bg-slate-900/90 border border-slate-700 rounded-lg p-1 gap-1" title="Switch Language / Chuyển ngôn ngữ">
+                <button type="button" onclick="setLanguage('en')" id="btn-lang-en" class="px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white" title="English">
+                    <svg class="w-4 h-3 rounded-[2px] shrink-0" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><g clip-path="url(#s)"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></g></svg>
+                    <span>EN</span>
+                </button>
+                <button type="button" onclick="setLanguage('vi')" id="btn-lang-vi" class="px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-transparent text-slate-400 hover:text-white" title="Tiếng Việt">
+                    <svg class="w-4 h-3 rounded-[2px] shrink-0" viewBox="0 0 30 20"><rect width="30" height="20" fill="#da251d"/><polygon points="15,4 11.47,14.85 20.71,8.15 9.29,8.15 18.53,14.85" fill="#ffff00"/></svg>
+                    <span>VI</span>
+                </button>
+            </div>
             <span id="sync-status" class="text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5">
                 <i class="fa-solid fa-cloud-arrow-up"></i> Connected
             </span>
             <button onclick="initData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition" title="Reload from Google Sheets">
-                <i class="fa-solid fa-rotate"></i> Sync
+                <i class="fa-solid fa-rotate"></i> <span data-i18n="btn_sync">Sync</span>
             </button>
             <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm flex items-center gap-1.5 transition shadow-md">
-                <i class="fa-solid fa-plus"></i> Add Equipment / Location
+                <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add Equipment / Location</span>
             </button>
             <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-download"></i> Backup
+                <i class="fa-solid fa-download"></i> <span data-i18n="btn_backup">Backup</span>
             </button>
         </div>
     </header>
@@ -71,7 +82,7 @@
         <aside class="lg:col-span-1 bg-cardbg border border-slate-700/60 rounded-xl p-4 shadow-xl flex flex-col h-[68vh] lg:h-[80vh]">
             <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-3">
                 <h2 class="text-xs md:text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                    <i class="fa-solid fa-sitemap text-accent"></i> Locations & Hierarchy
+                    <i class="fa-solid fa-sitemap text-accent"></i> <span data-i18n="sidebar_title">Locations & Hierarchy</span>
                 </h2>
                 <span id="total-nodes-badge" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">0 nodes</span>
             </div>
@@ -79,7 +90,7 @@
             <div class="mb-3 flex gap-1.5">
                 <div class="relative flex-1">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                    <input type="text" id="tree-search" placeholder="Search tree..." oninput="filterTree(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-accent">
+                    <input type="text" id="tree-search" placeholder="Search tree..." data-i18n-placeholder="search_tree" oninput="filterTree(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-accent">
                 </div>
                 <button onclick="expandAllTree(true)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-lg text-xs border border-slate-700" title="Expand All"><i class="fa-solid fa-angles-down"></i></button>
                 <button onclick="expandAllTree(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-lg text-xs border border-slate-700" title="Collapse All"><i class="fa-solid fa-angles-up"></i></button>
@@ -95,13 +106,13 @@
             <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md relative">
                 <div class="flex flex-wrap gap-1.5 items-center justify-start" id="tab-buttons">
                     <button onclick="switchTab('Locations')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations">
-                        <i class="fa-solid fa-location-dot mr-1"></i> Locations
+                        <i class="fa-solid fa-location-dot mr-1"></i> <span data-i18n="tab_locations">Locations</span>
                     </button>
                     <button onclick="switchTab('Slickline_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Slickline_Tools">
-                        <i class="fa-solid fa-screwdriver-wrench mr-1 text-sky-300"></i> Slickline Tools
+                        <i class="fa-solid fa-screwdriver-wrench mr-1 text-sky-300"></i> <span data-i18n="tab_slickline">Slickline Tools</span>
                     </button>
                     <button onclick="switchTab('Container')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Container">
-                        <i class="fa-solid fa-box mr-1 text-amber-400"></i> Container & Box
+                        <i class="fa-solid fa-box mr-1 text-amber-400"></i> <span data-i18n="tab_container">Container & Box</span>
                     </button>
                     
                     <!-- Dropdown: Unit, Mast & Power Pack -->
@@ -128,11 +139,11 @@
                     </div>
 
                     <button onclick="switchTab('PCE_Equipment')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="PCE_Equipment">
-                        <i class="fa-solid fa-shield-halved mr-1 text-purple-400"></i> PCE Packages & Sets
+                        <i class="fa-solid fa-shield-halved mr-1 text-purple-400"></i> <span data-i18n="tab_pce">PCE Packages & Sets</span>
                     </button>
 
                     <button onclick="switchTab('Mechanical_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Mechanical_Tools">
-                        <i class="fa-solid fa-wrench mr-1"></i> Mechanical Tools
+                        <i class="fa-solid fa-wrench mr-1"></i> <span data-i18n="tab_mech">Mechanical Tools</span>
                     </button>
 
                     <!-- Dropdown: Logging -->
@@ -156,7 +167,7 @@
 
                     <!-- Tab Paper Work -->
                     <button onclick="switchTab('Paper_Work')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Paper_Work">
-                        <i class="fa-solid fa-folder-open mr-1 text-emerald-400"></i> Paper Work
+                        <i class="fa-solid fa-folder-open mr-1 text-emerald-400"></i> <span data-i18n="tab_paperwork">Paper Work</span>
                     </button>
                 </div>
             </div>
@@ -167,11 +178,11 @@
                     <div class="flex items-center gap-2">
                         <h3 id="current-table-title" class="font-semibold text-xs md:text-sm text-white uppercase tracking-wide">List</h3>
                         <span id="tree-filter-badge" class="hidden text-[11px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-md">
-                            Filtered by Location <button onclick="resetTreeFilter()" class="ml-1 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+                            <span data-i18n="filtered_by">Filtered by Location</span> <button onclick="resetTreeFilter()" class="ml-1 text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
                         </span>
                     </div>
                     <div class="flex items-center gap-3">
-                        <input type="text" id="table-search" placeholder="Filter table..." oninput="filterCurrentTable(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-accent w-40 md:w-52">
+                        <input type="text" id="table-search" placeholder="Filter table..." data-i18n-placeholder="filter_table" oninput="filterCurrentTable(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-accent w-40 md:w-52">
                         <div class="text-xs text-slate-400" id="record-count">0 records</div>
                     </div>
                 </div>
@@ -964,6 +975,93 @@
         }
 
 
+        let currentLang = localStorage.getItem("amsito_ui_lang") || "en";
+
+        const I18N = {
+            en: {
+                subtitle: "Asset & Maintenance Management System (Standardized 29-Cols)",
+                btn_sync: "Sync",
+                btn_add: "Add Equipment / Location",
+                btn_backup: "Backup",
+                sidebar_title: "Locations & Hierarchy",
+                search_tree: "Search tree...",
+                filter_table: "Filter table...",
+                tab_locations: "Locations",
+                tab_slickline: "Slickline Tools",
+                tab_container: "Container & Box",
+                tab_pce: "PCE Packages & Sets",
+                tab_mech: "Mechanical Tools",
+                tab_paperwork: "Paper Work",
+                filtered_by: "Filtered by Location",
+                act_open: "Open",
+                act_menu: "Actions",
+                act_view: "View Details",
+                act_edit: "Edit Info",
+                act_copy: "Copy (Duplicate)",
+                act_move: "Move Location",
+                act_delete: "Delete",
+                confirm_delete: "Delete this record? It will also be removed from Google Sheets."
+            },
+            vi: {
+                subtitle: "Hệ Thống Quản Lý Tài Sản & Bảo Trì (Chuẩn 29 Cột)",
+                btn_sync: "Đồng bộ",
+                btn_add: "Thêm Thiết Bị / Vị Trí",
+                btn_backup: "Sao lưu",
+                sidebar_title: "Vị Trí & Phân Cấp Kho",
+                search_tree: "Tìm trên cây thư mục...",
+                filter_table: "Lọc nhanh trong bảng...",
+                tab_locations: "Vị Trí (Locations)",
+                tab_slickline: "Dụng Cụ Slickline",
+                tab_container: "Container & Hộp Đồ",
+                tab_pce: "Cụm Thiết Bị PCE",
+                tab_mech: "Dụng Cụ Cơ Khí",
+                tab_paperwork: "Hồ Sơ / Biểu Mẫu",
+                filtered_by: "Đang lọc theo vị trí",
+                act_open: "Mở",
+                act_menu: "Thao tác",
+                act_view: "Xem chi tiết",
+                act_edit: "Sửa thông tin",
+                act_copy: "Copy (Tạo bản sao)",
+                act_move: "Di chuyển (Move)",
+                act_delete: "Xóa bản ghi",
+                confirm_delete: "Xóa bản ghi này? Dữ liệu trên Google Sheets cũng sẽ bị xóa đồng bộ."
+            }
+        };
+
+        function t(key) {
+            return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+        }
+
+        function setLanguage(lang) {
+            currentLang = (lang === "vi") ? "vi" : "en";
+            localStorage.setItem("amsito_ui_lang", currentLang);
+            document.documentElement.lang = currentLang;
+
+            const btnEn = document.getElementById("btn-lang-en");
+            const btnVi = document.getElementById("btn-lang-vi");
+            if (btnEn && btnVi) {
+                if (currentLang === "en") {
+                    btnEn.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white";
+                    btnVi.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-transparent text-slate-400 hover:text-white";
+                } else {
+                    btnVi.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white";
+                    btnEn.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-transparent text-slate-400 hover:text-white";
+                }
+            }
+
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (I18N[currentLang][key]) el.innerText = I18N[currentLang][key];
+            });
+            document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+                const key = el.getAttribute("data-i18n-placeholder");
+                if (I18N[currentLang][key]) el.placeholder = I18N[currentLang][key];
+            });
+
+            if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
+            else renderTable(currentActiveTab);
+        }
+
         function buildUnifiedActionMenuHtml(tabName, rowIndex, options = {}) {
             const {
                 canOpenFolder = false,
@@ -977,29 +1075,29 @@
             return `
                 <div class="inline-flex items-center justify-end gap-1.5" onclick="event.stopPropagation()">
                     ${canOpenFolder ? `
-                    <button onclick="filterByTreeNode('${safeFolderId}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition" title="Mở thư mục bên trong">
-                        <i class="fa-solid fa-folder-open mr-1"></i> Mở
+                    <button onclick="filterByTreeNode('${safeFolderId}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition" title="${t('act_open')}">
+                        <i class="fa-solid fa-folder-open mr-1"></i> ${t('act_open')}
                     </button>` : ''}
                     <div class="relative inline-block text-left">
                         <button onclick="toggleRowActionDropdown(event, '${dropdownUniqueId}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1 rounded text-xs inline-flex items-center gap-1.5 transition shadow-sm">
-                            <i class="fa-solid fa-ellipsis-vertical text-sky-400"></i> Thao tác <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                            <i class="fa-solid fa-ellipsis-vertical text-sky-400"></i> ${t('act_menu')} <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                         </button>
                         <div id="${dropdownUniqueId}" class="hidden absolute right-0 mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-40 py-1 divide-y divide-slate-800/80 text-left">
                             <button onclick="openDetailModalByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-eye text-sky-400 w-4 text-center"></i> Xem chi tiết
+                                <i class="fa-solid fa-eye text-sky-400 w-4 text-center"></i> ${t('act_view')}
                             </button>
                             <button onclick="openEditModalByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-pen-to-square text-emerald-400 w-4 text-center"></i> Sửa thông tin
+                                <i class="fa-solid fa-pen-to-square text-emerald-400 w-4 text-center"></i> ${t('act_edit')}
                             </button>
                             <button onclick="copyItemByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-copy text-purple-400 w-4 text-center"></i> Copy (Tạo bản sao)
+                                <i class="fa-solid fa-copy text-purple-400 w-4 text-center"></i> ${t('act_copy')}
                             </button>
                             ${canMove ? `
                             <button onclick="openMoveModal('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-amber-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-right-left text-amber-400 w-4 text-center"></i> Di chuyển (Move)
+                                <i class="fa-solid fa-right-left text-amber-400 w-4 text-center"></i> ${t('act_move')}
                             </button>` : ''}
                             <button onclick="deleteItemByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-rose-300 hover:bg-rose-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-trash-can text-rose-400 w-4 text-center"></i> Xóa
+                                <i class="fa-solid fa-trash-can text-rose-400 w-4 text-center"></i> ${t('act_delete')}
                             </button>
                         </div>
                     </div>
@@ -1603,10 +1701,17 @@
         }
 
         function deleteItemByIndex(tabName, rowIndex) {
-            if (!confirm(`Xóa bản ghi này?`)) return;
+            if (!confirm(t('confirm_delete'))) return;
+            const row = (appData[tabName] || [])[rowIndex];
+            const rowKey = getRowUniqueKey(row, rowIndex);
             appData[tabName].splice(rowIndex, 1);
+            syncToGoogleSheet("delete", tabName, row, rowKey);
             saveDataLocal();
-            renderTable(currentActiveTab);
+            if (currentFilteredLocId) {
+                renderLocationCombinedTable(currentFilteredLocId);
+            } else {
+                renderTable(currentActiveTab);
+            }
         }
 
         function exportJSON() {
@@ -1618,7 +1723,10 @@
             downloadAnchor.remove();
         }
 
-        window.onload = initData;
+        window.onload = function() {
+            setLanguage(currentLang);
+            initData();
+        };
     </script>
 </body>
 </html>
