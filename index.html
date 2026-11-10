@@ -841,13 +841,14 @@
                             </div>`;
                     } else {
                         html += `
-                            <div class="tree-node-item">
-                                <div class="flex items-center justify-between ${eq.textColor} hover:bg-slate-800/80 px-1.5 py-1 rounded transition cursor-pointer" onclick="openDetailModalByIndex('${eq.category}', ${eq.rowIndex})">
+                            <div class="tree-node-item" data-loc-id="${eq.id}">
+                                <div data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-center justify-between ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\'")}')">
                                     <div class="flex items-center truncate">
                                         <span class="w-4 h-4 inline-block shrink-0 mr-1"></span>
                                         <i class="${eq.icon} text-[11px] mr-1.5 shrink-0"></i>
                                         <span class="truncate">${eqTitle}</span>
                                     </div>
+                                    <button onclick="event.stopPropagation(); openDetailModalByIndex('${eq.category}', ${eq.rowIndex})" class="text-slate-500 hover:text-sky-400 px-1 text-[11px]" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
                                 </div>
                             </div>`;
                     }
@@ -962,6 +963,50 @@
             return `<div class="flex flex-wrap items-center gap-0.5 text-xs">${partsHtml}</div>`;
         }
 
+
+        function buildUnifiedActionMenuHtml(tabName, rowIndex, options = {}) {
+            const {
+                canOpenFolder = false,
+                folderTargetId = "",
+                canMove = true,
+                dropdownUniqueId = `row-dropdown-${tabName}-${rowIndex}-${Math.random().toString(36).slice(2, 6)}`
+            } = options;
+
+            const safeFolderId = folderTargetId ? folderTargetId.replace(/'/g, "\\'") : "";
+
+            return `
+                <div class="inline-flex items-center justify-end gap-1.5" onclick="event.stopPropagation()">
+                    ${canOpenFolder ? `
+                    <button onclick="filterByTreeNode('${safeFolderId}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition" title="Mở thư mục bên trong">
+                        <i class="fa-solid fa-folder-open mr-1"></i> Mở
+                    </button>` : ''}
+                    <div class="relative inline-block text-left">
+                        <button onclick="toggleRowActionDropdown(event, '${dropdownUniqueId}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1 rounded text-xs inline-flex items-center gap-1.5 transition shadow-sm">
+                            <i class="fa-solid fa-ellipsis-vertical text-sky-400"></i> Thao tác <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                        </button>
+                        <div id="${dropdownUniqueId}" class="hidden absolute right-0 mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-40 py-1 divide-y divide-slate-800/80 text-left">
+                            <button onclick="openDetailModalByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
+                                <i class="fa-solid fa-eye text-sky-400 w-4 text-center"></i> Xem chi tiết
+                            </button>
+                            <button onclick="openEditModalByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
+                                <i class="fa-solid fa-pen-to-square text-emerald-400 w-4 text-center"></i> Sửa thông tin
+                            </button>
+                            <button onclick="copyItemByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
+                                <i class="fa-solid fa-copy text-purple-400 w-4 text-center"></i> Copy (Tạo bản sao)
+                            </button>
+                            ${canMove ? `
+                            <button onclick="openMoveModal('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-amber-600 hover:text-white flex items-center gap-2 transition">
+                                <i class="fa-solid fa-right-left text-amber-400 w-4 text-center"></i> Di chuyển (Move)
+                            </button>` : ''}
+                            <button onclick="deleteItemByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-rose-300 hover:bg-rose-600 hover:text-white flex items-center gap-2 transition">
+                                <i class="fa-solid fa-trash-can text-rose-400 w-4 text-center"></i> Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         // --- WINDOWS EXPLORER RIGHT PANE: ROOT VIEW ---
         function renderLocationsTreeTable() {
             const roots = getRootLocationNodes();
@@ -1010,13 +1055,13 @@
                             </span>
                         </td>
                         <td class="px-3 py-3 text-emerald-400 whitespace-nowrap">${cleanVal(row[26]) || 'Active'}</td>
-                        <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap" onclick="event.stopPropagation()">
-                            <button onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition">
-                                <i class="fa-solid fa-folder-open mr-1"></i> Mở
-                            </button>
-                            <button onclick="openDetailModalByIndex('Locations', ${origIndex})" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded text-xs transition" title="Thông tin chi tiết">
-                                <i class="fa-solid fa-circle-info text-sky-400"></i>
-                            </button>
+                        <td class="px-3 py-3 text-right whitespace-nowrap" onclick="event.stopPropagation()">
+                            ${buildUnifiedActionMenuHtml('Locations', origIndex, {
+                                canOpenFolder: true,
+                                folderTargetId: locId,
+                                canMove: true,
+                                dropdownUniqueId: `row-dropdown-root-${origIndex}`
+                            })}
                         </td>
                     </tr>`;
             });
@@ -1117,23 +1162,13 @@
                         }
                     });
                     bodyHtml += `
-                            <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap relative" onclick="event.stopPropagation()">
-                                ${tabName !== 'Locations' ? `<button onclick="openMoveModal('${tabName}', ${index})" class="bg-amber-600/20 hover:bg-amber-600 text-amber-300 hover:text-white border border-amber-500/30 px-2 py-1 rounded text-xs transition" title="Move Location"><i class="fa-solid fa-right-left"></i> Move</button>` : ''}
-                                
-                                <div class="inline-block relative">
-                                    <button onclick="toggleRowActionDropdown(event, 'row-dropdown-${tabName}-${index}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded text-xs inline-flex items-center gap-1">
-                                        <i class="fa-solid fa-circle-info text-sky-400"></i> Xem <i class="fa-solid fa-chevron-down text-[9px]"></i>
-                                    </button>
-                                    <div id="row-dropdown-${tabName}-${index}" class="hidden absolute right-0 mt-1 w-52 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-30 py-1 divide-y divide-slate-800 text-left">
-                                        <button onclick="openDetailModalByIndex('${tabName}', ${index}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2">
-                                            <i class="fa-solid fa-eye text-sky-400"></i> Xem thông tin chi tiết
-                                        </button>
-                                        ${hasSubItems || tabName === 'Container' ? `
-                                        <button onclick="filterByTreeNode('${rowUniqueId.replace(/'/g, "\'")}'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-amber-300 hover:bg-accent hover:text-white flex items-center gap-2">
-                                            <i class="fa-solid fa-boxes-stacked text-amber-400"></i> Xem danh sách thiết bị bên trong
-                                        </button>` : ''}
-                                    </div>
-                                </div>
+                            <td class="px-3 py-3 text-right whitespace-nowrap" onclick="event.stopPropagation()">
+                                ${buildUnifiedActionMenuHtml(tabName, index, {
+                                    canOpenFolder: (hasSubItems || tabName === 'Container'),
+                                    folderTargetId: rowUniqueId,
+                                    canMove: true,
+                                    dropdownUniqueId: `row-dropdown-${tabName}-${index}`
+                                })}
                             </td>
                         </tr>`;
                 });
@@ -1183,13 +1218,13 @@
                         <td class="px-3 py-3 text-amber-300 font-mono whitespace-nowrap align-middle">${subId}</td>
                         <td class="px-3 py-3 text-slate-400 whitespace-nowrap align-middle"><span class="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded text-[11px]">${cleanVal(row[5]) || 'Sub-Location'}</span></td>
                         <td class="px-3 py-3 text-emerald-400 whitespace-nowrap align-middle">${cleanVal(row[26]) || 'Active'}</td>
-                        <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap align-middle" onclick="event.stopPropagation()">
-                            <button onclick="filterByTreeNode('${subId.replace(/'/g, "\'")}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition">
-                                <i class="fa-solid fa-folder-open mr-1"></i> Mở
-                            </button>
-                            <button onclick="openDetailModalByIndex('Locations', ${rowIndex})" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded text-xs transition" title="Xem chi tiết vị trí">
-                                <i class="fa-solid fa-circle-info text-sky-400"></i>
-                            </button>
+                        <td class="px-3 py-3 text-right whitespace-nowrap align-middle" onclick="event.stopPropagation()">
+                            ${buildUnifiedActionMenuHtml('Locations', rowIndex, {
+                                canOpenFolder: true,
+                                folderTargetId: subId,
+                                canMove: true,
+                                dropdownUniqueId: `row-dropdown-subloc-${rowIndex}`
+                            })}
                         </td>
                     </tr>`;
             });
@@ -1216,14 +1251,13 @@
                         <td class="px-3 py-3 text-sky-300 font-mono whitespace-nowrap align-middle">${item.serialNo || item.code || item.id || '-'}</td>
                         <td class="px-3 py-3 text-slate-400 whitespace-nowrap align-middle"><span class="bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${item.categoryLabel}</span></td>
                         <td class="px-3 py-3 text-emerald-400 whitespace-nowrap align-middle">${item.status}</td>
-                        <td class="px-3 py-3 text-right space-x-1 whitespace-nowrap align-middle" onclick="event.stopPropagation()">
-                            ${hasInside ? `<button onclick="filterByTreeNode('${item.id.replace(/'/g, "\'")}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2 py-1 rounded text-xs transition" title="Mở bên trong"><i class="fa-solid fa-folder-open mr-1"></i> Mở</button>` : ''}
-                            <button onclick="openMoveModal('${item.category}', ${item.rowIndex})" class="bg-amber-600/20 hover:bg-amber-600 text-amber-300 hover:text-white border border-amber-500/30 px-2 py-1 rounded text-xs transition" title="Move Location">
-                                <i class="fa-solid fa-right-left"></i> Move
-                            </button>
-                            <button onclick="openDetailModalByIndex('${item.category}', ${item.rowIndex})" class="bg-slate-800 hover:bg-slate-700 px-2.5 py-1 rounded text-xs text-sky-400">
-                                <i class="fa-solid fa-circle-info mr-1"></i> Xem
-                            </button>
+                        <td class="px-3 py-3 text-right whitespace-nowrap align-middle" onclick="event.stopPropagation()">
+                            ${buildUnifiedActionMenuHtml(item.category, item.rowIndex, {
+                                canOpenFolder: hasInside,
+                                folderTargetId: item.id,
+                                canMove: true,
+                                dropdownUniqueId: `row-dropdown-comb-${item.category}-${item.rowIndex}`
+                            })}
                         </td>
                     </tr>`;
             });
@@ -1379,6 +1413,41 @@
             renderFormFields();
         }
 
+
+        function copyItemByIndex(tabName, rowIndex) {
+            const sourceRow = (appData[tabName] || [])[rowIndex];
+            if (!sourceRow) return;
+
+            editingRowIndex = null; // Create new record on submit
+            const clonedRow = [...sourceRow];
+            // Ensure length up to 29
+            while (clonedRow.length < UNIFIED_HEADERS.length) clonedRow.push("");
+
+            // Auto increment No.
+            clonedRow[0] = String((appData[tabName] || []).length + 1);
+            // Clear Serial Number so user inputs the new Serial Number for the copied item
+            const oldSerial = cleanVal(clonedRow[3]);
+            clonedRow[3] = "";
+
+            const sourceName = cleanVal(sourceRow[2]) || cleanVal(sourceRow[1]) || tabName;
+            document.getElementById("modal-title").innerHTML = `<i class="fa-solid fa-copy text-purple-400 mr-1.5"></i> Copy [${tabName.replace(/_/g, ' ')}]: ${sourceName}`;
+            document.getElementById("submit-btn").innerText = "Save Copy & Sync Sheet";
+            document.getElementById("form-target-tab").value = tabName;
+            document.getElementById("form-target-tab").disabled = true;
+
+            document.getElementById("equipment-modal").classList.remove("hidden");
+            document.getElementById("equipment-modal").classList.add("flex");
+            renderFormFields(clonedRow);
+
+            // Highlight and focus Serial Number input (f3)
+            const snInput = document.querySelector('input[name="f3"]');
+            if (snInput) {
+                snInput.placeholder = oldSerial ? `Nhập Serial Number mới (Bản gốc: ${oldSerial})` : "Nhập Serial Number mới cho bản sao...";
+                snInput.classList.add("border-purple-500", "ring-2", "ring-purple-500/40", "bg-purple-950/20");
+                setTimeout(() => snInput.focus(), 80);
+            }
+        }
+
         function openEditModalByIndex(tabName, rowIndex) {
             editingRowIndex = rowIndex;
             document.getElementById("modal-title").innerText = `Edit [${tabName}]`;
@@ -1428,12 +1497,8 @@
             document.getElementById("detail-modal-content").innerHTML = contentHtml;
             
             const moveBtn = document.getElementById("detail-move-btn");
-            if (tabName === "Locations") {
-                moveBtn.classList.add("hidden");
-            } else {
-                moveBtn.classList.remove("hidden");
-                moveBtn.onclick = () => { closeDetailModal(); openMoveModal(tabName, rowIndex); };
-            }
+            moveBtn.classList.remove("hidden");
+            moveBtn.onclick = () => { closeDetailModal(); openMoveModal(tabName, rowIndex); };
             
             document.getElementById("detail-edit-btn").onclick = () => { closeDetailModal(); openEditModalByIndex(tabName, rowIndex); };
             document.getElementById("detail-modal").classList.remove("hidden");
