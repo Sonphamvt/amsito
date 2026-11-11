@@ -34,7 +34,7 @@
         #word-editor-area td, #word-editor-area th { border: 1px solid #94a3b8; padding: 6px 10px; }
     </style>
 </head>
-<body class="bg-darkbg text-slate-100 min-h-screen font-sans overflow-x-hidden" onclick="hideAllDropdowns(event)">
+<body class="bg-darkbg text-slate-100 min-h-screen font-sans overflow-x-hidden pb-20" onclick="hideAllDropdowns(event)">
 
     <!-- Header -->
     <header class="bg-cardbg border-b border-slate-700 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
@@ -49,7 +49,7 @@
         </div>
         
         <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto justify-between sm:justify-end">
-            <!-- Language Switcher (UK Flag = English, VN Flag = Vietnamese) -->
+            <!-- Language Switcher -->
             <div class="flex items-center bg-slate-900/90 border border-slate-700 rounded-lg p-1 gap-1" title="Switch Language / Chuyển ngôn ngữ">
                 <button type="button" onclick="setLanguage('en')" id="btn-lang-en" class="px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white" title="English">
                     <svg class="w-4 h-3 rounded-[2px] shrink-0" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><g clip-path="url(#s)"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></g></svg>
@@ -60,18 +60,26 @@
                     <span>VI</span>
                 </button>
             </div>
+
             <span id="sync-status" class="text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5">
                 <i class="fa-solid fa-cloud-arrow-up"></i> Connected
             </span>
-            <button onclick="initData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition" title="Reload from Google Sheets">
+
+            <button onclick="initData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition" title="Reload & Sync Sheets">
                 <i class="fa-solid fa-rotate"></i> <span data-i18n="btn_sync">Sync</span>
             </button>
             <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm flex items-center gap-1.5 transition shadow-md">
                 <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add Equipment / Location</span>
             </button>
-            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-download"></i> <span data-i18n="btn_backup">Backup</span>
+            
+            <!-- Backup Controls -->
+            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition" title="Tải file dữ liệu offline">
+                <i class="fa-solid fa-download"></i> <span data-i18n="btn_backup">Export Backup</span>
             </button>
+            <label class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition cursor-pointer" title="Nhập file dữ liệu offline từ người khác">
+                <i class="fa-solid fa-upload"></i> <span>Import</span>
+                <input type="file" id="import-json-input" accept=".json" onchange="importJSON(event)" class="hidden">
+            </label>
         </div>
     </header>
 
@@ -100,7 +108,6 @@
         </aside>
 
         <!-- Content Area: Tables & Detail View -->
-        <!-- Drag Resizer Handle -->
         <div id="sidebar-resizer" class="hidden lg:flex w-1.5 cursor-col-resize items-center justify-center group select-none" title="Kéo sang trái/phải để chỉnh độ rộng cột cây thư mục">
             <div class="w-1 h-16 rounded-full bg-slate-700 group-hover:bg-sky-400 transition"></div>
         </div>
@@ -202,6 +209,17 @@
         </section>
     </main>
 
+    <!-- Floating Bulk Action Bar -->
+    <div id="bulk-action-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 border border-amber-500/40 shadow-2xl rounded-full px-5 py-2.5 flex items-center gap-3 md:gap-5 z-40 hidden backdrop-blur-md">
+        <span id="selected-count" class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
+            <i class="fa-solid fa-check-double"></i> Đã chọn 0 mục
+        </span>
+        <button onclick="openBulkMoveModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-3.5 py-1.5 rounded-full text-xs font-bold transition shadow flex items-center gap-1.5">
+            <i class="fa-solid fa-right-left"></i> Di chuyển hàng loạt
+        </button>
+        <button onclick="clearSelection()" class="text-xs text-slate-400 hover:text-white px-2 py-1">Hủy chọn</button>
+    </div>
+
     <!-- Modal Form Add / Edit Equipment -->
     <div id="equipment-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl">
@@ -242,18 +260,18 @@
         </div>
     </div>
 
-    <!-- Move Item Modal -->
+    <!-- Move Item Modal (Hỗ trợ cả Đơn lẻ & Hàng loạt) -->
     <div id="move-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
-                <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-right-left text-accent"></i> Move Equipment Location (Phân Cấp)
+                <h3 id="move-modal-header" class="font-bold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-right-left text-accent"></i> Move Equipment Location
                 </h3>
                 <button onclick="closeMoveModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Selected Equipment:</label>
+                    <label class="block text-xs text-slate-300 mb-1">Selected Item(s):</label>
                     <input type="text" id="move-item-id" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-400 font-semibold cursor-not-allowed">
                 </div>
                 <div class="space-y-3 bg-slate-900/50 p-3.5 rounded-xl border border-slate-700/70">
@@ -436,6 +454,13 @@
             "Wires": [], "PCE_Equipment": [], "Mechanical_Tools": [], "Other": [], "Paper_Work": [], "Paper_Work_Help": []
         };
 
+        // Offline Sync Queue Array
+        let syncQueue = JSON.parse(localStorage.getItem("amsito_sync_queue") || "[]");
+
+        // Selected items for bulk operations: Key pattern = "tabName::rowIndex"
+        let selectedItemKeys = new Set();
+        let isBulkMoveMode = false;
+
         let currentActiveTab = "Locations";
         let currentFilteredLocId = null;
         let editingRowIndex = null;
@@ -548,10 +573,85 @@
             return path.length > 0 ? path.join(" \\ ") : cleanId;
         }
 
+        // --- OFFLINE SYNC QUEUE & NETWORK LOGIC ---
+        function addToSyncQueue(action, sheetName, rowData, itemId = null) {
+            const queueItem = {
+                id: Date.now() + "_" + Math.random().toString(36).substr(2, 4),
+                action: action,       // 'append', 'update', 'delete'
+                sheetName: sheetName,
+                row: rowData,
+                itemId: itemId,
+                timestamp: new Date().toISOString()
+            };
+            syncQueue.push(queueItem);
+            localStorage.setItem("amsito_sync_queue", JSON.stringify(syncQueue));
+            updateSyncStatusUI();
+        }
+
+        async function processSyncQueue() {
+            if (!navigator.onLine || syncQueue.length === 0) return;
+            
+            const indicator = document.getElementById("sync-status");
+            if (indicator) {
+                indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Đang đồng bộ (${syncQueue.length})...`;
+            }
+
+            let remainingQueue = [...syncQueue];
+            for (let i = 0; i < syncQueue.length; i++) {
+                const item = syncQueue[i];
+                try {
+                    await fetch(GOOGLE_SHEET_API_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            action: item.action,
+                            sheetName: item.sheetName,
+                            row: item.row,
+                            id: item.itemId
+                        })
+                    });
+                    remainingQueue = remainingQueue.filter(q => q.id !== item.id);
+                    localStorage.setItem("amsito_sync_queue", JSON.stringify(remainingQueue));
+                } catch (err) {
+                    console.log("Lỗi đồng bộ hàng chờ:", err);
+                    break;
+                }
+            }
+            
+            syncQueue = remainingQueue;
+            updateSyncStatusUI();
+        }
+
+        window.addEventListener("online", () => {
+            console.log("Internet restored. Flushing sync queue...");
+            processSyncQueue();
+        });
+
+        function updateSyncStatusUI() {
+            const indicator = document.getElementById("sync-status");
+            if (!indicator) return;
+            
+            if (syncQueue.length > 0) {
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> Tạm lưu offline (${syncQueue.length})`;
+                indicator.className = "text-xs px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full flex items-center gap-1.5 cursor-pointer";
+                indicator.onclick = () => processSyncQueue();
+            } else {
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
+                indicator.className = "text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5";
+                indicator.onclick = null;
+            }
+        }
+
         async function initData() {
+            if (navigator.onLine && syncQueue.length > 0) {
+                await processSyncQueue();
+            }
+
             const indicator = document.getElementById("sync-status");
             let loadedFromServer = false;
-            if (GOOGLE_SHEET_API_URL && GOOGLE_SHEET_API_URL.startsWith("http")) {
+
+            if (navigator.onLine && GOOGLE_SHEET_API_URL && GOOGLE_SHEET_API_URL.startsWith("http")) {
                 try {
                     indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading Sheets...`;
                     const response = await fetch(GOOGLE_SHEET_API_URL);
@@ -562,21 +662,26 @@
                         if (data["Slickline_Toolstrings"] && !data["Slickline_Tools"]) data["Slickline_Tools"] = data["Slickline_Toolstrings"];
                         if (data["Containers_Units"] && (!data["Container"] || data["Container"].length === 0)) data["Container"] = data["Containers_Units"];
                         delete data["Containers_Units"];
-                        appData = { ...appData, ...data };
+                        
+                        if (syncQueue.length === 0) {
+                            appData = { ...appData, ...data };
+                            localStorage.setItem("slickline_master_std29_v4", JSON.stringify({ appData }));
+                        }
                         loadedFromServer = true;
-                        indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
                     }
                 } catch (e) { console.log("Offline mode fallback"); }
             }
-            if (!loadedFromServer) {
+
+            if (!loadedFromServer || syncQueue.length > 0) {
                 const saved = localStorage.getItem("slickline_master_std29_v4");
                 if (saved) {
                     try { appData = { ...appData, ...(JSON.parse(saved).appData || JSON.parse(saved)) }; } catch (err) {}
-                    indicator.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Offline Mode`;
                 }
             }
+
+            updateSyncStatusUI();
             populateFormTabSelect();
-            localStorage.setItem("slickline_master_std29_v4", JSON.stringify({ appData }));
+            clearSelection();
             if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
             else renderTable(currentActiveTab);
             renderTree();
@@ -590,13 +695,60 @@
         }
 
         async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
-            if (!GOOGLE_SHEET_API_URL || !GOOGLE_SHEET_API_URL.startsWith("http")) return;
-            try {
-                fetch(GOOGLE_SHEET_API_URL, {
-                    method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ action: action, sheetName: sheetName, row: rowData, id: itemId })
-                }).catch(err => {});
-            } catch (error) {}
+            addToSyncQueue(action, sheetName, rowData, itemId);
+            if (navigator.onLine) {
+                processSyncQueue();
+            }
+        }
+
+        // --- BULK SELECTION & ACTIONS LOGIC ---
+        function toggleSelectItem(key, isChecked) {
+            if (isChecked) selectedItemKeys.add(key);
+            else selectedItemKeys.delete(key);
+            updateBulkActionBar();
+        }
+
+        function toggleSelectAllInTable(masterCb) {
+            const checkboxes = document.querySelectorAll(".row-select-cb");
+            checkboxes.forEach(cb => {
+                cb.checked = masterCb.checked;
+                toggleSelectItem(cb.value, masterCb.checked);
+            });
+        }
+
+        function updateBulkActionBar() {
+            const bar = document.getElementById("bulk-action-bar");
+            const countEl = document.getElementById("selected-count");
+            if (!bar) return;
+
+            if (selectedItemKeys.size > 0) {
+                bar.classList.remove("hidden");
+                if (countEl) countEl.innerHTML = `<i class="fa-solid fa-check-double"></i> Đã chọn ${selectedItemKeys.size} mục`;
+            } else {
+                bar.classList.add("hidden");
+            }
+        }
+
+        function clearSelection() {
+            selectedItemKeys.clear();
+            document.querySelectorAll(".row-select-cb, #master-select-cb").forEach(cb => cb.checked = false);
+            updateBulkActionBar();
+        }
+
+        function openBulkMoveModal() {
+            if (selectedItemKeys.size === 0) return;
+            isBulkMoveMode = true;
+            
+            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-amber-400"></i> Move ${selectedItemKeys.size} Selected Items`;
+            document.getElementById("move-item-id").value = `Di chuyển hàng loạt ${selectedItemKeys.size} thiết bị/dụng cụ đã chọn`;
+
+            const container = document.getElementById("cascading-location-container");
+            container.innerHTML = "";
+            renderCascadingDropdownLevel(0, "");
+            updateMovePreviewPath();
+
+            document.getElementById("move-modal").classList.remove("hidden");
+            document.getElementById("move-modal").classList.add("flex");
         }
 
         function populateFormTabSelect() {
@@ -612,6 +764,7 @@
         function switchTab(tabName) {
             currentActiveTab = tabName;
             currentFilteredLocId = null;
+            clearSelection();
             document.getElementById("table-search").value = "";
             document.querySelectorAll(".tab-btn").forEach(btn => {
                 btn.className = btn.dataset.tab === tabName 
@@ -627,6 +780,7 @@
         function resetTreeFilter() {
             activeExplorerLocId = null;
             currentFilteredLocId = null;
+            clearSelection();
             document.getElementById("tree-filter-badge").classList.add("hidden");
             highlightTreeSelection(null);
             renderTable(currentActiveTab);
@@ -635,6 +789,7 @@
         function filterByTreeNode(locId) {
             activeExplorerLocId = locId;
             currentFilteredLocId = locId;
+            clearSelection();
             document.getElementById("tree-filter-badge").classList.remove("hidden");
             expandAncestorsInTree(locId);
             highlightTreeSelection(locId);
@@ -785,8 +940,6 @@
             return { subLocations, equipments };
         }
 
-
-        // --- SMART ICON RESOLVER FOR LOCATIONS (RIG, PLATFORM, WAREHOUSE, STORE, RACK...) ---
         function getLocationIconHtml(row, isRoot = true) {
             const name = cleanVal(row?.[2]).toLowerCase();
             const type = cleanVal(row?.[5]).toLowerCase();
@@ -841,7 +994,6 @@
             return `<i class="fa-solid fa-folder text-amber-400 text-xs mr-1.5 shrink-0"></i>`;
         }
 
-        // --- WINDOWS EXPLORER LEFT TREE (NAVIGATION PANE) ---
         function renderTree() {
             const container = document.getElementById("tree-container");
             const locs = appData["Locations"] || [];
@@ -1039,7 +1191,6 @@
             return `<div class="flex flex-wrap items-center gap-0.5 text-xs">${partsHtml}</div>`;
         }
 
-
         let currentLang = localStorage.getItem("amsito_ui_lang") || "en";
 
         const I18N = {
@@ -1179,6 +1330,9 @@
 
             document.getElementById("table-head").innerHTML = `
                 <tr>
+                    <th class="px-3 py-3 w-10 text-center">
+                        <input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500">
+                    </th>
                     <th class="px-3 py-3 w-12 text-center">No.</th>
                     <th class="px-3 py-3 min-w-[260px]">Name (Folder / Location)</th>
                     <th class="px-3 py-3">Code / Serial No</th>
@@ -1189,7 +1343,7 @@
                 </tr>`;
 
             if (roots.length === 0) {
-                document.getElementById("table-body").innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No root locations found.</td></tr>`;
+                document.getElementById("table-body").innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-slate-500 italic">No root locations found.</td></tr>`;
                 document.getElementById("record-count").innerText = "0 folders";
                 return;
             }
@@ -1201,8 +1355,14 @@
                 const locName = cleanVal(row[2]) || locId;
                 const { subLocations, equipments } = getDirectChildrenOfNode(locId);
 
+                const itemKey = `Locations::${origIndex}`;
+                const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
+
                 bodyHtml += `
                     <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer select-none" onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')">
+                        <td class="px-3 py-3 text-center" onclick="event.stopPropagation()">
+                            <input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}>
+                        </td>
                         <td class="px-3 py-3 text-slate-400 text-center font-medium">${idx + 1}</td>
                         <td class="px-3 py-3 text-slate-100 font-semibold whitespace-nowrap">
                             <div class="flex items-center gap-2">
@@ -1231,6 +1391,7 @@
 
             document.getElementById("table-body").innerHTML = bodyHtml;
             document.getElementById("record-count").innerText = `${roots.length} folders`;
+            updateBulkActionBar();
         }
 
         function renderTable(tabName) {
@@ -1297,21 +1458,32 @@
             });
             activeColIndices.sort((a, b) => a - b);
 
-            let headHtml = `<tr><th class="px-3 py-3 w-12 text-center">No.</th>`;
+            let headHtml = `<tr>
+                <th class="px-3 py-3 w-10 text-center">
+                    <input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500">
+                </th>
+                <th class="px-3 py-3 w-12 text-center">No.</th>`;
             activeColIndices.forEach(idx => { if (idx !== 0) headHtml += `<th class="px-3 py-3">${UNIFIED_HEADERS[idx]}</th>`; });
             headHtml += `<th class="px-3 py-3 text-right">Actions</th></tr>`;
             document.getElementById("table-head").innerHTML = headHtml;
 
             let bodyHtml = "";
             if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${activeColIndices.length + 2}" class="px-4 py-8 text-center text-slate-500 italic">No data available in [${tabName}].</td></tr>`;
+                bodyHtml = `<tr><td colspan="${activeColIndices.length + 3}" class="px-4 py-8 text-center text-slate-500 italic">No data available in [${tabName}].</td></tr>`;
             } else {
                 rows.forEach((row, index) => {
                     const rowUniqueId = getNodePrimaryId(row, index);
                     const subCheck = getDirectChildrenOfNode(rowUniqueId);
                     const hasSubItems = (subCheck.subLocations.length + subCheck.equipments.length) > 0;
+                    
+                    const itemKey = `${tabName}::${index}`;
+                    const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
+
                     bodyHtml += `
                         <tr class="main-item-row hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('${tabName}', ${index})">
+                            <td class="px-3 py-3 text-center" onclick="event.stopPropagation()">
+                                <input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}>
+                            </td>
                             <td class="px-3 py-3 font-semibold text-slate-400 text-center">${cleanVal(row[0]) || (index + 1)}</td>`;
                     activeColIndices.forEach(idx => {
                         if (idx !== 0) {
@@ -1339,6 +1511,7 @@
             document.getElementById("table-body").innerHTML = bodyHtml;
             document.getElementById("current-table-title").innerText = `Management: ${tabName.replace(/_/g, ' ')}`;
             document.getElementById("record-count").innerText = `${rows.length} records`;
+            updateBulkActionBar();
         }
 
         // --- WINDOWS EXPLORER RIGHT PANE: FOLDER CONTENTS VIEW ---
@@ -1349,6 +1522,9 @@
 
             document.getElementById("table-head").innerHTML = `
                 <tr>
+                    <th class="px-3 py-3 w-10 text-center">
+                        <input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500">
+                    </th>
                     <th class="px-3 py-3 w-12 text-center">No.</th>
                     <th class="px-3 py-3 min-w-[250px] max-w-[340px]">Name (Folder / Equipment)</th>
                     <th class="px-3 py-3">Code / Serial No</th>
@@ -1366,9 +1542,14 @@
                 const subName = cleanVal(row[2]) || subId;
                 const grandKids = getDirectChildrenOfNode(subId);
                 const countText = `${grandKids.subLocations.length + grandKids.equipments.length} items`;
+                const itemKey = `Locations::${rowIndex}`;
+                const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
 
                 bodyHtml += `
                     <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer select-none bg-slate-800/20" onclick="filterByTreeNode('${subId.replace(/'/g, "\'")}')">
+                        <td class="px-3 py-3 text-center align-middle" onclick="event.stopPropagation()">
+                            <input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}>
+                        </td>
                         <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
                         <td class="px-3 py-3 text-amber-200 font-semibold min-w-[250px] max-w-[340px] whitespace-normal break-words align-middle">
                             <div class="flex items-center gap-2">
@@ -1399,8 +1580,14 @@
                     ? `filterByTreeNode('${item.id.replace(/'/g, "\'")}')`
                     : `openDetailModalByIndex('${item.category}', ${item.rowIndex})`;
 
+                const itemKey = `${item.category}::${item.rowIndex}`;
+                const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
+
                 bodyHtml += `
                     <tr class="hover:bg-slate-800/50 border-b border-slate-800/80 transition cursor-pointer" onclick="${rowAction}">
+                        <td class="px-3 py-3 text-center align-middle" onclick="event.stopPropagation()">
+                            <input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}>
+                        </td>
                         <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
                         <td class="px-3 py-3 text-slate-200 font-medium min-w-[250px] max-w-[340px] whitespace-normal break-words leading-snug align-middle">
                             <div class="flex items-center gap-2">
@@ -1423,8 +1610,9 @@
                     </tr>`;
             });
 
-            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="6" class="px-4 py-8 text-center text-slate-500 italic">Thư mục này hiện đang trống (0 mục con).</td></tr>`;
+            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">Thư mục này hiện đang trống (0 mục con).</td></tr>`;
             document.getElementById("record-count").innerText = `${subLocations.length} folders, ${equipments.length} items`;
+            updateBulkActionBar();
         }
 
         // --- CASCADING LOCATION NODES ---
@@ -1453,12 +1641,15 @@
         }
 
         function openMoveModal(tabName, rowIndex) {
+            isBulkMoveMode = false;
             const row = (appData[tabName] || [])[rowIndex];
             if (!row) return;
             
             movingItemContext = { tabName, rowIndex, selectedTargetId: cleanVal(row[14]) };
             const itemName = cleanVal(row[2]) || 'Unnamed Item';
             const serial = cleanVal(row[3]) ? ` (SN: ${cleanVal(row[3])})` : '';
+
+            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-accent"></i> Move Equipment Location`;
             document.getElementById("move-item-id").value = `${itemName}${serial}`;
             
             const container = document.getElementById("cascading-location-container");
@@ -1532,23 +1723,50 @@
         }
 
         function confirmMoveItem() {
-            const { tabName, rowIndex, selectedTargetId } = movingItemContext;
-            if (!tabName || rowIndex === null || !selectedTargetId) {
-                alert("Ông vui lòng chọn ít nhất một vị trí đích trước khi xác nhận di chuyển!");
+            const { selectedTargetId } = movingItemContext;
+            if (!selectedTargetId) {
+                alert("Ông vui lòng chọn vị trí đích trước khi xác nhận di chuyển!");
                 return;
             }
-            const row = appData[tabName][rowIndex];
-            if (!row) return;
-
-            row[14] = selectedTargetId;
-            row[15] = getLocationPath(selectedTargetId);
 
             const today = new Date().toISOString().slice(0, 10);
-            const oldLog = cleanVal(row[27]);
-            const moveNote = `[${today}] Moved to ${row[15]}`;
-            row[27] = oldLog ? `${oldLog} | ${moveNote}` : moveNote;
+            const targetPath = getLocationPath(selectedTargetId);
 
-            syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rowIndex));
+            if (isBulkMoveMode) {
+                // Bulk Move Mode: Move all items in selectedItemKeys
+                let movedCount = 0;
+                selectedItemKeys.forEach(key => {
+                    const [tabName, rIdxStr] = key.split("::");
+                    const rIdx = parseInt(rIdxStr, 10);
+                    const row = (appData[tabName] || [])[rIdx];
+                    if (row) {
+                        row[14] = selectedTargetId;
+                        row[15] = targetPath;
+                        const oldLog = cleanVal(row[27]);
+                        const moveNote = `[${today}] Bulk moved to ${targetPath}`;
+                        row[27] = oldLog ? `${oldLog} | ${moveNote}` : moveNote;
+                        
+                        syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rIdx));
+                        movedCount++;
+                    }
+                });
+                alert(`Đã di chuyển thành công ${movedCount} thiết bị sang vị trí mới: ${targetPath}`);
+                clearSelection();
+            } else {
+                // Single Item Move Mode
+                const { tabName, rowIndex } = movingItemContext;
+                const row = (appData[tabName] || [])[rowIndex];
+                if (!row) return;
+
+                row[14] = selectedTargetId;
+                row[15] = targetPath;
+                const oldLog = cleanVal(row[27]);
+                const moveNote = `[${today}] Moved to ${targetPath}`;
+                row[27] = oldLog ? `${oldLog} | ${moveNote}` : moveNote;
+
+                syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rowIndex));
+            }
+
             saveDataLocal();
             closeMoveModal();
         }
@@ -1574,7 +1792,6 @@
             document.getElementById("equipment-modal").classList.add("flex");
             renderFormFields();
         }
-
 
         function copyItemByIndex(tabName, rowIndex) {
             const sourceRow = (appData[tabName] || [])[rowIndex];
@@ -1774,17 +1991,44 @@
             }
         }
 
+        // Export / Import Backup Files
         function exportJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ appData }, null, 2));
+            const backupPayload = {
+                appData: appData,
+                syncQueue: syncQueue,
+                exportDate: new Date().toISOString()
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPayload, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `amsito_master_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `amsito_master_offline_${new Date().toISOString().slice(0,10)}.json`);
             downloadAnchor.click();
             downloadAnchor.remove();
         }
 
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported && imported.appData) {
+                        appData = imported.appData;
+                        if (imported.syncQueue) syncQueue = imported.syncQueue;
+                        saveDataLocal();
+                        alert("Đã nạp file dữ liệu Offline thành công!");
+                    } else {
+                        alert("File dữ liệu không đúng định dạng!");
+                    }
+                } catch (err) {
+                    alert("Lỗi khi đọc file Backup JSON!");
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ""; // Reset input
+        }
 
-        // --- DRAG RESIZER FOR LEFT TREE PANEL ---
         function initSidebarResizer() {
             const resizer = document.getElementById("sidebar-resizer");
             const sidebar = document.getElementById("sidebar-aside");
