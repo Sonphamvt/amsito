@@ -38,19 +38,19 @@
 
     <!-- Header -->
     <header class="bg-cardbg border-b border-slate-700 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
-        <div class="flex items-center space-x-3 w-full md:w-auto">
-            <div class="bg-accent/10 p-2.5 rounded-lg border border-accent/20 shrink-0">
-                <i class="fa-solid fa-oil-well text-accent text-2xl"></i>
+        <div class="flex items-center space-x-3.5 w-full md:w-auto">
+            <div class="bg-white px-2.5 py-1.5 rounded-lg border border-slate-600/60 shadow-sm shrink-0 flex items-center justify-center">
+                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 450 140' width='140' height='44'><g transform='italic'><text x='5' y='105' font-family='Arial, Helvetica, sans-serif' font-weight='900' font-style='italic' font-size='105' fill='%23dc2626' letter-spacing='-3'>amsito</text><circle cx='302' cy='25' r='14' fill='%231e293b'/><circle cx='435' cy='78' r='7' fill='%23dc2626'/><line x1='435' y1='85' x2='435' y2='135' stroke='%23dc2626' stroke-width='4'/></g></svg>" alt="amsito." class="h-8 md:h-9 w-auto object-contain block" />
             </div>
-            <div class="min-w-0">
-                <h1 class="text-base md:text-xl font-bold tracking-wide uppercase text-white">AMSITO Slickline Master Asset Manager</h1>
-                <p class="text-[11px] text-slate-400" data-i18n="subtitle">Asset & Maintenance Management System (Standardized 29-Cols)</p>
+            <div>
+                <h1 class="text-base md:text-xl font-bold tracking-wide uppercase text-white">Slickline Asset Manager</h1>
+                <p class="text-[11px] text-slate-400" data-i18n="subtitle">Asset & Maintenance Management System</p>
             </div>
         </div>
         
         <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto justify-between sm:justify-end">
             <!-- Language Switcher -->
-            <div class="flex items-center bg-slate-900/90 border border-slate-700 rounded-lg p-1 gap-1" title="Switch Language / Chuyển ngôn ngữ">
+            <div class="flex items-center bg-slate-900/90 border border-slate-700 rounded-lg p-1 gap-1" title="Switch Language">
                 <button type="button" onclick="setLanguage('en')" id="btn-lang-en" class="px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white" title="English">
                     <svg class="w-4 h-3 rounded-[2px] shrink-0" viewBox="0 0 60 30"><clipPath id="s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><g clip-path="url(#s)"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></g></svg>
                     <span>EN</span>
@@ -62,22 +62,21 @@
             </div>
 
             <span id="sync-status" class="text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Connected
+                <i class="fa-solid fa-cloud-arrow-up"></i> <span data-i18n="status_connected">Connected</span>
             </span>
 
-            <button onclick="initData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition" title="Reload & Sync Sheets">
+            <button onclick="initData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-rotate"></i> <span data-i18n="btn_sync">Sync</span>
             </button>
             <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm flex items-center gap-1.5 transition shadow-md">
-                <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add Equipment / Location</span>
+                <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add Equipment</span>
             </button>
             
-            <!-- Backup Controls -->
-            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition" title="Tải file dữ liệu offline">
-                <i class="fa-solid fa-download"></i> <span data-i18n="btn_backup">Export Backup</span>
+            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-download"></i> <span data-i18n="btn_backup">Export</span>
             </button>
-            <label class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition cursor-pointer" title="Nhập file dữ liệu offline từ người khác">
-                <i class="fa-solid fa-upload"></i> <span>Import</span>
+            <label class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition cursor-pointer">
+                <i class="fa-solid fa-upload"></i> <span data-i18n="btn_import">Import</span>
                 <input type="file" id="import-json-input" accept=".json" onchange="importJSON(event)" class="hidden">
             </label>
         </div>
@@ -90,7 +89,7 @@
         <aside id="sidebar-aside" class="w-full lg:w-[360px] lg:min-w-[270px] lg:max-w-[650px] shrink-0 bg-cardbg border border-slate-700/60 rounded-xl p-4 shadow-xl flex flex-col h-[68vh] lg:h-[82vh] relative box-border">
             <div class="flex items-center justify-between pb-3 border-b border-slate-700 mb-3">
                 <h2 class="text-xs md:text-sm font-semibold uppercase tracking-wider text-slate-300 flex items-center gap-2">
-                    <i class="fa-solid fa-sitemap text-accent"></i> <span data-i18n="sidebar_title">Locations & Hierarchy</span>
+                    <i class="fa-solid fa-sitemap text-accent"></i> <span data-i18n="sidebar_title">LOCATIONS & HIERARCHY</span>
                 </h2>
                 <span id="total-nodes-badge" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">0 nodes</span>
             </div>
@@ -108,7 +107,7 @@
         </aside>
 
         <!-- Content Area: Tables & Detail View -->
-        <div id="sidebar-resizer" class="hidden lg:flex w-1.5 cursor-col-resize items-center justify-center group select-none" title="Kéo sang trái/phải để chỉnh độ rộng cột cây thư mục">
+        <div id="sidebar-resizer" class="hidden lg:flex w-1.5 cursor-col-resize items-center justify-center group select-none">
             <div class="w-1 h-16 rounded-full bg-slate-700 group-hover:bg-sky-400 transition"></div>
         </div>
         <section class="w-full flex-1 min-w-0 flex flex-col gap-4 md:gap-6">
@@ -123,17 +122,17 @@
                         <i class="fa-solid fa-screwdriver-wrench mr-1 text-sky-300"></i> <span data-i18n="tab_slickline">Slickline Tools</span>
                     </button>
                     <button onclick="switchTab('Container')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Container">
-                        <i class="fa-solid fa-box mr-1 text-amber-400"></i> <span data-i18n="tab_container">Container & Box</span>
+                        <i class="fa-solid fa-box mr-1 text-amber-400"></i> <span data-i18n="tab_container">Containers</span>
                     </button>
                     
                     <!-- Dropdown: Unit, Mast & Power Pack -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown(event, 'dropdown-unit-mast')" id="btn-group-unit-mast" class="tab-dropdown-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1">
-                            <i class="fa-solid fa-truck-monster mr-1 text-sky-400"></i> Unit & Mast <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
+                            <span class="mr-1 inline-flex items-center"><svg class="w-4 h-4 inline-block text-teal-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V3.5M12 5V3.5M21 5V3.5"/><rect x="2.5" y="5" width="19" height="14" rx="1"/><rect x="2.5" y="5" width="7.5" height="14" fill="currentColor" fill-opacity="0.3"/><rect x="4" y="7" width="4.5" height="4.5" rx="0.5" fill="#0f172a" stroke-width="1.2"/><circle cx="14.5" cy="12.5" r="3.5" fill="currentColor" fill-opacity="0.22"/><circle cx="14.5" cy="12.5" r="1.2"/><path d="M18 12.5h3.5M19.5 8.5v8"/><path d="M1.5 19h21"/></svg></span> Unit & Mast <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
                         </button>
                         <div id="dropdown-unit-mast" class="hidden absolute left-0 mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-30 py-1 divide-y divide-slate-800">
-                            <button onclick="switchTab('Unit'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-truck-monster text-sky-400"></i> Unit</button>
-                            <button onclick="switchTab('Mast'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-tower-cell text-emerald-400"></i> Mast</button>
+                            <button onclick="switchTab('Unit'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><span class="inline-flex items-center"><svg class="w-4 h-4 inline-block text-teal-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V3.5M12 5V3.5M21 5V3.5"/><rect x="2.5" y="5" width="19" height="14" rx="1"/><rect x="2.5" y="5" width="7.5" height="14" fill="currentColor" fill-opacity="0.3"/><rect x="4" y="7" width="4.5" height="4.5" rx="0.5" fill="#0f172a" stroke-width="1.2"/><circle cx="14.5" cy="12.5" r="3.5" fill="currentColor" fill-opacity="0.22"/><circle cx="14.5" cy="12.5" r="1.2"/><path d="M18 12.5h3.5M19.5 8.5v8"/><path d="M1.5 19h21"/></svg></span> Unit</button>
+                            <button onclick="switchTab('Mast'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><span class="inline-flex items-center"><svg class="w-4 h-4 inline-block text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M7 21l2-4h6l2 4"/><rect x="9" y="9" width="6" height="12" rx="0.5" fill="currentColor" fill-opacity="0.28"/><rect x="10.5" y="4" width="3" height="5" fill="currentColor" fill-opacity="0.5"/><path d="M8 3l4 2 4-2"/><circle cx="8" cy="3" r="1"/><circle cx="16" cy="3" r="1"/><path d="M12 5L2 19M12 5l10 14" stroke-opacity="0.6" stroke-dasharray="1.5 1.5"/></svg></span> Mast</button>
                             <button onclick="switchTab('Power Pack'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-car-battery text-amber-400"></i> Power Pack</button>
                         </div>
                     </div>
@@ -150,7 +149,7 @@
                     </div>
 
                     <button onclick="switchTab('PCE_Equipment')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="PCE_Equipment">
-                        <i class="fa-solid fa-shield-halved mr-1 text-purple-400"></i> <span data-i18n="tab_pce">PCE Packages & Sets</span>
+                        <i class="fa-solid fa-shield-halved mr-1 text-purple-400"></i> <span data-i18n="tab_pce">PCE Packages</span>
                     </button>
 
                     <button onclick="switchTab('Mechanical_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Mechanical_Tools">
@@ -212,12 +211,12 @@
     <!-- Floating Bulk Action Bar -->
     <div id="bulk-action-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 border border-amber-500/40 shadow-2xl rounded-full px-5 py-2.5 flex items-center gap-3 md:gap-5 z-40 hidden backdrop-blur-md">
         <span id="selected-count" class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-            <i class="fa-solid fa-check-double"></i> Đã chọn 0 mục
+            <i class="fa-solid fa-check-double"></i> <span data-i18n="bulk_selected">0 selected</span>
         </span>
         <button onclick="openBulkMoveModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-3.5 py-1.5 rounded-full text-xs font-bold transition shadow flex items-center gap-1.5">
-            <i class="fa-solid fa-right-left"></i> Di chuyển hàng loạt
+            <i class="fa-solid fa-right-left"></i> <span data-i18n="bulk_move">Batch Move</span>
         </button>
-        <button onclick="clearSelection()" class="text-xs text-slate-400 hover:text-white px-2 py-1">Hủy chọn</button>
+        <button onclick="clearSelection()" class="text-xs text-slate-400 hover:text-white px-2 py-1" data-i18n="bulk_cancel">Cancel</button>
     </div>
 
     <!-- Modal Form Add / Edit Equipment -->
@@ -230,13 +229,13 @@
             
             <form id="dynamic-form" onsubmit="handleFormSubmit(event)" autocomplete="off" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1">Select Management Group (Target Sheet)</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1" data-i18n="form_target_group">Target Group</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"></select>
                 </div>
                 <div id="dynamic-fields-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition">Cancel</button>
-                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Save & Sync Sheet</button>
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition" data-i18n="btn_cancel">Cancel</button>
+                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md" data-i18n="btn_save">Save</button>
                 </div>
             </form>
         </div>
@@ -247,20 +246,20 @@
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-sky-400"></i> Equipment & Container Details
+                    <i class="fa-solid fa-circle-info text-sky-400"></i> <span data-i18n="detail_title">Equipment Details</span>
                 </h3>
                 <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="detail-modal-content"></div>
             <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Close</button>
-                <button type="button" id="detail-move-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-medium transition shadow-md"><i class="fa-solid fa-right-left mr-1"></i> Move Location</button>
-                <button type="button" id="detail-edit-btn" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Edit Equipment</button>
+                <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition" data-i18n="btn_close">Close</button>
+                <button type="button" id="detail-move-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-medium transition shadow-md"><i class="fa-solid fa-right-left mr-1"></i> <span data-i18n="btn_move">Move</span></button>
+                <button type="button" id="detail-edit-btn" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md" data-i18n="btn_edit">Edit</button>
             </div>
         </div>
     </div>
 
-    <!-- Move Item Modal (Hỗ trợ cả Đơn lẻ & Hàng loạt) -->
+    <!-- Move Item Modal -->
     <div id="move-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
@@ -271,23 +270,23 @@
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Selected Item(s):</label>
+                    <label class="block text-xs text-slate-300 mb-1" data-i18n="move_target_label">Selected Item(s):</label>
                     <input type="text" id="move-item-id" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-400 font-semibold cursor-not-allowed">
                 </div>
                 <div class="space-y-3 bg-slate-900/50 p-3.5 rounded-xl border border-slate-700/70">
                     <label class="block text-xs font-semibold text-amber-300">
-                        <i class="fa-solid fa-sitemap mr-1"></i> Chọn vị trí mới theo từng cấp (Base ➔ Container ➔ Rack ➔ Box):
+                        <i class="fa-solid fa-sitemap mr-1"></i> <span data-i18n="move_select_prompt">Select destination location hierarchy:</span>
                     </label>
                     <div id="cascading-location-container" class="space-y-2.5"></div>
                     <div class="pt-2 border-t border-slate-800">
-                        <span class="text-[11px] text-slate-400 block">Đường dẫn đích đã chọn:</span>
-                        <span id="move-preview-path" class="text-xs font-semibold text-emerald-400 mt-0.5 block">Chưa chọn vị trí</span>
+                        <span class="text-[11px] text-slate-400 block" data-i18n="move_dest_path">Destination path:</span>
+                        <span id="move-preview-path" class="text-xs font-semibold text-emerald-400 mt-0.5 block">Not selected</span>
                     </div>
                 </div>
             </div>
             <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeMoveModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Cancel</button>
-                <button type="button" onclick="confirmMoveItem()" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Confirm Move</button>
+                <button type="button" onclick="closeMoveModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition" data-i18n="btn_cancel">Cancel</button>
+                <button type="button" onclick="confirmMoveItem()" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md" data-i18n="btn_confirm">Confirm Move</button>
             </div>
         </div>
     </div>
@@ -297,19 +296,19 @@
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 id="pw-modal-title" class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-link text-emerald-400"></i> Thêm / Cập Nhật Link Tài Liệu Drive
+                    <i class="fa-solid fa-link text-emerald-400"></i> Paper Work Document Link
                 </h3>
                 <button onclick="closePaperworkModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="handlePaperworkLinkSave(event)" class="p-6 space-y-4">
                 <input type="hidden" id="pw-edit-index" value="-1">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Tên hồ sơ / Biểu mẫu hiển thị *</label>
-                    <input type="text" id="pw-doc-name" required placeholder="VD: Timesheet Mẫu 2026..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                    <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_doc_name">Document Name *</label>
+                    <input type="text" id="pw-doc-name" required placeholder="Timesheet..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1">Phân loại</label>
+                        <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_category">Category</label>
                         <select id="pw-category" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                             <option value="Timesheet">Timesheet</option>
                             <option value="Job Report / Log">Job Report / Log</option>
@@ -320,22 +319,22 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1">Tên file gốc (tùy chọn)</label>
-                        <input type="text" id="pw-file-name" placeholder="VD: Timesheet_2026.xlsx" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                        <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_filename">File Name</label>
+                        <input type="text" id="pw-file-name" placeholder="Timesheet_2026.xlsx" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Link Google Drive của file *</label>
-                    <input type="url" id="pw-drive-link" required placeholder="https://drive.google.com/file/d/.../view" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-300 focus:outline-none focus:border-accent">
+                    <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_drivelink">Google Drive Link *</label>
+                    <input type="url" id="pw-drive-link" required placeholder="https://drive.google.com/..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-300 focus:outline-none focus:border-accent">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1">Ghi chú (Remarks)</label>
-                    <input type="text" id="pw-remarks" placeholder="Ghi chú thêm nếu có..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                    <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_remarks">Remarks</label>
+                    <input type="text" id="pw-remarks" placeholder="Notes..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                 </div>
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
-                    <button type="button" onclick="closePaperworkModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Hủy</button>
+                    <button type="button" onclick="closePaperworkModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition" data-i18n="btn_cancel">Cancel</button>
                     <button type="submit" id="pw-submit-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium transition shadow-md flex items-center gap-1.5">
-                        <i class="fa-solid fa-floppy-disk"></i> Lưu & Đồng Bộ Sheet
+                        <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btn_save">Save</span>
                     </button>
                 </div>
             </form>
@@ -355,10 +354,10 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <a id="viewer-download-btn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow">
-                        <i class="fa-solid fa-download"></i> Tải về máy
+                        <i class="fa-solid fa-download"></i> <span data-i18n="btn_download">Download</span>
                     </a>
                     <a id="viewer-external-btn" href="#" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-up-right-from-square"></i> Mở tab mới
+                        <i class="fa-solid fa-up-right-from-square"></i> <span data-i18n="btn_open_tab">Open Tab</span>
                     </a>
                     <button onclick="closeDocViewer()" class="bg-slate-700 hover:bg-rose-600 text-white w-8 h-8 rounded-lg flex items-center justify-center transition ml-1">
                         <i class="fa-solid fa-xmark"></i>
@@ -380,17 +379,17 @@
                         <i class="fa-solid fa-file-word text-base"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-sm md:text-base text-white">Help & Reference Document (Trang Soạn Thảo Ghi Chú)</h3>
-                        <p class="text-[11px] text-slate-400">Soạn thảo tự do thông tin hợp đồng, giám sát, ghi chú mẫu...</p>
+                        <h3 class="font-bold text-sm md:text-base text-white" data-i18n="help_doc_title">Reference Notes Editor</h3>
+                        <p class="text-[11px] text-slate-400" data-i18n="help_doc_sub">Edit contract information, supervisor contacts, and reference templates...</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span id="word-save-status" class="text-[11px] text-emerald-400 hidden"><i class="fa-solid fa-check-circle mr-1"></i> Đã lưu</span>
+                    <span id="word-save-status" class="text-[11px] text-emerald-400 hidden"><i class="fa-solid fa-check-circle mr-1"></i> Saved</span>
                     <button onclick="downloadHelpAsWordDoc()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition shadow">
-                        <i class="fa-solid fa-file-arrow-down"></i> Xuất file Word
+                        <i class="fa-solid fa-file-arrow-down"></i> Export Word
                     </button>
                     <button onclick="saveHelpWordDocument()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow">
-                        <i class="fa-solid fa-floppy-disk"></i> Lưu Văn Bản
+                        <i class="fa-solid fa-floppy-disk"></i> Save Document
                     </button>
                     <button onclick="closeHelpModal()" class="bg-slate-700 hover:bg-rose-600 text-white w-8 h-8 rounded-lg flex items-center justify-center transition ml-1">
                         <i class="fa-solid fa-xmark"></i>
@@ -401,9 +400,9 @@
             <!-- Toolbar -->
             <div class="px-4 py-2 bg-slate-900 border-b border-slate-700 flex flex-wrap items-center gap-1.5 text-xs select-none">
                 <select onchange="execWordCmd('formatBlock', this.value); this.value='P';" class="bg-slate-800 border border-slate-700 text-slate-200 rounded px-2 py-1 text-xs focus:outline-none">
-                    <option value="P">Văn bản thường</option>
-                    <option value="H1">Tiêu đề lớn</option>
-                    <option value="H2">Tiêu đề vừa</option>
+                    <option value="P">Normal</option>
+                    <option value="H1">Heading 1</option>
+                    <option value="H2">Heading 2</option>
                 </select>
                 <div class="h-4 w-[1px] bg-slate-700 mx-1"></div>
                 <button type="button" onclick="execWordCmd('bold')" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold">B</button>
@@ -414,7 +413,7 @@
                 <button type="button" onclick="execWordCmd('foreColor', '#2563eb')" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 flex items-center justify-center font-bold text-blue-500">A</button>
                 <button type="button" onclick="execWordCmd('insertUnorderedList')" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center"><i class="fa-solid fa-list-ul"></i></button>
                 <button type="button" onclick="insertTemplateBlock()" class="px-2.5 h-7 rounded bg-sky-900/70 hover:bg-sky-800 border border-sky-500/30 text-sky-300 flex items-center gap-1">
-                    <i class="fa-solid fa-plus"></i> Chèn mẫu dự án
+                    <i class="fa-solid fa-plus"></i> Template
                 </button>
             </div>
 
@@ -438,13 +437,13 @@
         ];
 
         const DEFAULT_HELP_WORD_CONTENT = `
-            <h1 style="color: #0f172a; border-bottom: 2px solid #0ea5e9; padding-bottom: 6px;">THÔNG TIN THAM KHẢO ĐIỀN TIMESHEET & JOB REPORT</h1>
-            <p style="color: #475569; font-size: 13px;"><i>(Trang soạn thảo văn bản: Ông có thể gõ, sửa, format tùy ý và bấm <b>Lưu Văn Bản</b>).</i></p>
+            <h1 style="color: #0f172a; border-bottom: 2px solid #0ea5e9; padding-bottom: 6px;">TIMESHEET & JOB REPORT REFERENCE INFO</h1>
+            <p style="color: #475569; font-size: 13px;"><i>(Editor page: You can type, edit, format content freely and click <b>Save Document</b>).</i></p>
             <br>
-            <h2 style="color: #0369a1;">1. KHÁCH HÀNG: CUU LONG JOC</h2>
+            <h2 style="color: #0369a1;">1. CLIENT: CUU LONG JOC</h2>
             <ul>
-                <li><b>Số Hợp Đồng:</b> CLJOC-SL-2026-001</li>
-                <li><b>Giám Sát:</b> Mr. Nguyen Van A</li>
+                <li><b>Contract No:</b> CLJOC-SL-2026-001</li>
+                <li><b>Supervisor:</b> Mr. Nguyen Van A</li>
             </ul>
         `;
 
@@ -577,7 +576,7 @@
         function addToSyncQueue(action, sheetName, rowData, itemId = null) {
             const queueItem = {
                 id: Date.now() + "_" + Math.random().toString(36).substr(2, 4),
-                action: action,       // 'append', 'update', 'delete'
+                action: action,
                 sheetName: sheetName,
                 row: rowData,
                 itemId: itemId,
@@ -593,7 +592,7 @@
             
             const indicator = document.getElementById("sync-status");
             if (indicator) {
-                indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Đang đồng bộ (${syncQueue.length})...`;
+                indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> ${t('status_syncing')} (${syncQueue.length})...`;
             }
 
             let remainingQueue = [...syncQueue];
@@ -614,7 +613,7 @@
                     remainingQueue = remainingQueue.filter(q => q.id !== item.id);
                     localStorage.setItem("amsito_sync_queue", JSON.stringify(remainingQueue));
                 } catch (err) {
-                    console.log("Lỗi đồng bộ hàng chờ:", err);
+                    console.log("Sync error:", err);
                     break;
                 }
             }
@@ -624,7 +623,6 @@
         }
 
         window.addEventListener("online", () => {
-            console.log("Internet restored. Flushing sync queue...");
             processSyncQueue();
         });
 
@@ -633,11 +631,11 @@
             if (!indicator) return;
             
             if (syncQueue.length > 0) {
-                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> Tạm lưu offline (${syncQueue.length})`;
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> ${t('status_pending')} (${syncQueue.length})`;
                 indicator.className = "text-xs px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full flex items-center gap-1.5 cursor-pointer";
                 indicator.onclick = () => processSyncQueue();
             } else {
-                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> ${t('status_connected')}`;
                 indicator.className = "text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5";
                 indicator.onclick = null;
             }
@@ -653,7 +651,7 @@
 
             if (navigator.onLine && GOOGLE_SHEET_API_URL && GOOGLE_SHEET_API_URL.startsWith("http")) {
                 try {
-                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading Sheets...`;
+                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> ${t('status_loading')}`;
                     const response = await fetch(GOOGLE_SHEET_API_URL);
                     const data = await response.json();
                     if (data && typeof data === "object") {
@@ -723,7 +721,7 @@
 
             if (selectedItemKeys.size > 0) {
                 bar.classList.remove("hidden");
-                if (countEl) countEl.innerHTML = `<i class="fa-solid fa-check-double"></i> Đã chọn ${selectedItemKeys.size} mục`;
+                if (countEl) countEl.innerHTML = `<i class="fa-solid fa-check-double"></i> ${selectedItemKeys.size} ${t('bulk_selected')}`;
             } else {
                 bar.classList.add("hidden");
             }
@@ -739,8 +737,8 @@
             if (selectedItemKeys.size === 0) return;
             isBulkMoveMode = true;
             
-            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-amber-400"></i> Move ${selectedItemKeys.size} Selected Items`;
-            document.getElementById("move-item-id").value = `Di chuyển hàng loạt ${selectedItemKeys.size} thiết bị/dụng cụ đã chọn`;
+            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-amber-400"></i> ${t('move_batch_title')} (${selectedItemKeys.size})`;
+            document.getElementById("move-item-id").value = `${t('move_batch_title')} (${selectedItemKeys.size})`;
 
             const container = document.getElementById("cascading-location-container");
             container.innerHTML = "";
@@ -896,8 +894,8 @@
 
             const equipmentCategories = [
                 { key: 'Container', label: 'Container / Box', icon: 'fa-solid fa-box text-amber-400', color: 'text-amber-300', isFolderLike: true },
-                { key: 'Unit', label: 'Unit', icon: 'fa-solid fa-truck-monster text-sky-400', color: 'text-sky-300', isFolderLike: true },
-                { key: 'Mast', label: 'Mast / Basket', icon: 'fa-solid fa-tower-cell text-emerald-400', color: 'text-emerald-300', isFolderLike: true },
+                { key: 'Unit', label: 'Unit', icon: '', customIconHtml: `<svg class="w-3.5 h-3.5 inline-block text-teal-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V3.5M12 5V3.5M21 5V3.5"/><rect x="2.5" y="5" width="19" height="14" rx="1"/><rect x="2.5" y="5" width="7.5" height="14" fill="currentColor" fill-opacity="0.3"/><rect x="4" y="7" width="4.5" height="4.5" rx="0.5" fill="#0f172a" stroke-width="1.2"/><circle cx="14.5" cy="12.5" r="3.5" fill="currentColor" fill-opacity="0.22"/><circle cx="14.5" cy="12.5" r="1.2"/><path d="M18 12.5h3.5M19.5 8.5v8"/><path d="M1.5 19h21"/></svg>`, color: 'text-teal-300', isFolderLike: true },
+                { key: 'Mast', label: 'Mast / Basket', icon: '', customIconHtml: `<svg class="w-3.5 h-3.5 inline-block text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M7 21l2-4h6l2 4"/><rect x="9" y="9" width="6" height="12" rx="0.5" fill="currentColor" fill-opacity="0.28"/><rect x="10.5" y="4" width="3" height="5" fill="currentColor" fill-opacity="0.5"/><path d="M8 3l4 2 4-2"/><circle cx="8" cy="3" r="1"/><circle cx="16" cy="3" r="1"/><path d="M12 5L2 19M12 5l10 14" stroke-opacity="0.6" stroke-dasharray="1.5 1.5"/></svg>`, color: 'text-emerald-300', isFolderLike: true },
                 { key: 'Power Pack', label: 'Power Pack', icon: 'fa-solid fa-car-battery text-amber-400', color: 'text-amber-300', isFolderLike: true },
                 { key: 'PCE_Equipment', label: 'PCE Equipment', icon: 'fa-solid fa-shield-halved text-purple-400', color: 'text-purple-300', isFolderLike: true },
                 { key: 'Drums', label: 'Drum', icon: 'fa-solid fa-dharmachakra text-amber-400', color: 'text-amber-300', isFolderLike: false },
@@ -929,6 +927,7 @@
                             category: cat.key,
                             categoryLabel: cat.label,
                             icon: cat.icon,
+                            customIconHtml: cat.customIconHtml || '',
                             textColor: cat.color,
                             isFolderLike: cat.isFolderLike,
                             status: cleanVal(item[26]) || 'Active'
@@ -946,8 +945,8 @@
             const code = cleanVal(row?.[1]).toLowerCase();
             const combined = `${name} ${type} ${code}`;
 
-            if (combined.includes("rig") || combined.includes("jackup") || combined.includes("jack-up") || combined.includes("drilling") || combined.includes("giàn khoan")) {
-                return `<span class="inline-flex items-center justify-center w-4 h-4 mr-1.5 shrink-0 text-amber-400" title="Drilling Rig / Giàn khoan">
+            if (combined.includes("rig") || combined.includes("jackup") || combined.includes("jack-up") || combined.includes("drilling")) {
+                return `<span class="inline-flex items-center justify-center w-4 h-4 mr-1.5 shrink-0 text-amber-400">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 2L8 15h8L12 2z" fill="currentColor" fill-opacity="0.2"/>
                         <path d="M9.5 9h5M8.8 12h6.4"/>
@@ -958,8 +957,8 @@
                 </span>`;
             }
 
-            if (combined.includes("platform") || combined.includes("nulq") || combined.includes("whp") || combined.includes("cpp") || combined.includes("offshore") || combined.includes("giàn khai thác")) {
-                return `<span class="inline-flex items-center justify-center w-4 h-4 mr-1.5 shrink-0 text-sky-400" title="Offshore Platform / Giàn khai thác">
+            if (combined.includes("platform") || combined.includes("nulq") || combined.includes("whp") || combined.includes("cpp") || combined.includes("offshore")) {
+                return `<span class="inline-flex items-center justify-center w-4 h-4 mr-1.5 shrink-0 text-sky-400">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 9V4l2-1"/>
                         <rect x="4" y="9" width="16" height="4" rx="0.5" fill="currentColor" fill-opacity="0.25"/>
@@ -971,20 +970,20 @@
             }
 
             if (combined.includes("fpso") || combined.includes("fso") || combined.includes("vessel") || combined.includes("ship") || combined.includes("boat")) {
-                return `<i class="fa-solid fa-ship text-cyan-400 text-xs mr-1.5 shrink-0" title="Vessel / FPSO"></i>`;
+                return `<i class="fa-solid fa-ship text-cyan-400 text-xs mr-1.5 shrink-0"></i>`;
             }
 
-            if (isRoot || combined.includes("ware house") || combined.includes("warehouse") || combined.includes("base") || combined.includes("kho")) {
-                return `<i class="fa-solid fa-warehouse text-emerald-400 text-xs mr-1.5 shrink-0" title="Warehouse / Base"></i>`;
+            if (isRoot || combined.includes("ware house") || combined.includes("warehouse") || combined.includes("base")) {
+                return `<i class="fa-solid fa-warehouse text-emerald-400 text-xs mr-1.5 shrink-0"></i>`;
             }
 
-            if (combined.includes("workshop") || combined.includes("xưởng")) {
+            if (combined.includes("workshop")) {
                 return `<i class="fa-solid fa-screwdriver-wrench text-sky-400 text-xs mr-1.5 shrink-0"></i>`;
             }
-            if (combined.includes("office") || combined.includes("văn phòng")) {
+            if (combined.includes("office")) {
                 return `<i class="fa-solid fa-building text-indigo-400 text-xs mr-1.5 shrink-0"></i>`;
             }
-            if (combined.includes("rack") || combined.includes("shelf") || combined.includes("kệ")) {
+            if (combined.includes("rack") || combined.includes("shelf")) {
                 return `<i class="fa-solid fa-layer-group text-amber-300 text-xs mr-1.5 shrink-0"></i>`;
             }
             if (combined.includes("store")) {
@@ -1057,7 +1056,7 @@
                                 <div title="${eqTitle.replace(/"/g, '&quot;')}" data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\'")}')">
                                     <div class="flex items-start min-w-0 flex-1">
                                         <span onclick="toggleTreeNode(event, '${safeEqId}')" class="w-4 h-4 mt-0.5 inline-flex items-center justify-center rounded hover:bg-slate-600/70 shrink-0 mr-1"><i id="tree-icon-${safeEqId}" class="fa-solid fa-chevron-right text-slate-400 text-[10px]"></i></span>
-                                        <i class="${eq.icon} text-[11px] mr-1.5 mt-1 shrink-0"></i>
+                                        ${eq.customIconHtml ? `<span class="mr-1.5 mt-0.5 shrink-0 inline-flex items-center">${eq.customIconHtml}</span>` : `<i class="${eq.icon} text-[11px] mr-1.5 mt-1 shrink-0"></i>`}
                                         <div class="whitespace-normal break-words leading-snug font-medium">${displayEqHtml}</div>
                                     </div>
                                     <span class="text-[10px] text-slate-400 bg-slate-900/70 px-1.5 py-0.5 rounded ml-1 shrink-0 mt-0.5">${totalEqKids}</span>
@@ -1070,10 +1069,10 @@
                                 <div title="${eqTitle.replace(/"/g, '&quot;')}" data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\'")}')">
                                     <div class="flex items-start min-w-0 flex-1">
                                         <span class="w-4 h-4 inline-block shrink-0 mr-1"></span>
-                                        <i class="${eq.icon} text-[11px] mr-1.5 mt-1 shrink-0"></i>
+                                        ${eq.customIconHtml ? `<span class="mr-1.5 mt-0.5 shrink-0 inline-flex items-center">${eq.customIconHtml}</span>` : `<i class="${eq.icon} text-[11px] mr-1.5 mt-1 shrink-0"></i>`}
                                         <div class="whitespace-normal break-words leading-snug">${displayEqHtml}</div>
                                     </div>
-                                    <button onclick="event.stopPropagation(); openDetailModalByIndex('${eq.category}', ${eq.rowIndex})" class="text-slate-500 hover:text-sky-400 px-1 text-[11px] mt-0.5 shrink-0" title="Xem chi tiết"><i class="fa-solid fa-circle-info"></i></button>
+                                    <button onclick="event.stopPropagation(); openDetailModalByIndex('${eq.category}', ${eq.rowIndex})" class="text-slate-500 hover:text-sky-400 px-1 text-[11px] mt-0.5 shrink-0" title="Details"><i class="fa-solid fa-circle-info"></i></button>
                                 </div>
                             </div>`;
                     }
@@ -1139,7 +1138,7 @@
             if (!locId) {
                 return `
                     <div class="flex items-center gap-1.5 text-xs">
-                        <span class="text-sky-400 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-desktop"></i> Locations (Root Folders)</span>
+                        <span class="text-sky-400 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-desktop"></i> LOCATIONS (ROOT FOLDERS)</span>
                     </div>`;
             }
             const locs = appData["Locations"] || [];
@@ -1175,8 +1174,8 @@
 
             const parentLocId = chain.length > 1 ? chain[chain.length - 2].id : null;
             const upBtn = parentLocId
-                ? `<button onclick="filterByTreeNode('${parentLocId.replace(/'/g, "\'")}')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition" title="Lên 1 cấp thư mục"><i class="fa-solid fa-arrow-up"></i></button>`
-                : `<button onclick="resetTreeFilter()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition" title="Về thư mục gốc"><i class="fa-solid fa-arrow-up"></i></button>`;
+                ? `<button onclick="filterByTreeNode('${parentLocId.replace(/'/g, "\'")}')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition"><i class="fa-solid fa-arrow-up"></i></button>`
+                : `<button onclick="resetTreeFilter()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition"><i class="fa-solid fa-arrow-up"></i></button>`;
 
             let partsHtml = `${upBtn}<button onclick="resetTreeFilter()" class="text-slate-400 hover:text-sky-400 transition font-medium"><i class="fa-solid fa-house text-[11px] mr-1"></i>Locations</button>`;
             chain.forEach((node, idx) => {
@@ -1195,52 +1194,110 @@
 
         const I18N = {
             en: {
-                subtitle: "Asset & Maintenance Management System (Standardized 29-Cols)",
+                subtitle: "Asset & Maintenance Management System",
                 btn_sync: "Sync",
-                btn_add: "Add Equipment / Location",
-                btn_backup: "Backup",
-                sidebar_title: "Locations & Hierarchy",
+                btn_add: "Add Equipment",
+                btn_backup: "Export",
+                btn_import: "Import",
+                sidebar_title: "LOCATIONS & HIERARCHY",
                 search_tree: "Search tree...",
                 filter_table: "Filter table...",
                 tab_locations: "Locations",
                 tab_slickline: "Slickline Tools",
-                tab_container: "Container & Box",
-                tab_pce: "PCE Packages & Sets",
+                tab_container: "Containers",
+                tab_pce: "PCE Packages",
                 tab_mech: "Mechanical Tools",
                 tab_paperwork: "Paper Work",
                 filtered_by: "Filtered by Location",
+                status_connected: "Connected",
+                status_syncing: "Syncing",
+                status_pending: "Offline Queue",
+                status_loading: "Loading Sheets...",
                 act_open: "Open",
                 act_menu: "Actions",
                 act_view: "View Details",
                 act_edit: "Edit Info",
-                act_copy: "Copy (Duplicate)",
+                act_copy: "Duplicate",
                 act_move: "Move Location",
                 act_delete: "Delete",
-                confirm_delete: "Delete this record? It will also be removed from Google Sheets."
+                confirm_delete: "Delete this record?",
+                bulk_selected: "selected",
+                bulk_move: "Batch Move",
+                bulk_cancel: "Cancel",
+                form_target_group: "Target Group",
+                btn_cancel: "Cancel",
+                btn_save: "Save",
+                btn_close: "Close",
+                btn_move: "Move",
+                btn_edit: "Edit",
+                btn_confirm: "Confirm",
+                btn_download: "Download",
+                btn_open_tab: "Open Tab",
+                detail_title: "Equipment Details",
+                move_target_label: "Selected Item(s):",
+                move_select_prompt: "Select destination location hierarchy:",
+                move_dest_path: "Destination path:",
+                move_batch_title: "Batch Move Items",
+                pw_doc_name: "Document Name *",
+                pw_category: "Category",
+                pw_filename: "File Name",
+                pw_drivelink: "Google Drive Link *",
+                pw_remarks: "Remarks",
+                help_doc_title: "Reference Notes Editor",
+                help_doc_sub: "Edit contract information, supervisor contacts, and reference templates..."
             },
             vi: {
-                subtitle: "Hệ Thống Quản Lý Tài Sản & Bảo Trì (Chuẩn 29 Cột)",
+                subtitle: "Hệ Thống Quản Lý Tài Sản & Bảo Trì",
                 btn_sync: "Đồng bộ",
-                btn_add: "Thêm Thiết Bị / Vị Trí",
-                btn_backup: "Sao lưu",
-                sidebar_title: "Vị Trí & Phân Cấp Kho",
-                search_tree: "Tìm trên cây thư mục...",
-                filter_table: "Lọc nhanh trong bảng...",
-                tab_locations: "Vị Trí (Locations)",
+                btn_add: "Thêm Thiết Bị",
+                btn_backup: "Xuất dữ liệu",
+                btn_import: "Nhập dữ liệu",
+                sidebar_title: "VỊ TRÍ & PHÂN CẤP KHO",
+                search_tree: "Tìm cây thư mục...",
+                filter_table: "Lọc trong bảng...",
+                tab_locations: "Vị Trí",
                 tab_slickline: "Dụng Cụ Slickline",
-                tab_container: "Container & Hộp Đồ",
-                tab_pce: "Cụm Thiết Bị PCE",
+                tab_container: "Container & Hộp",
+                tab_pce: "Cụm PCE",
                 tab_mech: "Dụng Cụ Cơ Khí",
-                tab_paperwork: "Hồ Sơ / Biểu Mẫu",
+                tab_paperwork: "Hồ Sơ & Giấy Tờ",
                 filtered_by: "Đang lọc theo vị trí",
+                status_connected: "Đã kết nối",
+                status_syncing: "Đang đồng bộ",
+                status_pending: "Hàng chờ Offline",
+                status_loading: "Tải dữ liệu...",
                 act_open: "Mở",
                 act_menu: "Thao tác",
                 act_view: "Xem chi tiết",
-                act_edit: "Sửa thông tin",
-                act_copy: "Copy (Tạo bản sao)",
-                act_move: "Di chuyển (Move)",
-                act_delete: "Xóa bản ghi",
-                confirm_delete: "Xóa bản ghi này? Dữ liệu trên Google Sheets cũng sẽ bị xóa đồng bộ."
+                act_edit: "Chỉnh sửa",
+                act_copy: "Tạo bản sao",
+                act_move: "Di chuyển",
+                act_delete: "Xóa",
+                confirm_delete: "Xóa bản ghi này?",
+                bulk_selected: "đã chọn",
+                bulk_move: "Chuyển hàng loạt",
+                bulk_cancel: "Hủy",
+                form_target_group: "Nhóm lưu trữ",
+                btn_cancel: "Hủy bỏ",
+                btn_save: "Lưu",
+                btn_close: "Đóng",
+                btn_move: "Di chuyển",
+                btn_edit: "Sửa",
+                btn_confirm: "Xác nhận",
+                btn_download: "Tải về",
+                btn_open_tab: "Mở tab mới",
+                detail_title: "Chi Tiết Thiết Bị",
+                move_target_label: "Mục đã chọn:",
+                move_select_prompt: "Chọn vị trí đích theo phân cấp:",
+                move_dest_path: "Đường dẫn đích:",
+                move_batch_title: "Chuyển mục hàng loạt",
+                pw_doc_name: "Tên hồ sơ *",
+                pw_category: "Phân loại",
+                pw_filename: "Tên file",
+                pw_drivelink: "Link Google Drive *",
+                pw_remarks: "Ghi chú",
+                help_doc_title: "Trang Soạn Thảo Ghi Chú",
+                help_doc_sub: "Soạn thảo hợp đồng, thông tin giám sát và mẫu báo cáo..."
             }
         };
 
@@ -1274,6 +1331,7 @@
                 if (I18N[currentLang][key]) el.placeholder = I18N[currentLang][key];
             });
 
+            updateSyncStatusUI();
             if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
             else renderTable(currentActiveTab);
         }
@@ -1407,17 +1465,17 @@
                         <th class="px-4 py-3 font-semibold">Remarks</th>
                         <th class="px-4 py-3 text-right space-x-1.5">
                             <button onclick="openHelpModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow">
-                                <i class="fa-solid fa-file-word mr-1"></i> Help (Trang soạn thảo)
+                                <i class="fa-solid fa-file-word mr-1"></i> Reference Notes
                             </button>
                             <button onclick="openPaperworkModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow">
-                                <i class="fa-solid fa-link mr-1"></i> Thêm Link Drive
+                                <i class="fa-solid fa-link mr-1"></i> Add Drive Link
                             </button>
                         </th>
                     </tr>`;
 
                 let bodyHtml = "";
                 if (rows.length === 0) {
-                    bodyHtml = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">Chưa có tài liệu nào. Bấm <b>"Thêm Link Drive"</b> để gắn link Google Drive.</td></tr>`;
+                    bodyHtml = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No files available. Click "Add Drive Link" to attach Google Drive files.</td></tr>`;
                 } else {
                     rows.forEach((row, index) => {
                         const links = parseGoogleDriveLinks(cleanVal(row[5]) || cleanVal(row[4]));
@@ -1430,8 +1488,8 @@
                                 <td class="px-4 py-3 text-slate-400 whitespace-nowrap">${cleanVal(row[6])}</td>
                                 <td class="px-4 py-3 text-slate-400 whitespace-normal break-words max-w-xs">${cleanVal(row[7])}</td>
                                 <td class="px-4 py-3 text-right space-x-1.5 whitespace-nowrap" onclick="event.stopPropagation()">
-                                    <button onclick="openDocViewer(${index})" class="bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-eye"></i> Xem</button>
-                                    ${links.downloadUrl ? `<a href="${links.downloadUrl}" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-download"></i> Tải về</a>` : ''}
+                                    <button onclick="openDocViewer(${index})" class="bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-eye"></i> ${t('act_view')}</button>
+                                    ${links.downloadUrl ? `<a href="${links.downloadUrl}" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-download"></i> ${t('btn_download')}</a>` : ''}
                                     <button onclick="openPaperworkModal(${index})" class="text-slate-400 hover:text-sky-300 px-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
                                     <button onclick="deleteItemByIndex('Paper_Work', ${index})" class="text-slate-400 hover:text-rose-400 px-1.5"><i class="fa-solid fa-trash-can"></i></button>
                                 </td>
@@ -1439,7 +1497,7 @@
                     });
                 }
                 document.getElementById("table-body").innerHTML = bodyHtml;
-                document.getElementById("current-table-title").innerText = "Management: Paper Work & Templates";
+                document.getElementById("current-table-title").innerText = "Management: Paper Work";
                 document.getElementById("record-count").innerText = `${rows.length} files`;
                 return;
             }
@@ -1591,7 +1649,7 @@
                         <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
                         <td class="px-3 py-3 text-slate-200 font-medium min-w-[250px] max-w-[340px] whitespace-normal break-words leading-snug align-middle">
                             <div class="flex items-center gap-2">
-                                <i class="${item.icon} text-sm shrink-0"></i>
+                                ${item.customIconHtml ? `<span class="shrink-0 inline-flex items-center">${item.customIconHtml}</span>` : `<i class="${item.icon} text-sm shrink-0"></i>`}
                                 <span>${item.name}</span>
                                 ${hasInside ? `<span class="text-[10px] text-amber-300 font-normal">(${kidsCheck.subLocations.length + kidsCheck.equipments.length} items)</span>` : ''}
                             </div>
@@ -1610,7 +1668,7 @@
                     </tr>`;
             });
 
-            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">Thư mục này hiện đang trống (0 mục con).</td></tr>`;
+            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">This folder is currently empty.</td></tr>`;
             document.getElementById("record-count").innerText = `${subLocations.length} folders, ${equipments.length} items`;
             updateBulkActionBar();
         }
@@ -1649,7 +1707,7 @@
             const itemName = cleanVal(row[2]) || 'Unnamed Item';
             const serial = cleanVal(row[3]) ? ` (SN: ${cleanVal(row[3])})` : '';
 
-            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-accent"></i> Move Equipment Location`;
+            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-accent"></i> Move Location`;
             document.getElementById("move-item-id").value = `${itemName}${serial}`;
             
             const container = document.getElementById("cascading-location-container");
@@ -1676,10 +1734,10 @@
 
             const wrapper = document.createElement("div");
             wrapper.dataset.level = level;
-            const levelLabels = ["Cấp 1 (Base / Khu vực chính):", "Cấp 2 (Container / Kho con):", "Cấp 3 (Rack / Kệ / Khu vực con):", "Cấp 4 (Tool Box / Ngăn chứa chi tiết):"];
-            const labelText = levelLabels[level] || `Cấp ${level + 1} (Vị trí con):`;
+            const levelLabels = ["Level 1 (Base / Main Site):", "Level 2 (Container / Sub-location):", "Level 3 (Rack / Area):", "Level 4 (Toolbox / Compartment):"];
+            const labelText = levelLabels[level] || `Level ${level + 1}:`;
 
-            let optionsHtml = `<option value="">-- Chọn ${level === 0 ? 'vị trí gốc' : 'vị trí con bên trong (nếu có)'} --</option>`;
+            let optionsHtml = `<option value="">-- Select ${level === 0 ? 'root location' : 'sub-location'} --</option>`;
             children.forEach(c => {
                 optionsHtml += `<option value="${c.id}">${c.id} - ${c.name}</option>`;
             });
@@ -1711,7 +1769,7 @@
             const targetId = movingItemContext.selectedTargetId;
             const previewEl = document.getElementById("move-preview-path");
             if (!targetId) {
-                previewEl.innerText = "Chưa chọn vị trí mới";
+                previewEl.innerText = "Not selected";
             } else {
                 previewEl.innerText = `${getLocationPath(targetId)} (ID: ${targetId})`;
             }
@@ -1725,7 +1783,7 @@
         function confirmMoveItem() {
             const { selectedTargetId } = movingItemContext;
             if (!selectedTargetId) {
-                alert("Ông vui lòng chọn vị trí đích trước khi xác nhận di chuyển!");
+                alert("Please select a target location first!");
                 return;
             }
 
@@ -1733,7 +1791,6 @@
             const targetPath = getLocationPath(selectedTargetId);
 
             if (isBulkMoveMode) {
-                // Bulk Move Mode: Move all items in selectedItemKeys
                 let movedCount = 0;
                 selectedItemKeys.forEach(key => {
                     const [tabName, rIdxStr] = key.split("::");
@@ -1750,10 +1807,9 @@
                         movedCount++;
                     }
                 });
-                alert(`Đã di chuyển thành công ${movedCount} thiết bị sang vị trí mới: ${targetPath}`);
+                alert(`Successfully moved ${movedCount} items to: ${targetPath}`);
                 clearSelection();
             } else {
-                // Single Item Move Mode
                 const { tabName, rowIndex } = movingItemContext;
                 const row = (appData[tabName] || [])[rowIndex];
                 if (!row) return;
@@ -1785,7 +1841,7 @@
         function openAddModal() {
             editingRowIndex = null;
             document.getElementById("modal-title").innerText = "Add New Equipment / Location";
-            document.getElementById("submit-btn").innerText = "Save & Sync Sheet";
+            document.getElementById("submit-btn").innerText = t('btn_save');
             document.getElementById("form-target-tab").disabled = false;
             document.getElementById("form-target-tab").value = currentActiveTab === "Paper_Work" ? "Locations" : currentActiveTab;
             document.getElementById("equipment-modal").classList.remove("hidden");
@@ -1806,8 +1862,8 @@
             clonedRow[3] = "";
 
             const sourceName = cleanVal(sourceRow[2]) || cleanVal(sourceRow[1]) || tabName;
-            document.getElementById("modal-title").innerHTML = `<i class="fa-solid fa-copy text-purple-400 mr-1.5"></i> Copy [${tabName.replace(/_/g, ' ')}]: ${sourceName}`;
-            document.getElementById("submit-btn").innerText = "Save Copy & Sync Sheet";
+            document.getElementById("modal-title").innerHTML = `<i class="fa-solid fa-copy text-purple-400 mr-1.5"></i> Duplicate [${tabName.replace(/_/g, ' ')}]: ${sourceName}`;
+            document.getElementById("submit-btn").innerText = t('btn_save');
             document.getElementById("form-target-tab").value = tabName;
             document.getElementById("form-target-tab").disabled = true;
 
@@ -1817,7 +1873,7 @@
 
             const snInput = document.querySelector('input[name="f3"]');
             if (snInput) {
-                snInput.placeholder = oldSerial ? `Nhập Serial Number mới (Bản gốc: ${oldSerial})` : "Nhập Serial Number mới cho bản sao...";
+                snInput.placeholder = oldSerial ? `Enter new Serial Number (Original: ${oldSerial})` : "Enter new Serial Number...";
                 snInput.classList.add("border-purple-500", "ring-2", "ring-purple-500/40", "bg-purple-950/20");
                 setTimeout(() => snInput.focus(), 80);
             }
@@ -1826,7 +1882,7 @@
         function openEditModalByIndex(tabName, rowIndex) {
             editingRowIndex = rowIndex;
             document.getElementById("modal-title").innerText = `Edit [${tabName}]`;
-            document.getElementById("submit-btn").innerText = "Update & Sync Sheet";
+            document.getElementById("submit-btn").innerText = t('btn_save');
             document.getElementById("form-target-tab").value = tabName;
             document.getElementById("form-target-tab").disabled = true;
             document.getElementById("equipment-modal").classList.remove("hidden");
@@ -1928,7 +1984,7 @@
             const row = (appData["Paper_Work"] || [])[index];
             if (!row) return;
             const links = parseGoogleDriveLinks(cleanVal(row[5]) || cleanVal(row[4]));
-            if (!links.previewUrl) { alert("Chưa có link Google Drive hợp lệ!"); return; }
+            if (!links.previewUrl) { alert("Invalid Google Drive link!"); return; }
             document.getElementById("viewer-doc-title").innerText = cleanVal(row[1]);
             document.getElementById("viewer-iframe").src = links.previewUrl;
             document.getElementById("viewer-download-btn").href = links.downloadUrl || "#";
@@ -1946,7 +2002,7 @@
         function execWordCmd(command, value = null) { document.execCommand(command, false, value); document.getElementById("word-editor-area").focus(); }
 
         function insertTemplateBlock() {
-            document.execCommand('insertHTML', false, `<br><h2 style="color: #0369a1;">DỰ ÁN MỚI</h2><ul><li><b>Số Hợp Đồng:</b> ...</li><li><b>Giám Sát:</b> ...</li></ul><br>`);
+            document.execCommand('insertHTML', false, `<br><h2 style="color: #0369a1;">NEW PROJECT</h2><ul><li><b>Contract No:</b> ...</li><li><b>Supervisor:</b> ...</li></ul><br>`);
         }
 
         function openHelpModal() {
@@ -1991,7 +2047,6 @@
             }
         }
 
-        // Export / Import Backup Files
         function exportJSON() {
             const backupPayload = {
                 appData: appData,
@@ -2017,16 +2072,16 @@
                         appData = imported.appData;
                         if (imported.syncQueue) syncQueue = imported.syncQueue;
                         saveDataLocal();
-                        alert("Đã nạp file dữ liệu Offline thành công!");
+                        alert("Data imported successfully!");
                     } else {
-                        alert("File dữ liệu không đúng định dạng!");
+                        alert("Invalid JSON format!");
                     }
                 } catch (err) {
-                    alert("Lỗi khi đọc file Backup JSON!");
+                    alert("Error reading JSON file!");
                 }
             };
             reader.readAsText(file);
-            event.target.value = ""; // Reset input
+            event.target.value = "";
         }
 
         function initSidebarResizer() {
