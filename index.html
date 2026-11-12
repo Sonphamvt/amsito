@@ -32,6 +32,15 @@
         #word-editor-area h3 { font-size: 1.1rem; font-weight: 600; margin: 0.5rem 0 0.3rem; }
         #word-editor-area table { border-collapse: collapse; width: 100%; margin: 0.75rem 0; }
         #word-editor-area td, #word-editor-area th { border: 1px solid #94a3b8; padding: 6px 10px; }
+        
+        @media print {
+            body * { visibility: hidden; }
+            #wire-log-modal, #wire-log-modal * { visibility: visible; }
+            #wire-log-modal { position: absolute; left: 0; top: 0; width: 100%; background: white !important; color: black !important; padding: 0 !important; }
+            .no-print { display: none !important; }
+            .print-table th, .print-table td { border: 1px solid #000 !important; color: black !important; padding: 4px 6px !important; }
+            .print-table input { border-bottom: none !important; font-size: 11px !important; }
+        }
     </style>
 </head>
 <body class="bg-darkbg text-slate-100 min-h-screen font-sans overflow-x-hidden pb-20" onclick="hideAllDropdowns(event)">
@@ -39,8 +48,18 @@
     <!-- Header -->
     <header class="bg-cardbg border-b border-slate-700 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
         <div class="flex items-center space-x-3.5 w-full md:w-auto">
-            <div class="bg-white px-2.5 py-1.5 rounded-lg border border-slate-600/60 shadow-sm shrink-0 flex items-center justify-center">
-                <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 450 140' width='140' height='44'><g transform='italic'><text x='5' y='105' font-family='Arial, Helvetica, sans-serif' font-weight='900' font-style='italic' font-size='105' fill='%23dc2626' letter-spacing='-3'>amsito</text><circle cx='302' cy='25' r='14' fill='%231e293b'/><circle cx='435' cy='78' r='7' fill='%23dc2626'/><line x1='435' y1='85' x2='435' y2='135' stroke='%23dc2626' stroke-width='4'/></g></svg>" alt="amsito." class="h-8 md:h-9 w-auto object-contain block" />
+            <!-- Corrected Amsito Logo (Correct spacing between i and s) -->
+            <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-600/60 shadow-sm shrink-0 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 140" class="h-8 md:h-9 w-auto block select-none" aria-label="amsito.">
+                    <g transform="translate(26, 0) skewX(-12)">
+                        <text x="0" y="102" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="104" fill="#dc2626" letter-spacing="-2">ams</text>
+                        <rect x="226" y="42" width="21" height="60" fill="#dc2626"/>
+                        <text x="256" y="102" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="104" fill="#dc2626" letter-spacing="-2">to</text>
+                        <circle cx="236.5" cy="21" rx="12" ry="13" r="12.5" fill="#1e293b"/>
+                    </g>
+                    <circle cx="412" cy="76" r="6.5" fill="#dc2626"/>
+                    <line x1="412" y1="82.5" x2="412" y2="132" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+                </svg>
             </div>
             <div>
                 <h1 class="text-base md:text-xl font-bold tracking-wide uppercase text-white">Slickline Asset Manager</h1>
@@ -71,14 +90,9 @@
             <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm flex items-center gap-1.5 transition shadow-md">
                 <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add Equipment</span>
             </button>
-            
             <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-download"></i> <span data-i18n="btn_backup">Export</span>
             </button>
-            <label class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition cursor-pointer">
-                <i class="fa-solid fa-upload"></i> <span data-i18n="btn_import">Import</span>
-                <input type="file" id="import-json-input" accept=".json" onchange="importJSON(event)" class="hidden">
-            </label>
         </div>
     </header>
 
@@ -106,13 +120,15 @@
             <div id="tree-container" class="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs select-none"></div>
         </aside>
 
-        <!-- Content Area: Tables & Detail View -->
-        <div id="sidebar-resizer" class="hidden lg:flex w-1.5 cursor-col-resize items-center justify-center group select-none">
+        <!-- Resizer -->
+        <div id="sidebar-resizer" class="hidden lg:flex w-1.5 cursor-col-resize items-center justify-center group select-none" title="Kéo sang trái/phải để chỉnh độ rộng cột cây thư mục">
             <div class="w-1 h-16 rounded-full bg-slate-700 group-hover:bg-sky-400 transition"></div>
         </div>
+
+        <!-- Content Area: Tables & Detail View -->
         <section class="w-full flex-1 min-w-0 flex flex-col gap-4 md:gap-6">
             
-            <!-- Filter Tabs -->
+            <!-- Filter Tabs with Restored Custom Icons -->
             <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md relative">
                 <div class="flex flex-wrap gap-1.5 items-center justify-start" id="tab-buttons">
                     <button onclick="switchTab('Locations')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations">
@@ -125,7 +141,7 @@
                         <i class="fa-solid fa-box mr-1 text-amber-400"></i> <span data-i18n="tab_container">Containers</span>
                     </button>
                     
-                    <!-- Dropdown: Unit, Mast & Power Pack -->
+                    <!-- Dropdown: Unit, Mast & Power Pack with Custom SVG Icons -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown(event, 'dropdown-unit-mast')" id="btn-group-unit-mast" class="tab-dropdown-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1">
                             <span class="mr-1 inline-flex items-center"><svg class="w-4 h-4 inline-block text-teal-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V3.5M12 5V3.5M21 5V3.5"/><rect x="2.5" y="5" width="19" height="14" rx="1"/><rect x="2.5" y="5" width="7.5" height="14" fill="currentColor" fill-opacity="0.3"/><rect x="4" y="7" width="4.5" height="4.5" rx="0.5" fill="#0f172a" stroke-width="1.2"/><circle cx="14.5" cy="12.5" r="3.5" fill="currentColor" fill-opacity="0.22"/><circle cx="14.5" cy="12.5" r="1.2"/><path d="M18 12.5h3.5M19.5 8.5v8"/><path d="M1.5 19h21"/></svg></span> Unit & Mast <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
@@ -175,7 +191,6 @@
                         <i class="fa-solid fa-file-contract mr-1 text-rose-400"></i> MPI / LT
                     </button>
 
-                    <!-- Tab Paper Work -->
                     <button onclick="switchTab('Paper_Work')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Paper_Work">
                         <i class="fa-solid fa-folder-open mr-1 text-emerald-400"></i> <span data-i18n="tab_paperwork">Paper Work</span>
                     </button>
@@ -208,15 +223,105 @@
         </section>
     </main>
 
+    <!-- Wire Log Modal (Updated 3 Pull Test Columns & Fully Synced Deletion) -->
+    <div id="wire-log-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-3 md:p-6">
+        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-6xl h-[92vh] flex flex-col overflow-hidden shadow-2xl">
+            <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center no-print">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-circle-notch text-sky-400 text-lg"></i>
+                    <div>
+                        <h3 class="font-bold text-base text-white uppercase tracking-wider">WIRE LOG REPORT</h3>
+                        <p class="text-[11px] text-slate-400">Slickline Wire Inspection & Cut-off History Record</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="window.print()" class="bg-sky-600 hover:bg-sky-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow">
+                        <i class="fa-solid fa-print"></i> Print Wire Log
+                    </button>
+                    <button onclick="closeWireLogModal()" class="bg-slate-700 hover:bg-rose-600 text-white w-8 h-8 rounded-lg flex items-center justify-center transition">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Printable Log Content -->
+            <div class="flex-1 bg-slate-900/90 overflow-y-auto p-4 md:p-6 space-y-4">
+                <div class="bg-white text-slate-900 p-4 md:p-6 rounded-xl shadow border border-slate-300">
+                    <div class="flex justify-between items-center border-b-2 border-slate-900 pb-3 mb-4">
+                        <h2 class="text-xl font-extrabold tracking-wider text-slate-900 uppercase">WIRE LOG</h2>
+                        <div class="text-right text-xs font-bold text-slate-800 tracking-wide">AMSITO OILWELL SERVICES</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+                        <div class="space-y-2">
+                            <div class="flex justify-between border-b border-slate-200 pb-1">
+                                <span class="font-semibold text-slate-600">Date Spooled:</span>
+                                <input type="text" id="wl-date-spooled" class="font-bold text-slate-900 text-right bg-transparent focus:outline-none focus:bg-amber-50">
+                            </div>
+                            <div class="flex justify-between border-b border-slate-200 pb-1">
+                                <span class="font-semibold text-slate-600">Type of Wire:</span>
+                                <input type="text" id="wl-wire-type" class="font-bold text-slate-900 text-right bg-transparent focus:outline-none focus:bg-amber-50">
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between border-b border-slate-200 pb-1">
+                                <span class="font-semibold text-slate-600">Certificate No:</span>
+                                <input type="text" id="wl-cert-no" class="font-bold text-slate-900 text-right bg-transparent focus:outline-none focus:bg-amber-50">
+                            </div>
+                            <div class="flex justify-between border-b border-slate-200 pb-1">
+                                <span class="font-semibold text-slate-600">Unit No:</span>
+                                <input type="text" id="wl-unit-no" class="font-bold text-slate-900 text-right bg-transparent focus:outline-none focus:bg-amber-50">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center no-print">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300"><i class="fa-solid fa-list-check mr-1.5 text-amber-400"></i> Operation Logs Table</h4>
+                    <button onclick="addWireLogRow()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow">
+                        <i class="fa-solid fa-plus"></i> Add Log Entry
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-xl shadow overflow-x-auto border border-slate-300">
+                    <table class="w-full text-left border-collapse text-xs text-slate-900 print-table font-sans">
+                        <thead class="bg-slate-100 uppercase text-[10px] font-bold border-b-2 border-slate-900 text-slate-800">
+                            <tr>
+                                <th class="p-2 border-r border-slate-300 w-28 text-center">DATE</th>
+                                <th class="p-2 border-r border-slate-300 w-36">WELL NAME & NUMBER</th>
+                                <th class="p-2 border-r border-slate-300 text-center w-24">MAX DEPTH<br><span class="text-[9px] lowercase font-normal text-slate-600">(metres)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-24">MAX PULL<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-24">WIRE CUT-OFF<br><span class="text-[9px] lowercase font-normal text-slate-600">(metres)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-24">WIRE ON DRUM<br><span class="text-[9px] lowercase font-normal text-slate-600">(metres)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-20">1st Pull Test<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-20">2nd Pull Test<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-20">3rd Pull Test<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
+                                <th class="p-2 border-r border-slate-300 min-w-[150px]">COMMENTS<br><span class="text-[9px] lowercase font-normal text-slate-600">(CO2, H2S, brine, etc.)</span></th>
+                                <th class="p-2 text-center w-10 no-print">ACT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wl-table-body" class="divide-y divide-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3 no-print">
+                <button type="button" onclick="closeWireLogModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Close</button>
+                <button type="button" onclick="saveWireLogData()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-semibold transition shadow-md flex items-center gap-1.5">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Wire Log
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Floating Bulk Action Bar -->
     <div id="bulk-action-bar" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/95 border border-amber-500/40 shadow-2xl rounded-full px-5 py-2.5 flex items-center gap-3 md:gap-5 z-40 hidden backdrop-blur-md">
         <span id="selected-count" class="text-xs font-bold text-amber-400 flex items-center gap-1.5">
-            <i class="fa-solid fa-check-double"></i> <span data-i18n="bulk_selected">0 selected</span>
+            <i class="fa-solid fa-check-double"></i> <span>0 selected</span>
         </span>
         <button onclick="openBulkMoveModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 px-3.5 py-1.5 rounded-full text-xs font-bold transition shadow flex items-center gap-1.5">
-            <i class="fa-solid fa-right-left"></i> <span data-i18n="bulk_move">Batch Move</span>
+            <i class="fa-solid fa-right-left"></i> Batch Move
         </button>
-        <button onclick="clearSelection()" class="text-xs text-slate-400 hover:text-white px-2 py-1" data-i18n="bulk_cancel">Cancel</button>
+        <button onclick="clearSelection()" class="text-xs text-slate-400 hover:text-white px-2 py-1">Cancel</button>
     </div>
 
     <!-- Modal Form Add / Edit Equipment -->
@@ -229,13 +334,13 @@
             
             <form id="dynamic-form" onsubmit="handleFormSubmit(event)" autocomplete="off" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
                 <div>
-                    <label class="block text-xs font-medium text-slate-300 mb-1" data-i18n="form_target_group">Target Group</label>
+                    <label class="block text-xs font-medium text-slate-300 mb-1">Target Group</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"></select>
                 </div>
                 <div id="dynamic-fields-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition" data-i18n="btn_cancel">Cancel</button>
-                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md" data-i18n="btn_save">Save</button>
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-medium transition">Cancel</button>
+                    <button type="submit" id="submit-btn" class="px-5 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Save</button>
                 </div>
             </form>
         </div>
@@ -246,15 +351,15 @@
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-4xl overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-sky-400"></i> <span data-i18n="detail_title">Equipment Details</span>
+                    <i class="fa-solid fa-circle-info text-sky-400"></i> Equipment Details
                 </h3>
                 <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="detail-modal-content"></div>
             <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition" data-i18n="btn_close">Close</button>
-                <button type="button" id="detail-move-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-medium transition shadow-md"><i class="fa-solid fa-right-left mr-1"></i> <span data-i18n="btn_move">Move</span></button>
-                <button type="button" id="detail-edit-btn" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md" data-i18n="btn_edit">Edit</button>
+                <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Close</button>
+                <button type="button" id="detail-move-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-medium transition shadow-md"><i class="fa-solid fa-right-left mr-1"></i> Move</button>
+                <button type="button" id="detail-edit-btn" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Edit</button>
             </div>
         </div>
     </div>
@@ -270,23 +375,23 @@
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1" data-i18n="move_target_label">Selected Item(s):</label>
+                    <label class="block text-xs text-slate-300 mb-1">Selected Item(s):</label>
                     <input type="text" id="move-item-id" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-400 font-semibold cursor-not-allowed">
                 </div>
                 <div class="space-y-3 bg-slate-900/50 p-3.5 rounded-xl border border-slate-700/70">
                     <label class="block text-xs font-semibold text-amber-300">
-                        <i class="fa-solid fa-sitemap mr-1"></i> <span data-i18n="move_select_prompt">Select destination location hierarchy:</span>
+                        <i class="fa-solid fa-sitemap mr-1"></i> Select destination location hierarchy:
                     </label>
                     <div id="cascading-location-container" class="space-y-2.5"></div>
                     <div class="pt-2 border-t border-slate-800">
-                        <span class="text-[11px] text-slate-400 block" data-i18n="move_dest_path">Destination path:</span>
+                        <span class="text-[11px] text-slate-400 block">Destination path:</span>
                         <span id="move-preview-path" class="text-xs font-semibold text-emerald-400 mt-0.5 block">Not selected</span>
                     </div>
                 </div>
             </div>
             <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
-                <button type="button" onclick="closeMoveModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition" data-i18n="btn_cancel">Cancel</button>
-                <button type="button" onclick="confirmMoveItem()" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md" data-i18n="btn_confirm">Confirm Move</button>
+                <button type="button" onclick="closeMoveModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Cancel</button>
+                <button type="button" onclick="confirmMoveItem()" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Confirm Move</button>
             </div>
         </div>
     </div>
@@ -296,19 +401,19 @@
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
                 <h3 id="pw-modal-title" class="font-bold text-base text-white flex items-center gap-2">
-                    <i class="fa-solid fa-link text-emerald-400"></i> Paper Work Document Link
+                    <i class="fa-solid fa-link text-emerald-400"></i> Thêm / Cập Nhật Link Tài Liệu Drive
                 </h3>
                 <button onclick="closePaperworkModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="handlePaperworkLinkSave(event)" class="p-6 space-y-4">
                 <input type="hidden" id="pw-edit-index" value="-1">
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_doc_name">Document Name *</label>
-                    <input type="text" id="pw-doc-name" required placeholder="Timesheet..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                    <label class="block text-xs text-slate-300 mb-1">Tên hồ sơ / Biểu mẫu hiển thị *</label>
+                    <input type="text" id="pw-doc-name" required placeholder="VD: Timesheet Mẫu 2026..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_category">Category</label>
+                        <label class="block text-xs text-slate-300 mb-1">Phân loại</label>
                         <select id="pw-category" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                             <option value="Timesheet">Timesheet</option>
                             <option value="Job Report / Log">Job Report / Log</option>
@@ -319,22 +424,22 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_filename">File Name</label>
-                        <input type="text" id="pw-file-name" placeholder="Timesheet_2026.xlsx" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                        <label class="block text-xs text-slate-300 mb-1">Tên file gốc (tùy chọn)</label>
+                        <input type="text" id="pw-file-name" placeholder="VD: Timesheet_2026.xlsx" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_drivelink">Google Drive Link *</label>
-                    <input type="url" id="pw-drive-link" required placeholder="https://drive.google.com/..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-300 focus:outline-none focus:border-accent">
+                    <label class="block text-xs text-slate-300 mb-1">Link Google Drive của file *</label>
+                    <input type="url" id="pw-drive-link" required placeholder="https://drive.google.com/file/d/.../view" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-300 focus:outline-none focus:border-accent">
                 </div>
                 <div>
-                    <label class="block text-xs text-slate-300 mb-1" data-i18n="pw_remarks">Remarks</label>
-                    <input type="text" id="pw-remarks" placeholder="Notes..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
+                    <label class="block text-xs text-slate-300 mb-1">Ghi chú (Remarks)</label>
+                    <input type="text" id="pw-remarks" placeholder="Ghi chú thêm nếu có..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
                 </div>
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-700">
-                    <button type="button" onclick="closePaperworkModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition" data-i18n="btn_cancel">Cancel</button>
+                    <button type="button" onclick="closePaperworkModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Hủy</button>
                     <button type="submit" id="pw-submit-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-medium transition shadow-md flex items-center gap-1.5">
-                        <i class="fa-solid fa-floppy-disk"></i> <span data-i18n="btn_save">Save</span>
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu & Đồng Bộ Sheet
                     </button>
                 </div>
             </form>
@@ -354,10 +459,10 @@
                 </div>
                 <div class="flex items-center gap-2">
                     <a id="viewer-download-btn" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow">
-                        <i class="fa-solid fa-download"></i> <span data-i18n="btn_download">Download</span>
+                        <i class="fa-solid fa-download"></i> Tải về máy
                     </a>
                     <a id="viewer-external-btn" href="#" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-up-right-from-square"></i> <span data-i18n="btn_open_tab">Open Tab</span>
+                        <i class="fa-solid fa-up-right-from-square"></i> Mở tab mới
                     </a>
                     <button onclick="closeDocViewer()" class="bg-slate-700 hover:bg-rose-600 text-white w-8 h-8 rounded-lg flex items-center justify-center transition ml-1">
                         <i class="fa-solid fa-xmark"></i>
@@ -379,17 +484,17 @@
                         <i class="fa-solid fa-file-word text-base"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-sm md:text-base text-white" data-i18n="help_doc_title">Reference Notes Editor</h3>
-                        <p class="text-[11px] text-slate-400" data-i18n="help_doc_sub">Edit contract information, supervisor contacts, and reference templates...</p>
+                        <h3 class="font-bold text-sm md:text-base text-white">Help & Reference Document (Trang Soạn Thảo Ghi Chú)</h3>
+                        <p class="text-[11px] text-slate-400">Soạn thảo tự do thông tin hợp đồng, giám sát, ghi chú mẫu...</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span id="word-save-status" class="text-[11px] text-emerald-400 hidden"><i class="fa-solid fa-check-circle mr-1"></i> Saved</span>
+                    <span id="word-save-status" class="text-[11px] text-emerald-400 hidden"><i class="fa-solid fa-check-circle mr-1"></i> Đã lưu</span>
                     <button onclick="downloadHelpAsWordDoc()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition shadow">
-                        <i class="fa-solid fa-file-arrow-down"></i> Export Word
+                        <i class="fa-solid fa-file-arrow-down"></i> Xuất file Word
                     </button>
                     <button onclick="saveHelpWordDocument()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow">
-                        <i class="fa-solid fa-floppy-disk"></i> Save Document
+                        <i class="fa-solid fa-floppy-disk"></i> Lưu Văn Bản
                     </button>
                     <button onclick="closeHelpModal()" class="bg-slate-700 hover:bg-rose-600 text-white w-8 h-8 rounded-lg flex items-center justify-center transition ml-1">
                         <i class="fa-solid fa-xmark"></i>
@@ -400,9 +505,9 @@
             <!-- Toolbar -->
             <div class="px-4 py-2 bg-slate-900 border-b border-slate-700 flex flex-wrap items-center gap-1.5 text-xs select-none">
                 <select onchange="execWordCmd('formatBlock', this.value); this.value='P';" class="bg-slate-800 border border-slate-700 text-slate-200 rounded px-2 py-1 text-xs focus:outline-none">
-                    <option value="P">Normal</option>
-                    <option value="H1">Heading 1</option>
-                    <option value="H2">Heading 2</option>
+                    <option value="P">Văn bản thường</option>
+                    <option value="H1">Tiêu đề lớn</option>
+                    <option value="H2">Tiêu đề vừa</option>
                 </select>
                 <div class="h-4 w-[1px] bg-slate-700 mx-1"></div>
                 <button type="button" onclick="execWordCmd('bold')" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold">B</button>
@@ -413,7 +518,7 @@
                 <button type="button" onclick="execWordCmd('foreColor', '#2563eb')" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 flex items-center justify-center font-bold text-blue-500">A</button>
                 <button type="button" onclick="execWordCmd('insertUnorderedList')" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center"><i class="fa-solid fa-list-ul"></i></button>
                 <button type="button" onclick="insertTemplateBlock()" class="px-2.5 h-7 rounded bg-sky-900/70 hover:bg-sky-800 border border-sky-500/30 text-sky-300 flex items-center gap-1">
-                    <i class="fa-solid fa-plus"></i> Template
+                    <i class="fa-solid fa-plus"></i> Chèn mẫu dự án
                 </button>
             </div>
 
@@ -426,7 +531,7 @@
 
     <!-- Script Logic -->
     <script>
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyyPrIf1H6fGmVeEC7xvEAOhWQHRwVfpjtqaPBpHrdUkJsQH840JNT7f8FA0H4qAMaVsQ/exec";
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxRjudlirgaLN4sD8q33ZUTBLjg3PA6bPxNUKNVGhcWEmjVh7WSxjndjPJ5a6zaxRzjpQ/exec";
 
         const UNIFIED_HEADERS = [
             'STT / Item No', 'Asset ID / Code', 'Asset Name / Description', 'Serial Number', 'Part Number / Model', 
@@ -437,33 +542,125 @@
         ];
 
         const DEFAULT_HELP_WORD_CONTENT = `
-            <h1 style="color: #0f172a; border-bottom: 2px solid #0ea5e9; padding-bottom: 6px;">TIMESHEET & JOB REPORT REFERENCE INFO</h1>
-            <p style="color: #475569; font-size: 13px;"><i>(Editor page: You can type, edit, format content freely and click <b>Save Document</b>).</i></p>
+            <h1 style="color: #0f172a; border-bottom: 2px solid #0ea5e9; padding-bottom: 6px;">THÔNG TIN THAM KHẢO ĐIỀN TIMESHEET & JOB REPORT</h1>
+            <p style="color: #475569; font-size: 13px;"><i>(Trang soạn thảo văn bản: Ông có thể gõ, sửa, format tùy ý và bấm <b>Lưu Văn Bản</b>).</i></p>
             <br>
-            <h2 style="color: #0369a1;">1. CLIENT: CUU LONG JOC</h2>
+            <h2 style="color: #0369a1;">1. KHÁCH HÀNG: CUU LONG JOC</h2>
             <ul>
-                <li><b>Contract No:</b> CLJOC-SL-2026-001</li>
-                <li><b>Supervisor:</b> Mr. Nguyen Van A</li>
+                <li><b>Số Hợp Đồng:</b> CLJOC-SL-2026-001</li>
+                <li><b>Giám Sát:</b> Mr. Nguyen Van A</li>
             </ul>
         `;
+
+        let currentLang = localStorage.getItem("amsito_ui_lang") || "en";
+
+        const I18N = {
+            en: {
+                subtitle: "Asset & Maintenance Management System",
+                btn_sync: "Sync",
+                btn_add: "Add Equipment",
+                btn_backup: "Export",
+                sidebar_title: "LOCATIONS & HIERARCHY",
+                search_tree: "Search tree...",
+                filter_table: "Filter table...",
+                tab_locations: "Locations",
+                tab_slickline: "Slickline Tools",
+                tab_container: "Containers",
+                tab_pce: "PCE Packages",
+                tab_mech: "Mechanical Tools",
+                tab_paperwork: "Paper Work",
+                filtered_by: "Filtered by Location",
+                status_connected: "Connected",
+                status_syncing: "Syncing",
+                status_pending: "Offline Queue",
+                status_loading: "Loading Sheets...",
+                act_open: "Open",
+                act_menu: "Actions",
+                act_view: "View Details",
+                act_edit: "Edit Info",
+                act_copy: "Duplicate",
+                act_move: "Move Location",
+                act_delete: "Delete",
+                confirm_delete: "Delete this record?",
+                bulk_selected: "selected",
+                bulk_move: "Batch Move",
+                bulk_cancel: "Cancel"
+            },
+            vi: {
+                subtitle: "Hệ Thống Quản Lý Tài Sản & Bảo Trì",
+                btn_sync: "Đồng bộ",
+                btn_add: "Thêm Thiết Bị",
+                btn_backup: "Xuất dữ liệu",
+                sidebar_title: "VỊ TRÍ & PHÂN CẤP KHO",
+                search_tree: "Tìm cây thư mục...",
+                filter_table: "Lọc trong bảng...",
+                tab_locations: "Vị Trí",
+                tab_slickline: "Dụng Cụ Slickline",
+                tab_container: "Container & Hộp",
+                tab_pce: "Cụm PCE",
+                tab_mech: "Dụng Cụ Cơ Khí",
+                tab_paperwork: "Hồ Sơ & Giấy Tờ",
+                filtered_by: "Đang lọc theo vị trí",
+                status_connected: "Đã kết nối",
+                status_syncing: "Đang đồng bộ",
+                status_pending: "Hàng chờ Offline",
+                status_loading: "Tải dữ liệu...",
+                act_open: "Mở",
+                act_menu: "Thao tác",
+                act_view: "Xem chi tiết",
+                act_edit: "Chỉnh sửa",
+                act_copy: "Tạo bản sao",
+                act_move: "Di chuyển",
+                act_delete: "Xóa",
+                confirm_delete: "Xóa bản ghi này?",
+                bulk_selected: "đã chọn",
+                bulk_move: "Chuyển hàng loạt",
+                bulk_cancel: "Hủy"
+            }
+        };
+
+        function t(key) {
+            return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
+        }
+
+        function setLanguage(lang) {
+            currentLang = (lang === "vi") ? "vi" : "en";
+            localStorage.setItem("amsito_ui_lang", currentLang);
+            document.documentElement.lang = currentLang;
+
+            const btnEn = document.getElementById("btn-lang-en");
+            const btnVi = document.getElementById("btn-lang-vi");
+            if (btnEn && btnVi) {
+                if (currentLang === "en") {
+                    btnEn.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white";
+                    btnVi.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-transparent text-slate-400 hover:text-white";
+                } else {
+                    btnVi.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white";
+                    btnEn.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-transparent text-slate-400 hover:text-white";
+                }
+            }
+            updateSyncStatusUI();
+            if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
+            else renderTable(currentActiveTab);
+        }
 
         let appData = {
             "Locations": [], "MPLT": [], "PPS_Gauge": [], "ART": [], "Cement": [], "Battery": [], "MPI_LT": [], 
             "Container": [], "Unit": [], "Mast": [], "Power Pack": [], "Slickline_Tools": [], "Drums": [], 
-            "Wires": [], "PCE_Equipment": [], "Mechanical_Tools": [], "Other": [], "Paper_Work": [], "Paper_Work_Help": []
+            "Wires": [], "PCE_Equipment": [], "Mechanical_Tools": [], "Other": [], "Paper_Work": [], "Paper_Work_Help": [],
+            "Wire_Logs": []
         };
 
-        // Offline Sync Queue Array
         let syncQueue = JSON.parse(localStorage.getItem("amsito_sync_queue") || "[]");
-
-        // Selected items for bulk operations: Key pattern = "tabName::rowIndex"
         let selectedItemKeys = new Set();
         let isBulkMoveMode = false;
 
         let currentActiveTab = "Locations";
         let currentFilteredLocId = null;
+        let activeExplorerLocId = null;
         let editingRowIndex = null;
         let movingItemContext = { tabName: null, rowIndex: null, selectedTargetId: null };
+        let activeWireContext = { wireRow: null, wireIndex: null };
 
         function cleanVal(v) {
             if (v === null || v === undefined) return "";
@@ -475,7 +672,7 @@
 
         function getRowUniqueKey(row, rowIndex) {
             if (!row || !Array.isArray(row)) return String(rowIndex + 1);
-            return cleanVal(row[1]) || cleanVal(row[3]) || cleanVal(row[0]) || String(rowIndex + 1);
+            return cleanVal(row[0]) || cleanVal(row[1]) || cleanVal(row[3]) || String(rowIndex + 1);
         }
 
         function parseGoogleDriveLinks(rawUrl) {
@@ -513,9 +710,7 @@
             document.querySelectorAll("[id^='dropdown-'], [id^='row-dropdown-']").forEach(d => d.classList.add("hidden"));
         }
 
-        function normKey(v) {
-            return cleanVal(v).replace(/\s+/g, ' ').trim();
-        }
+        function normKey(v) { return cleanVal(v).replace(/\s+/g, ' ').trim(); }
 
         function matchNodeId(row, targetId) {
             if (!row || !targetId) return false;
@@ -572,15 +767,175 @@
             return path.length > 0 ? path.join(" \\ ") : cleanId;
         }
 
-        // --- OFFLINE SYNC QUEUE & NETWORK LOGIC ---
+        function getTodayFormatted() {
+            return new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-');
+        }
+
+        // --- WIRE LOG SYSTEM INTEGRATION ---
+        function openWireLogModal(wireIndex) {
+            const wireRow = (appData["Wires"] || [])[wireIndex];
+            if (!wireRow) return;
+
+            activeWireContext = { wireRow, wireIndex };
+            const certNo = cleanVal(wireRow[3]) || cleanVal(wireRow[1]) || "36253 (CWR-0630)";
+            const wireType = cleanVal(wireRow[7]) || cleanVal(wireRow[2]) || '0.160" SUPA 75';
+            const dateSpooled = cleanVal(wireRow[24]) || "09-APR-2024";
+            const unitNo = cleanVal(wireRow[15]) || "104346";
+
+            document.getElementById("wl-date-spooled").value = dateSpooled;
+            document.getElementById("wl-wire-type").value = wireType;
+            document.getElementById("wl-cert-no").value = certNo;
+            document.getElementById("wl-unit-no").value = unitNo;
+
+            renderWireLogEntries(certNo);
+            document.getElementById("wire-log-modal").classList.remove("hidden");
+            document.getElementById("wire-log-modal").classList.add("flex");
+        }
+
+        function closeWireLogModal() {
+            document.getElementById("wire-log-modal").classList.remove("flex");
+            document.getElementById("wire-log-modal").classList.add("hidden");
+        }
+
+        function getWireLogsByCert(certNo) {
+            const safeCert = normKey(certNo).toLowerCase();
+            const list = appData["Wire_Logs"] || [];
+            return list.filter(l => 
+                normKey(l[1]).toLowerCase() === safeCert || 
+                normKey(l[4]).toLowerCase() === safeCert || 
+                normKey(l[3]).toLowerCase() === safeCert
+            );
+        }
+
+        function renderWireLogEntries(certNo) {
+            const tbody = document.getElementById("wl-table-body");
+            const logs = getWireLogsByCert(certNo);
+
+            let html = "";
+            const defaultDate = getTodayFormatted();
+            if (logs.length === 0) {
+                html = `
+                    <tr class="wl-row" data-log-id="">
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-date w-full bg-transparent border-b border-slate-300 font-medium text-center focus:bg-amber-50" value="${defaultDate}"></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-well w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value=""></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-depth w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pull w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-cutoff w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-ondrum w-full bg-transparent border-b border-slate-300 text-center font-bold text-sky-700 focus:bg-amber-50" value="7850"></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt1 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt2 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt3 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-comments w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value="AMS-02-SC08"></td>
+                        <td class="p-1.5 text-center no-print"><button onclick="removeWireLogRow(this, '')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
+                    </tr>`;
+            } else {
+                logs.forEach(log => {
+                    const logId = cleanVal(log[0]);
+                    html += `
+                        <tr class="wl-row" data-log-id="${logId}">
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-date w-full bg-transparent border-b border-slate-300 font-medium text-center focus:bg-amber-50" value="${cleanVal(log[6]) || defaultDate}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-well w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value="${cleanVal(log[7])}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-depth w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[8])}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pull w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[9])}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-cutoff w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[10])}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-ondrum w-full bg-transparent border-b border-slate-300 text-center font-bold text-sky-700 focus:bg-amber-50" value="${cleanVal(log[11])}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt1 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[12])}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt2 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[13])}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt3 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[14])}"></td>
+                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-comments w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value="${cleanVal(log[15])}"></td>
+                            <td class="p-1.5 text-center no-print"><button onclick="removeWireLogRow(this, '${logId}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
+                        </tr>`;
+                });
+            }
+            tbody.innerHTML = html;
+        }
+
+        function addWireLogRow() {
+            const tbody = document.getElementById("wl-table-body");
+            const tr = document.createElement("tr");
+            tr.className = "wl-row";
+            tr.dataset.logId = "";
+            const defaultDate = getTodayFormatted();
+            
+            tr.innerHTML = `
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-date w-full bg-transparent border-b border-slate-300 font-medium text-center focus:bg-amber-50" value="${defaultDate}"></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-well w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-depth w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pull w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-cutoff w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-ondrum w-full bg-transparent border-b border-slate-300 text-center font-bold text-sky-700 focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt1 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt2 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt3 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-comments w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value=""></td>
+                <td class="p-1.5 text-center no-print"><button onclick="removeWireLogRow(this, '')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        function removeWireLogRow(btn, logId) {
+            const row = btn.closest("tr");
+            if (logId) {
+                // If it's an existing synced log, send delete action to Google Sheet
+                const foundLog = (appData["Wire_Logs"] || []).find(l => cleanVal(l[0]) === logId);
+                if (foundLog) {
+                    syncToGoogleSheet("delete", "Wire_Logs", foundLog, logId);
+                }
+                appData["Wire_Logs"] = (appData["Wire_Logs"] || []).filter(l => cleanVal(l[0]) !== logId);
+                saveDataLocal();
+            }
+            if (row) row.remove();
+        }
+
+        function saveWireLogData() {
+            const certNo = document.getElementById("wl-cert-no").value.trim();
+            const dateSpooled = document.getElementById("wl-date-spooled").value.trim();
+            const wireType = document.getElementById("wl-wire-type").value.trim();
+            const unitNo = document.getElementById("wl-unit-no").value.trim();
+
+            if (!certNo) { alert("Certificate No is required!"); return; }
+
+            const rows = document.querySelectorAll("#wl-table-body .wl-row");
+            rows.forEach((row, idx) => {
+                let logId = row.dataset.logId;
+                if (!logId) {
+                    logId = `WL_${Date.now()}_${idx}`;
+                    row.dataset.logId = logId;
+                }
+
+                const date = row.querySelector(".wl-date")?.value || "";
+                const well = row.querySelector(".wl-well")?.value || "";
+                const depth = row.querySelector(".wl-depth")?.value || "";
+                const pull = row.querySelector(".wl-pull")?.value || "";
+                const cutoff = row.querySelector(".wl-cutoff")?.value || "";
+                const ondrum = row.querySelector(".wl-ondrum")?.value || "";
+                const pt1 = row.querySelector(".wl-pt1")?.value || "";
+                const pt2 = row.querySelector(".wl-pt2")?.value || "";
+                const pt3 = row.querySelector(".wl-pt3")?.value || "";
+                const comments = row.querySelector(".wl-comments")?.value || "";
+
+                const logRecord = [
+                    logId, certNo, dateSpooled, wireType, certNo, unitNo,
+                    date, well, depth, pull, cutoff, ondrum, pt1, pt2, pt3, comments
+                ];
+                
+                // Update local appData
+                appData["Wire_Logs"] = (appData["Wire_Logs"] || []).filter(l => cleanVal(l[0]) !== logId);
+                appData["Wire_Logs"].push(logRecord);
+
+                syncToGoogleSheet("append", "Wire_Logs", logRecord, logId);
+            });
+
+            saveDataLocal();
+            closeWireLogModal();
+            alert("Wire Log saved successfully!");
+        }
+
+        // --- OFFLINE SYNC & NETWORK ---
         function addToSyncQueue(action, sheetName, rowData, itemId = null) {
             const queueItem = {
                 id: Date.now() + "_" + Math.random().toString(36).substr(2, 4),
-                action: action,
-                sheetName: sheetName,
-                row: rowData,
-                itemId: itemId,
-                timestamp: new Date().toISOString()
+                action: action, sheetName: sheetName, row: rowData, itemId: itemId, timestamp: new Date().toISOString()
             };
             syncQueue.push(queueItem);
             localStorage.setItem("amsito_sync_queue", JSON.stringify(syncQueue));
@@ -589,69 +944,50 @@
 
         async function processSyncQueue() {
             if (!navigator.onLine || syncQueue.length === 0) return;
-            
             const indicator = document.getElementById("sync-status");
-            if (indicator) {
-                indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> ${t('status_syncing')} (${syncQueue.length})...`;
-            }
+            if (indicator) indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Syncing (${syncQueue.length})...`;
 
             let remainingQueue = [...syncQueue];
             for (let i = 0; i < syncQueue.length; i++) {
                 const item = syncQueue[i];
                 try {
                     await fetch(GOOGLE_SHEET_API_URL, {
-                        method: "POST",
-                        mode: "no-cors",
+                        method: "POST", mode: "no-cors",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            action: item.action,
-                            sheetName: item.sheetName,
-                            row: item.row,
-                            id: item.itemId
-                        })
+                        body: JSON.stringify({ action: item.action, sheetName: item.sheetName, row: item.row, id: item.itemId })
                     });
                     remainingQueue = remainingQueue.filter(q => q.id !== item.id);
                     localStorage.setItem("amsito_sync_queue", JSON.stringify(remainingQueue));
-                } catch (err) {
-                    console.log("Sync error:", err);
-                    break;
-                }
+                } catch (err) { break; }
             }
-            
             syncQueue = remainingQueue;
             updateSyncStatusUI();
         }
 
-        window.addEventListener("online", () => {
-            processSyncQueue();
-        });
+        window.addEventListener("online", processSyncQueue);
 
         function updateSyncStatusUI() {
             const indicator = document.getElementById("sync-status");
             if (!indicator) return;
-            
             if (syncQueue.length > 0) {
-                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> ${t('status_pending')} (${syncQueue.length})`;
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> Offline Queue (${syncQueue.length})`;
                 indicator.className = "text-xs px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full flex items-center gap-1.5 cursor-pointer";
-                indicator.onclick = () => processSyncQueue();
+                indicator.onclick = processSyncQueue;
             } else {
-                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> ${t('status_connected')}`;
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
                 indicator.className = "text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5";
                 indicator.onclick = null;
             }
         }
 
         async function initData() {
-            if (navigator.onLine && syncQueue.length > 0) {
-                await processSyncQueue();
-            }
-
+            if (navigator.onLine && syncQueue.length > 0) await processSyncQueue();
             const indicator = document.getElementById("sync-status");
             let loadedFromServer = false;
 
             if (navigator.onLine && GOOGLE_SHEET_API_URL && GOOGLE_SHEET_API_URL.startsWith("http")) {
                 try {
-                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> ${t('status_loading')}`;
+                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading Sheets...`;
                     const response = await fetch(GOOGLE_SHEET_API_URL);
                     const data = await response.json();
                     if (data && typeof data === "object") {
@@ -659,18 +995,22 @@
                         if (data["Power_Pack"] && !data["Power Pack"]) data["Power Pack"] = data["Power_Pack"];
                         if (data["Slickline_Toolstrings"] && !data["Slickline_Tools"]) data["Slickline_Tools"] = data["Slickline_Toolstrings"];
                         if (data["Containers_Units"] && (!data["Container"] || data["Container"].length === 0)) data["Container"] = data["Containers_Units"];
+                        if (data["Wire_logs"] && (!data["Wire_Logs"] || data["Wire_Logs"].length === 0)) data["Wire_Logs"] = data["Wire_logs"];
                         delete data["Containers_Units"];
-                        
+                        delete data["Wire_logs"];
+
+                        if (data["Wire_Logs"]) appData["Wire_Logs"] = data["Wire_Logs"];
+
                         if (syncQueue.length === 0) {
                             appData = { ...appData, ...data };
                             localStorage.setItem("slickline_master_std29_v4", JSON.stringify({ appData }));
                         }
                         loadedFromServer = true;
                     }
-                } catch (e) { console.log("Offline mode fallback"); }
+                } catch (e) { console.log("Offline fallback:", e); }
             }
 
-            if (!loadedFromServer || syncQueue.length > 0) {
+            if (!loadedFromServer || syncQueue.length === 0) {
                 const saved = localStorage.getItem("slickline_master_std29_v4");
                 if (saved) {
                     try { appData = { ...appData, ...(JSON.parse(saved).appData || JSON.parse(saved)) }; } catch (err) {}
@@ -694,12 +1034,9 @@
 
         async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
             addToSyncQueue(action, sheetName, rowData, itemId);
-            if (navigator.onLine) {
-                processSyncQueue();
-            }
+            if (navigator.onLine) processSyncQueue();
         }
 
-        // --- BULK SELECTION & ACTIONS LOGIC ---
         function toggleSelectItem(key, isChecked) {
             if (isChecked) selectedItemKeys.add(key);
             else selectedItemKeys.delete(key);
@@ -718,10 +1055,9 @@
             const bar = document.getElementById("bulk-action-bar");
             const countEl = document.getElementById("selected-count");
             if (!bar) return;
-
             if (selectedItemKeys.size > 0) {
                 bar.classList.remove("hidden");
-                if (countEl) countEl.innerHTML = `<i class="fa-solid fa-check-double"></i> ${selectedItemKeys.size} ${t('bulk_selected')}`;
+                if (countEl) countEl.innerHTML = `<i class="fa-solid fa-check-double"></i> ${selectedItemKeys.size} selected`;
             } else {
                 bar.classList.add("hidden");
             }
@@ -736,9 +1072,8 @@
         function openBulkMoveModal() {
             if (selectedItemKeys.size === 0) return;
             isBulkMoveMode = true;
-            
-            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-amber-400"></i> ${t('move_batch_title')} (${selectedItemKeys.size})`;
-            document.getElementById("move-item-id").value = `${t('move_batch_title')} (${selectedItemKeys.size})`;
+            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-amber-400"></i> Move ${selectedItemKeys.size} Selected Items`;
+            document.getElementById("move-item-id").value = `Di chuyển hàng loạt ${selectedItemKeys.size} thiết bị đã chọn`;
 
             const container = document.getElementById("cascading-location-container");
             container.innerHTML = "";
@@ -751,9 +1086,10 @@
 
         function populateFormTabSelect() {
             const select = document.getElementById("form-target-tab");
+            if (!select) return;
             let html = "";
             Object.keys(appData).forEach((key, idx) => {
-                if (key === "_headers" || key === "Paper_Work" || key === "Paper_Work_Help") return;
+                if (key === "_headers" || key === "Paper_Work" || key === "Paper_Work_Help" || key === "Wire_Logs") return;
                 html += `<option value="${key}">${idx + 1}. ${key.replace(/_/g, ' ')}</option>`;
             });
             select.innerHTML = html;
@@ -772,8 +1108,6 @@
             document.getElementById("tree-filter-badge").classList.add("hidden");
             renderTable(tabName);
         }
-
-        let activeExplorerLocId = null;
 
         function resetTreeFilter() {
             activeExplorerLocId = null;
@@ -802,11 +1136,8 @@
                     el.classList.remove("bg-slate-800/40", "bg-slate-800/90", "border-transparent", "border-slate-700/50");
                 } else {
                     el.classList.remove("bg-sky-600/35", "border-sky-500/70");
-                    if (el.dataset.isRoot === "1") {
-                        el.classList.add("bg-slate-800/90", "border-slate-700/50");
-                    } else {
-                        el.classList.add("bg-slate-800/40", "border-transparent");
-                    }
+                    if (el.dataset.isRoot === "1") el.classList.add("bg-slate-800/90", "border-slate-700/50");
+                    else el.classList.add("bg-slate-800/40", "border-transparent");
                 }
             });
         }
@@ -837,9 +1168,7 @@
             }
         }
 
-        function makeSafeDomId(str) {
-            return normKey(str).replace(/[^a-zA-Z0-9_-]/g, '_');
-        }
+        function makeSafeDomId(str) { return normKey(str).replace(/[^a-zA-Z0-9_-]/g, '_'); }
 
         function toggleTreeNode(event, safeChildId) {
             event.stopPropagation();
@@ -849,9 +1178,7 @@
                 const willShow = childEl.classList.contains("hidden");
                 childEl.classList.toggle("hidden");
                 if (iconEl) {
-                    iconEl.className = willShow 
-                        ? "fa-solid fa-chevron-down text-sky-400 text-[10px]" 
-                        : "fa-solid fa-chevron-right text-slate-400 text-[10px]";
+                    iconEl.className = willShow ? "fa-solid fa-chevron-down text-sky-400 text-[10px]" : "fa-solid fa-chevron-right text-slate-400 text-[10px]";
                 }
             }
         }
@@ -861,9 +1188,7 @@
                 if (expand) el.classList.remove("hidden"); else el.classList.add("hidden");
             });
             document.querySelectorAll("[id^='tree-icon-']").forEach(icon => {
-                icon.className = expand 
-                    ? "fa-solid fa-chevron-down text-sky-400 text-[10px]" 
-                    : "fa-solid fa-chevron-right text-slate-400 text-[10px]";
+                icon.className = expand ? "fa-solid fa-chevron-down text-sky-400 text-[10px]" : "fa-solid fa-chevron-right text-slate-400 text-[10px]";
             });
         }
 
@@ -884,18 +1209,16 @@
             if (!targetLower) return { subLocations: [], equipments: [] };
 
             const locs = appData["Locations"] || [];
-            const subLocations = locs
-                .map((row, idx) => ({ row, rowIndex: idx }))
-                .filter(item => {
-                    const p = normKey(item.row[14]).toLowerCase();
-                    const selfId = getNodePrimaryId(item.row, item.rowIndex).toLowerCase();
-                    return p === targetLower && selfId !== targetLower;
-                });
+            const subLocations = locs.map((row, idx) => ({ row, rowIndex: idx })).filter(item => {
+                const p = normKey(item.row[14]).toLowerCase();
+                const selfId = getNodePrimaryId(item.row, item.rowIndex).toLowerCase();
+                return p === targetLower && selfId !== targetLower;
+            });
 
             const equipmentCategories = [
                 { key: 'Container', label: 'Container / Box', icon: 'fa-solid fa-box text-amber-400', color: 'text-amber-300', isFolderLike: true },
-                { key: 'Unit', label: 'Unit', icon: '', customIconHtml: `<svg class="w-3.5 h-3.5 inline-block text-teal-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V3.5M12 5V3.5M21 5V3.5"/><rect x="2.5" y="5" width="19" height="14" rx="1"/><rect x="2.5" y="5" width="7.5" height="14" fill="currentColor" fill-opacity="0.3"/><rect x="4" y="7" width="4.5" height="4.5" rx="0.5" fill="#0f172a" stroke-width="1.2"/><circle cx="14.5" cy="12.5" r="3.5" fill="currentColor" fill-opacity="0.22"/><circle cx="14.5" cy="12.5" r="1.2"/><path d="M18 12.5h3.5M19.5 8.5v8"/><path d="M1.5 19h21"/></svg>`, color: 'text-teal-300', isFolderLike: true },
-                { key: 'Mast', label: 'Mast / Basket', icon: '', customIconHtml: `<svg class="w-3.5 h-3.5 inline-block text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M7 21l2-4h6l2 4"/><rect x="9" y="9" width="6" height="12" rx="0.5" fill="currentColor" fill-opacity="0.28"/><rect x="10.5" y="4" width="3" height="5" fill="currentColor" fill-opacity="0.5"/><path d="M8 3l4 2 4-2"/><circle cx="8" cy="3" r="1"/><circle cx="16" cy="3" r="1"/><path d="M12 5L2 19M12 5l10 14" stroke-opacity="0.6" stroke-dasharray="1.5 1.5"/></svg>`, color: 'text-emerald-300', isFolderLike: true },
+                { key: 'Unit', label: 'Unit', icon: 'fa-solid fa-truck-monster text-sky-400', color: 'text-sky-300', isFolderLike: true },
+                { key: 'Mast', label: 'Mast / Basket', icon: 'fa-solid fa-tower-cell text-emerald-400', color: 'text-emerald-300', isFolderLike: true },
                 { key: 'Power Pack', label: 'Power Pack', icon: 'fa-solid fa-car-battery text-amber-400', color: 'text-amber-300', isFolderLike: true },
                 { key: 'PCE_Equipment', label: 'PCE Equipment', icon: 'fa-solid fa-shield-halved text-purple-400', color: 'text-purple-300', isFolderLike: true },
                 { key: 'Drums', label: 'Drum', icon: 'fa-solid fa-dharmachakra text-amber-400', color: 'text-amber-300', isFolderLike: false },
@@ -918,19 +1241,9 @@
                     const selfId = getNodePrimaryId(item, rIdx);
                     if (p === targetLower && selfId.toLowerCase() !== targetLower) {
                         equipments.push({
-                            row: item,
-                            rowIndex: rIdx,
-                            id: selfId,
-                            code: normKey(item[1]),
-                            serialNo: normKey(item[3]),
-                            name: cleanVal(item[2]) || cat.label,
-                            category: cat.key,
-                            categoryLabel: cat.label,
-                            icon: cat.icon,
-                            customIconHtml: cat.customIconHtml || '',
-                            textColor: cat.color,
-                            isFolderLike: cat.isFolderLike,
-                            status: cleanVal(item[26]) || 'Active'
+                            row: item, rowIndex: rIdx, id: selfId, code: normKey(item[1]), serialNo: normKey(item[3]),
+                            name: cleanVal(item[2]) || cat.label, category: cat.key, categoryLabel: cat.label,
+                            icon: cat.icon, textColor: cat.color, isFolderLike: cat.isFolderLike, status: cleanVal(item[26]) || 'Active'
                         });
                     }
                 });
@@ -945,51 +1258,9 @@
             const code = cleanVal(row?.[1]).toLowerCase();
             const combined = `${name} ${type} ${code}`;
 
-            if (combined.includes("rig") || combined.includes("jackup") || combined.includes("jack-up") || combined.includes("drilling")) {
-                return `<span class="inline-flex items-center justify-center w-4 h-4 mr-1.5 shrink-0 text-amber-400">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L8 15h8L12 2z" fill="currentColor" fill-opacity="0.2"/>
-                        <path d="M9.5 9h5M8.8 12h6.4"/>
-                        <path d="M4 15h16v3H4z" fill="currentColor" fill-opacity="0.35"/>
-                        <path d="M6 18v4M18 18v4M12 18v4"/>
-                        <path d="M2 22h20" stroke-opacity="0.5"/>
-                    </svg>
-                </span>`;
-            }
-
-            if (combined.includes("platform") || combined.includes("nulq") || combined.includes("whp") || combined.includes("cpp") || combined.includes("offshore")) {
-                return `<span class="inline-flex items-center justify-center w-4 h-4 mr-1.5 shrink-0 text-sky-400">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 9V4l2-1"/>
-                        <rect x="4" y="9" width="16" height="4" rx="0.5" fill="currentColor" fill-opacity="0.25"/>
-                        <path d="M7 9V6h6v3"/>
-                        <path d="M6 13l-2 9M18 13l2 9M6 13l12 9M18 13L6 22"/>
-                        <path d="M2 22h20" stroke-opacity="0.5"/>
-                    </svg>
-                </span>`;
-            }
-
-            if (combined.includes("fpso") || combined.includes("fso") || combined.includes("vessel") || combined.includes("ship") || combined.includes("boat")) {
-                return `<i class="fa-solid fa-ship text-cyan-400 text-xs mr-1.5 shrink-0"></i>`;
-            }
-
-            if (isRoot || combined.includes("ware house") || combined.includes("warehouse") || combined.includes("base")) {
-                return `<i class="fa-solid fa-warehouse text-emerald-400 text-xs mr-1.5 shrink-0"></i>`;
-            }
-
-            if (combined.includes("workshop")) {
-                return `<i class="fa-solid fa-screwdriver-wrench text-sky-400 text-xs mr-1.5 shrink-0"></i>`;
-            }
-            if (combined.includes("office")) {
-                return `<i class="fa-solid fa-building text-indigo-400 text-xs mr-1.5 shrink-0"></i>`;
-            }
-            if (combined.includes("rack") || combined.includes("shelf")) {
-                return `<i class="fa-solid fa-layer-group text-amber-300 text-xs mr-1.5 shrink-0"></i>`;
-            }
-            if (combined.includes("store")) {
-                return `<i class="fa-solid fa-store text-amber-400 text-xs mr-1.5 shrink-0"></i>`;
-            }
-
+            if (combined.includes("rig") || combined.includes("jackup") || combined.includes("drilling")) return `<i class="fa-solid fa-rig text-amber-400 text-xs mr-1.5 shrink-0"></i>`;
+            if (combined.includes("platform") || combined.includes("nulq") || combined.includes("whp")) return `<i class="fa-solid fa-oil-well text-sky-400 text-xs mr-1.5 shrink-0"></i>`;
+            if (isRoot || combined.includes("warehouse") || combined.includes("base") || combined.includes("kho")) return `<i class="fa-solid fa-warehouse text-emerald-400 text-xs mr-1.5 shrink-0"></i>`;
             return `<i class="fa-solid fa-folder text-amber-400 text-xs mr-1.5 shrink-0"></i>`;
         }
 
@@ -1044,38 +1315,21 @@
                     const totalEqKids = eqKids.subLocations.length + eqKids.equipments.length;
                     const safeEqId = makeSafeDomId(eq.id);
                     const eqTitle = eq.serialNo && eq.serialNo !== eq.name ? `${eq.name} [${eq.serialNo}]` : eq.name;
-
                     const tagCode = eq.serialNo || eq.code || "";
-                    const displayEqHtml = (tagCode && !eq.name.includes(tagCode))
-                        ? `<span>${eq.name}</span> <span class="inline-block font-mono text-[10px] px-1.5 py-0.2 rounded bg-slate-900/90 border border-slate-700/80 text-amber-300 font-semibold">${tagCode}</span>`
-                        : `<span>${eqTitle}</span>`;
+                    const displayEqHtml = (tagCode && !eq.name.includes(tagCode)) ? `<span>${eq.name}</span> <span class="font-mono text-[10px] px-1.5 py-0.2 rounded bg-slate-900/90 border border-slate-700/80 text-amber-300 font-semibold">${tagCode}</span>` : `<span>${eqTitle}</span>`;
 
-                    if (totalEqKids > 0) {
-                        html += `
-                            <div class="tree-node-item" data-loc-id="${eq.id}">
-                                <div title="${eqTitle.replace(/"/g, '&quot;')}" data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\'")}')">
-                                    <div class="flex items-start min-w-0 flex-1">
-                                        <span onclick="toggleTreeNode(event, '${safeEqId}')" class="w-4 h-4 mt-0.5 inline-flex items-center justify-center rounded hover:bg-slate-600/70 shrink-0 mr-1"><i id="tree-icon-${safeEqId}" class="fa-solid fa-chevron-right text-slate-400 text-[10px]"></i></span>
-                                        ${eq.customIconHtml ? `<span class="mr-1.5 mt-0.5 shrink-0 inline-flex items-center">${eq.customIconHtml}</span>` : `<i class="${eq.icon} text-[11px] mr-1.5 mt-1 shrink-0"></i>`}
-                                        <div class="whitespace-normal break-words leading-snug font-medium">${displayEqHtml}</div>
-                                    </div>
-                                    <span class="text-[10px] text-slate-400 bg-slate-900/70 px-1.5 py-0.5 rounded ml-1 shrink-0 mt-0.5">${totalEqKids}</span>
+                    html += `
+                        <div class="tree-node-item" data-loc-id="${eq.id}">
+                            <div title="${eqTitle.replace(/"/g, '&quot;')}" data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\'")}')">
+                                <div class="flex items-start min-w-0 flex-1">
+                                    <span onclick="toggleTreeNode(event, '${safeEqId}')" class="w-4 h-4 mt-0.5 inline-flex items-center justify-center rounded hover:bg-slate-600/70 shrink-0 mr-1"><i id="tree-icon-${safeEqId}" class="fa-solid fa-chevron-right text-slate-400 text-[10px]"></i></span>
+                                    <i class="${eq.icon} text-[11px] mr-1.5 mt-1 shrink-0"></i>
+                                    <div class="whitespace-normal break-words leading-snug font-medium">${displayEqHtml}</div>
                                 </div>
-                                ${buildBranch(eq.id, currentAncestors)}
-                            </div>`;
-                    } else {
-                        html += `
-                            <div class="tree-node-item" data-loc-id="${eq.id}">
-                                <div title="${eqTitle.replace(/"/g, '&quot;')}" data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\'")}')">
-                                    <div class="flex items-start min-w-0 flex-1">
-                                        <span class="w-4 h-4 inline-block shrink-0 mr-1"></span>
-                                        ${eq.customIconHtml ? `<span class="mr-1.5 mt-0.5 shrink-0 inline-flex items-center">${eq.customIconHtml}</span>` : `<i class="${eq.icon} text-[11px] mr-1.5 mt-1 shrink-0"></i>`}
-                                        <div class="whitespace-normal break-words leading-snug">${displayEqHtml}</div>
-                                    </div>
-                                    <button onclick="event.stopPropagation(); openDetailModalByIndex('${eq.category}', ${eq.rowIndex})" class="text-slate-500 hover:text-sky-400 px-1 text-[11px] mt-0.5 shrink-0" title="Details"><i class="fa-solid fa-circle-info"></i></button>
-                                </div>
-                            </div>`;
-                    }
+                                ${totalEqKids > 0 ? `<span class="text-[10px] text-slate-400 bg-slate-900/70 px-1.5 py-0.5 rounded ml-1 shrink-0 mt-0.5">${totalEqKids}</span>` : ''}
+                            </div>
+                            ${totalEqKids > 0 ? buildBranch(eq.id, currentAncestors) : ''}
+                        </div>`;
                 });
 
                 html += '</div>';
@@ -1084,7 +1338,6 @@
 
             let rootHtml = "";
             const rootNodes = getRootLocationNodes();
-
             rootNodes.forEach((root, idx) => {
                 const locId = getNodePrimaryId(root, idx);
                 const safeId = makeSafeDomId(locId);
@@ -1120,8 +1373,7 @@
 
         function filterTree(query) {
             const q = query.toLowerCase().trim();
-            if (q) expandAllTree(true);
-            else expandAllTree(false);
+            if (q) expandAllTree(true); else expandAllTree(false);
             document.querySelectorAll("#tree-container .tree-node-item").forEach(el => {
                 el.style.display = !q || el.innerText.toLowerCase().includes(q) ? "block" : "none";
             });
@@ -1135,16 +1387,9 @@
         }
 
         function buildLocationBreadcrumbHtml(locId) {
-            if (!locId) {
-                return `
-                    <div class="flex items-center gap-1.5 text-xs">
-                        <span class="text-sky-400 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-desktop"></i> LOCATIONS (ROOT FOLDERS)</span>
-                    </div>`;
-            }
+            if (!locId) return `<div class="flex items-center gap-1.5 text-xs"><span class="text-sky-400 font-semibold flex items-center gap-1.5"><i class="fa-solid fa-desktop"></i> Locations (Root Folders)</span></div>`;
             const locs = appData["Locations"] || [];
-            let chain = [];
-            let curr = normKey(locId);
-            let visited = new Set();
+            let chain = [], curr = normKey(locId), visited = new Set();
             while (curr && !visited.has(curr.toLowerCase())) {
                 visited.add(curr.toLowerCase());
                 const found = locs.find(l => matchNodeId(l, curr));
@@ -1156,18 +1401,12 @@
                     for (let tName of ['Container', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment']) {
                         const eq = (appData[tName] || []).find(i => matchNodeId(i, curr));
                         if (eq) {
-                            const eqN = cleanVal(eq[2]);
-                            const eqSn = cleanVal(eq[3]) || cleanVal(eq[1]);
-                            const fullLabel = (eqN && eqSn && !eqN.includes(eqSn)) ? `${eqN} [${eqSn}]` : (eqN || eqSn || curr);
-                            chain.unshift({ id: getNodePrimaryId(eq), name: fullLabel });
+                            chain.unshift({ id: getNodePrimaryId(eq), name: cleanVal(eq[2]) || curr });
                             parentLocId = normKey(eq[14]);
                             break;
                         }
                     }
-                    if (!parentLocId) {
-                        chain.unshift({ id: curr, name: getLocationName(curr) });
-                        break;
-                    }
+                    if (!parentLocId) { chain.unshift({ id: curr, name: getLocationName(curr) }); break; }
                     curr = parentLocId;
                 }
             }
@@ -1181,218 +1420,44 @@
             chain.forEach((node, idx) => {
                 const isLast = idx === chain.length - 1;
                 partsHtml += ` <i class="fa-solid fa-chevron-right text-[9px] text-slate-600 mx-1"></i> `;
-                if (isLast) {
-                    partsHtml += `<span class="text-white font-semibold">${node.name}</span>`;
-                } else {
-                    partsHtml += `<button onclick="filterByTreeNode('${node.id.replace(/'/g, "\'")}')" class="text-sky-400 hover:underline font-medium">${node.name}</button>`;
-                }
+                if (isLast) partsHtml += `<span class="text-white font-semibold">${node.name}</span>`;
+                else partsHtml += `<button onclick="filterByTreeNode('${node.id.replace(/'/g, "\'")}')" class="text-sky-400 hover:underline font-medium">${node.name}</button>`;
             });
             return `<div class="flex flex-wrap items-center gap-0.5 text-xs">${partsHtml}</div>`;
         }
 
-        let currentLang = localStorage.getItem("amsito_ui_lang") || "en";
-
-        const I18N = {
-            en: {
-                subtitle: "Asset & Maintenance Management System",
-                btn_sync: "Sync",
-                btn_add: "Add Equipment",
-                btn_backup: "Export",
-                btn_import: "Import",
-                sidebar_title: "LOCATIONS & HIERARCHY",
-                search_tree: "Search tree...",
-                filter_table: "Filter table...",
-                tab_locations: "Locations",
-                tab_slickline: "Slickline Tools",
-                tab_container: "Containers",
-                tab_pce: "PCE Packages",
-                tab_mech: "Mechanical Tools",
-                tab_paperwork: "Paper Work",
-                filtered_by: "Filtered by Location",
-                status_connected: "Connected",
-                status_syncing: "Syncing",
-                status_pending: "Offline Queue",
-                status_loading: "Loading Sheets...",
-                act_open: "Open",
-                act_menu: "Actions",
-                act_view: "View Details",
-                act_edit: "Edit Info",
-                act_copy: "Duplicate",
-                act_move: "Move Location",
-                act_delete: "Delete",
-                confirm_delete: "Delete this record?",
-                bulk_selected: "selected",
-                bulk_move: "Batch Move",
-                bulk_cancel: "Cancel",
-                form_target_group: "Target Group",
-                btn_cancel: "Cancel",
-                btn_save: "Save",
-                btn_close: "Close",
-                btn_move: "Move",
-                btn_edit: "Edit",
-                btn_confirm: "Confirm",
-                btn_download: "Download",
-                btn_open_tab: "Open Tab",
-                detail_title: "Equipment Details",
-                move_target_label: "Selected Item(s):",
-                move_select_prompt: "Select destination location hierarchy:",
-                move_dest_path: "Destination path:",
-                move_batch_title: "Batch Move Items",
-                pw_doc_name: "Document Name *",
-                pw_category: "Category",
-                pw_filename: "File Name",
-                pw_drivelink: "Google Drive Link *",
-                pw_remarks: "Remarks",
-                help_doc_title: "Reference Notes Editor",
-                help_doc_sub: "Edit contract information, supervisor contacts, and reference templates..."
-            },
-            vi: {
-                subtitle: "Hệ Thống Quản Lý Tài Sản & Bảo Trì",
-                btn_sync: "Đồng bộ",
-                btn_add: "Thêm Thiết Bị",
-                btn_backup: "Xuất dữ liệu",
-                btn_import: "Nhập dữ liệu",
-                sidebar_title: "VỊ TRÍ & PHÂN CẤP KHO",
-                search_tree: "Tìm cây thư mục...",
-                filter_table: "Lọc trong bảng...",
-                tab_locations: "Vị Trí",
-                tab_slickline: "Dụng Cụ Slickline",
-                tab_container: "Container & Hộp",
-                tab_pce: "Cụm PCE",
-                tab_mech: "Dụng Cụ Cơ Khí",
-                tab_paperwork: "Hồ Sơ & Giấy Tờ",
-                filtered_by: "Đang lọc theo vị trí",
-                status_connected: "Đã kết nối",
-                status_syncing: "Đang đồng bộ",
-                status_pending: "Hàng chờ Offline",
-                status_loading: "Tải dữ liệu...",
-                act_open: "Mở",
-                act_menu: "Thao tác",
-                act_view: "Xem chi tiết",
-                act_edit: "Chỉnh sửa",
-                act_copy: "Tạo bản sao",
-                act_move: "Di chuyển",
-                act_delete: "Xóa",
-                confirm_delete: "Xóa bản ghi này?",
-                bulk_selected: "đã chọn",
-                bulk_move: "Chuyển hàng loạt",
-                bulk_cancel: "Hủy",
-                form_target_group: "Nhóm lưu trữ",
-                btn_cancel: "Hủy bỏ",
-                btn_save: "Lưu",
-                btn_close: "Đóng",
-                btn_move: "Di chuyển",
-                btn_edit: "Sửa",
-                btn_confirm: "Xác nhận",
-                btn_download: "Tải về",
-                btn_open_tab: "Mở tab mới",
-                detail_title: "Chi Tiết Thiết Bị",
-                move_target_label: "Mục đã chọn:",
-                move_select_prompt: "Chọn vị trí đích theo phân cấp:",
-                move_dest_path: "Đường dẫn đích:",
-                move_batch_title: "Chuyển mục hàng loạt",
-                pw_doc_name: "Tên hồ sơ *",
-                pw_category: "Phân loại",
-                pw_filename: "Tên file",
-                pw_drivelink: "Link Google Drive *",
-                pw_remarks: "Ghi chú",
-                help_doc_title: "Trang Soạn Thảo Ghi Chú",
-                help_doc_sub: "Soạn thảo hợp đồng, thông tin giám sát và mẫu báo cáo..."
-            }
-        };
-
-        function t(key) {
-            return (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || key;
-        }
-
-        function setLanguage(lang) {
-            currentLang = (lang === "vi") ? "vi" : "en";
-            localStorage.setItem("amsito_ui_lang", currentLang);
-            document.documentElement.lang = currentLang;
-
-            const btnEn = document.getElementById("btn-lang-en");
-            const btnVi = document.getElementById("btn-lang-vi");
-            if (btnEn && btnVi) {
-                if (currentLang === "en") {
-                    btnEn.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white";
-                    btnVi.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-transparent text-slate-400 hover:text-white";
-                } else {
-                    btnVi.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white";
-                    btnEn.className = "px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-transparent text-slate-400 hover:text-white";
-                }
-            }
-
-            document.querySelectorAll("[data-i18n]").forEach(el => {
-                const key = el.getAttribute("data-i18n");
-                if (I18N[currentLang][key]) el.innerText = I18N[currentLang][key];
-            });
-            document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-                const key = el.getAttribute("data-i18n-placeholder");
-                if (I18N[currentLang][key]) el.placeholder = I18N[currentLang][key];
-            });
-
-            updateSyncStatusUI();
-            if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
-            else renderTable(currentActiveTab);
-        }
-
         function buildUnifiedActionMenuHtml(tabName, rowIndex, options = {}) {
-            const {
-                canOpenFolder = false,
-                folderTargetId = "",
-                canMove = true,
-                dropdownUniqueId = `row-dropdown-${tabName}-${rowIndex}-${Math.random().toString(36).slice(2, 6)}`
-            } = options;
-
+            const { canOpenFolder = false, folderTargetId = "", canMove = true, dropdownUniqueId = `row-dropdown-${tabName}-${rowIndex}-${Math.random().toString(36).slice(2, 6)}` } = options;
             const safeFolderId = folderTargetId ? folderTargetId.replace(/'/g, "\\'") : "";
 
             return `
                 <div class="inline-flex items-center justify-end gap-1.5" onclick="event.stopPropagation()">
-                    ${canOpenFolder ? `
-                    <button onclick="filterByTreeNode('${safeFolderId}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition" title="${t('act_open')}">
-                        <i class="fa-solid fa-folder-open mr-1"></i> ${t('act_open')}
-                    </button>` : ''}
+                    ${canOpenFolder ? `<button onclick="filterByTreeNode('${safeFolderId}')" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition"><i class="fa-solid fa-folder-open mr-1"></i> Open</button>` : ''}
                     <div class="relative inline-block text-left">
                         <button onclick="toggleRowActionDropdown(event, '${dropdownUniqueId}')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1 rounded text-xs inline-flex items-center gap-1.5 transition shadow-sm">
-                            <i class="fa-solid fa-ellipsis-vertical text-sky-400"></i> ${t('act_menu')} <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                            <i class="fa-solid fa-ellipsis-vertical text-sky-400"></i> Actions <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                         </button>
                         <div id="${dropdownUniqueId}" class="hidden absolute right-0 mt-1 w-48 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-40 py-1 divide-y divide-slate-800/80 text-left">
-                            <button onclick="openDetailModalByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-eye text-sky-400 w-4 text-center"></i> ${t('act_view')}
-                            </button>
-                            <button onclick="openEditModalByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-pen-to-square text-emerald-400 w-4 text-center"></i> ${t('act_edit')}
-                            </button>
-                            <button onclick="copyItemByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-copy text-purple-400 w-4 text-center"></i> ${t('act_copy')}
-                            </button>
-                            ${canMove ? `
-                            <button onclick="openMoveModal('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-amber-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-right-left text-amber-400 w-4 text-center"></i> ${t('act_move')}
-                            </button>` : ''}
-                            <button onclick="deleteItemByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-rose-300 hover:bg-rose-600 hover:text-white flex items-center gap-2 transition">
-                                <i class="fa-solid fa-trash-can text-rose-400 w-4 text-center"></i> ${t('act_delete')}
-                            </button>
+                            <button onclick="openDetailModalByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2"><i class="fa-solid fa-eye text-sky-400 w-4"></i> View Details</button>
+                            <button onclick="openEditModalByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-emerald-400 w-4"></i> Edit Info</button>
+                            <button onclick="copyItemByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-sky-600 hover:text-white flex items-center gap-2"><i class="fa-solid fa-copy text-purple-400 w-4"></i> Duplicate</button>
+                            ${canMove ? `<button onclick="openMoveModal('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-amber-600 hover:text-white flex items-center gap-2"><i class="fa-solid fa-right-left text-amber-400 w-4"></i> Move Location</button>` : ''}
+                            <button onclick="deleteItemByIndex('${tabName}', ${rowIndex}); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-rose-300 hover:bg-rose-600 hover:text-white flex items-center gap-2"><i class="fa-solid fa-trash-can text-rose-400 w-4"></i> Delete</button>
                         </div>
                     </div>
-                </div>
-            `;
+                </div>`;
         }
 
-        // --- WINDOWS EXPLORER RIGHT PANE: ROOT VIEW ---
         function renderLocationsTreeTable() {
             const roots = getRootLocationNodes();
             const locs = appData["Locations"] || [];
-
             document.getElementById("current-table-title").innerHTML = buildLocationBreadcrumbHtml(null);
 
             document.getElementById("table-head").innerHTML = `
                 <tr>
-                    <th class="px-3 py-3 w-10 text-center">
-                        <input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500">
-                    </th>
+                    <th class="px-3 py-3 w-10 text-center"><input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500"></th>
                     <th class="px-3 py-3 w-12 text-center">No.</th>
-                    <th class="px-3 py-3 min-w-[260px]">Name (Folder / Location)</th>
+                    <th class="px-3 py-3 min-w-[240px] max-w-[340px]">Name (Folder / Location)</th>
                     <th class="px-3 py-3">Code / Serial No</th>
                     <th class="px-3 py-3">Type</th>
                     <th class="px-3 py-3">Items Inside</th>
@@ -1400,53 +1465,27 @@
                     <th class="px-3 py-3 text-right">Actions</th>
                 </tr>`;
 
-            if (roots.length === 0) {
-                document.getElementById("table-body").innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-slate-500 italic">No root locations found.</td></tr>`;
-                document.getElementById("record-count").innerText = "0 folders";
-                return;
-            }
-
             let bodyHtml = "";
             roots.forEach((row, idx) => {
                 const origIndex = locs.indexOf(row);
                 const locId = getNodePrimaryId(row, origIndex);
                 const locName = cleanVal(row[2]) || locId;
                 const { subLocations, equipments } = getDirectChildrenOfNode(locId);
-
                 const itemKey = `Locations::${origIndex}`;
                 const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
 
                 bodyHtml += `
                     <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer select-none" onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')">
-                        <td class="px-3 py-3 text-center" onclick="event.stopPropagation()">
-                            <input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}>
-                        </td>
+                        <td class="px-3 py-3 text-center" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
                         <td class="px-3 py-3 text-slate-400 text-center font-medium">${idx + 1}</td>
-                        <td class="px-3 py-3 text-slate-100 font-semibold whitespace-nowrap">
-                            <div class="flex items-center gap-2">
-                                ${getLocationIconHtml(row, true)}
-                                <span>${locName}</span>
-                            </div>
-                        </td>
-                        <td class="px-3 py-3 text-amber-300 font-mono whitespace-nowrap">${locId}</td>
-                        <td class="px-3 py-3 text-slate-400 whitespace-nowrap">${cleanVal(row[5]) || 'Root Base / Location'}</td>
-                        <td class="px-3 py-3 whitespace-nowrap">
-                            <span class="bg-slate-800 text-sky-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">
-                                ${subLocations.length} folders, ${equipments.length} items
-                            </span>
-                        </td>
-                        <td class="px-3 py-3 text-emerald-400 whitespace-nowrap">${cleanVal(row[26]) || 'Active'}</td>
-                        <td class="px-3 py-3 text-right whitespace-nowrap" onclick="event.stopPropagation()">
-                            ${buildUnifiedActionMenuHtml('Locations', origIndex, {
-                                canOpenFolder: true,
-                                folderTargetId: locId,
-                                canMove: true,
-                                dropdownUniqueId: `row-dropdown-root-${origIndex}`
-                            })}
-                        </td>
+                        <td class="px-3 py-3 text-slate-100 font-semibold min-w-[240px] max-w-[340px]"><div class="flex items-center gap-2">${getLocationIconHtml(row, true)}<span>${locName}</span></div></td>
+                        <td class="px-3 py-3 text-amber-300 font-mono">${locId}</td>
+                        <td class="px-3 py-3 text-slate-400">${cleanVal(row[5]) || 'Root Base'}</td>
+                        <td class="px-3 py-3"><span class="bg-slate-800 text-sky-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${subLocations.length} folders, ${equipments.length} items</span></td>
+                        <td class="px-3 py-3 text-emerald-400">${cleanVal(row[26]) || 'Active'}</td>
+                        <td class="px-3 py-3 text-right" onclick="event.stopPropagation()">${buildUnifiedActionMenuHtml('Locations', origIndex, { canOpenFolder: true, folderTargetId: locId, canMove: true })}</td>
                     </tr>`;
             });
-
             document.getElementById("table-body").innerHTML = bodyHtml;
             document.getElementById("record-count").innerText = `${roots.length} folders`;
             updateBulkActionBar();
@@ -1457,53 +1496,81 @@
                 let rows = [...(appData["Paper_Work"] || [])];
                 document.getElementById("table-head").innerHTML = `
                     <tr>
-                        <th class="px-4 py-3 font-semibold">No.</th>
-                        <th class="px-4 py-3 font-semibold">Document Name</th>
+                        <th class="px-4 py-3 font-semibold w-12 text-center">No.</th>
+                        <th class="px-4 py-3 font-semibold min-w-[240px]">Document Name</th>
                         <th class="px-4 py-3 font-semibold">Category</th>
                         <th class="px-4 py-3 font-semibold">File Name</th>
                         <th class="px-4 py-3 font-semibold">Date</th>
                         <th class="px-4 py-3 font-semibold">Remarks</th>
-                        <th class="px-4 py-3 text-right space-x-1.5">
-                            <button onclick="openHelpModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow">
-                                <i class="fa-solid fa-file-word mr-1"></i> Reference Notes
-                            </button>
-                            <button onclick="openPaperworkModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow">
-                                <i class="fa-solid fa-link mr-1"></i> Add Drive Link
-                            </button>
+                        <th class="px-4 py-3 text-right space-x-1.5 whitespace-nowrap">
+                            <button onclick="openHelpModal()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow"><i class="fa-solid fa-file-word mr-1"></i> Help Editor</button>
+                            <button onclick="openPaperworkModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1 rounded-lg text-xs font-semibold shadow"><i class="fa-solid fa-link mr-1"></i> Add Drive Link</button>
                         </th>
                     </tr>`;
-
                 let bodyHtml = "";
-                if (rows.length === 0) {
-                    bodyHtml = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No files available. Click "Add Drive Link" to attach Google Drive files.</td></tr>`;
-                } else {
-                    rows.forEach((row, index) => {
-                        const links = parseGoogleDriveLinks(cleanVal(row[5]) || cleanVal(row[4]));
-                        bodyHtml += `
-                            <tr class="paperwork-row hover:bg-slate-800/60 border-b border-slate-800 transition cursor-pointer" onclick="openDocViewer(${index})">
-                                <td class="px-4 py-3 font-semibold text-slate-400">${cleanVal(row[0]) || (index + 1)}</td>
-                                <td class="px-4 py-3 text-sky-300 font-semibold whitespace-normal break-words"><i class="fa-solid fa-file-lines text-emerald-400 mr-1.5"></i> ${cleanVal(row[1])}</td>
-                                <td class="px-4 py-3 whitespace-nowrap"><span class="bg-slate-800 text-sky-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${cleanVal(row[2])}</span></td>
-                                <td class="px-4 py-3 text-slate-300">${cleanVal(row[3])}</td>
-                                <td class="px-4 py-3 text-slate-400 whitespace-nowrap">${cleanVal(row[6])}</td>
-                                <td class="px-4 py-3 text-slate-400 whitespace-normal break-words max-w-xs">${cleanVal(row[7])}</td>
-                                <td class="px-4 py-3 text-right space-x-1.5 whitespace-nowrap" onclick="event.stopPropagation()">
-                                    <button onclick="openDocViewer(${index})" class="bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-eye"></i> ${t('act_view')}</button>
-                                    ${links.downloadUrl ? `<a href="${links.downloadUrl}" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-download"></i> ${t('btn_download')}</a>` : ''}
-                                    <button onclick="openPaperworkModal(${index})" class="text-slate-400 hover:text-sky-300 px-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
-                                    <button onclick="deleteItemByIndex('Paper_Work', ${index})" class="text-slate-400 hover:text-rose-400 px-1.5"><i class="fa-solid fa-trash-can"></i></button>
-                                </td>
-                            </tr>`;
-                    });
-                }
-                document.getElementById("table-body").innerHTML = bodyHtml;
-                document.getElementById("current-table-title").innerText = "Management: Paper Work";
+                rows.forEach((row, index) => {
+                    const links = parseGoogleDriveLinks(cleanVal(row[5]) || cleanVal(row[4]));
+                    bodyHtml += `
+                        <tr class="hover:bg-slate-800/60 border-b border-slate-800 transition cursor-pointer" onclick="openDocViewer(${index})">
+                            <td class="px-4 py-3 font-semibold text-slate-400 text-center">${index + 1}</td>
+                            <td class="px-4 py-3 text-sky-300 font-semibold min-w-[240px]"><i class="fa-solid fa-file-lines text-emerald-400 mr-1.5"></i> ${cleanVal(row[1])}</td>
+                            <td class="px-4 py-3"><span class="bg-slate-800 text-sky-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${cleanVal(row[2])}</span></td>
+                            <td class="px-4 py-3 text-slate-300">${cleanVal(row[3])}</td>
+                            <td class="px-4 py-3 text-slate-400">${cleanVal(row[6])}</td>
+                            <td class="px-4 py-3 text-slate-400">${cleanVal(row[7])}</td>
+                            <td class="px-4 py-3 text-right space-x-1.5 whitespace-nowrap" onclick="event.stopPropagation()">
+                                <button onclick="openDocViewer(${index})" class="bg-sky-600 hover:bg-sky-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-eye"></i> View</button>
+                                ${links.downloadUrl ? `<a href="${links.downloadUrl}" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white px-2.5 py-1 rounded text-xs"><i class="fa-solid fa-download"></i> Download</a>` : ''}
+                                <button onclick="openPaperworkModal(${index})" class="text-slate-400 hover:text-sky-300 px-1.5"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deleteItemByIndex('Paper_Work', ${index})" class="text-slate-400 hover:text-rose-400 px-1.5"><i class="fa-solid fa-trash-can"></i></button>
+                            </td>
+                        </tr>`;
+                });
+                document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">No paperwork documents found.</td></tr>`;
+                document.getElementById("current-table-title").innerText = "Management: Paper Work & Templates";
                 document.getElementById("record-count").innerText = `${rows.length} files`;
                 return;
             }
 
-            if (tabName === "Locations") {
-                renderLocationsTreeTable();
+            if (tabName === "Locations") { renderLocationsTreeTable(); return; }
+
+            if (tabName === "Wires") {
+                let rows = [...(appData["Wires"] || [])];
+                document.getElementById("table-head").innerHTML = `
+                    <tr>
+                        <th class="px-3 py-3 w-10 text-center"><input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500"></th>
+                        <th class="px-3 py-3 w-12 text-center">No.</th>
+                        <th class="px-3 py-3 min-w-[240px] max-w-[340px]">Wire Spec / Name</th>
+                        <th class="px-3 py-3">Certificate No</th>
+                        <th class="px-3 py-3">Length (m)</th>
+                        <th class="px-3 py-3">Storage / Unit</th>
+                        <th class="px-3 py-3">Status</th>
+                        <th class="px-3 py-3 text-right">Actions</th>
+                    </tr>`;
+                let bodyHtml = "";
+                rows.forEach((row, index) => {
+                    const certNo = cleanVal(row[3]) || cleanVal(row[1]) || '-';
+                    const itemKey = `Wires::${index}`;
+                    const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
+                    bodyHtml += `
+                        <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openWireLogModal(${index})">
+                            <td class="px-3 py-3 text-center" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
+                            <td class="px-3 py-3 text-center text-slate-400 font-medium">${index + 1}</td>
+                            <td class="px-3 py-3 text-slate-200 font-semibold min-w-[240px]"><i class="fa-solid fa-circle-notch text-sky-400 mr-2"></i>${cleanVal(row[2]) || 'Wire Spool'}</td>
+                            <td class="px-3 py-3 text-amber-300 font-mono">${certNo}</td>
+                            <td class="px-3 py-3 text-slate-300">${cleanVal(row[11]) || '-'}</td>
+                            <td class="px-3 py-3 text-slate-300">${cleanVal(row[15]) || getLocationName(row[14]) || '-'}</td>
+                            <td class="px-3 py-3 text-emerald-400">${cleanVal(row[26]) || 'Active'}</td>
+                            <td class="px-3 py-3 text-right" onclick="event.stopPropagation()">
+                                <button onclick="openWireLogModal(${index})" class="bg-sky-600/20 hover:bg-sky-600 text-sky-300 hover:text-white border border-sky-500/30 px-2.5 py-1 rounded text-xs transition mr-1.5"><i class="fa-solid fa-file-invoice mr-1"></i> Wire Log</button>
+                                ${buildUnifiedActionMenuHtml('Wires', index, { canMove: true })}
+                            </td>
+                        </tr>`;
+                });
+                document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="8" class="px-4 py-8 text-center text-slate-500 italic">No wires registered.</td></tr>`;
+                document.getElementById("current-table-title").innerText = "Management: Wires";
+                document.getElementById("record-count").innerText = `${rows.length} wire spools`;
+                updateBulkActionBar();
                 return;
             }
 
@@ -1516,73 +1583,51 @@
             });
             activeColIndices.sort((a, b) => a - b);
 
-            let headHtml = `<tr>
-                <th class="px-3 py-3 w-10 text-center">
-                    <input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500">
-                </th>
-                <th class="px-3 py-3 w-12 text-center">No.</th>`;
-            activeColIndices.forEach(idx => { if (idx !== 0) headHtml += `<th class="px-3 py-3">${UNIFIED_HEADERS[idx]}</th>`; });
+            let headHtml = `<tr><th class="px-3 py-3 w-10 text-center"><input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500"></th><th class="px-3 py-3 w-12 text-center">No.</th>`;
+            activeColIndices.forEach(idx => {
+                if (idx !== 0) headHtml += `<th class="px-3 py-3">${UNIFIED_HEADERS[idx]}</th>`;
+            });
             headHtml += `<th class="px-3 py-3 text-right">Actions</th></tr>`;
             document.getElementById("table-head").innerHTML = headHtml;
 
             let bodyHtml = "";
-            if (rows.length === 0) {
-                bodyHtml = `<tr><td colspan="${activeColIndices.length + 3}" class="px-4 py-8 text-center text-slate-500 italic">No data available in [${tabName}].</td></tr>`;
-            } else {
-                rows.forEach((row, index) => {
-                    const rowUniqueId = getNodePrimaryId(row, index);
-                    const subCheck = getDirectChildrenOfNode(rowUniqueId);
-                    const hasSubItems = (subCheck.subLocations.length + subCheck.equipments.length) > 0;
-                    
-                    const itemKey = `${tabName}::${index}`;
-                    const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
+            rows.forEach((row, index) => {
+                const rowUniqueId = getNodePrimaryId(row, index);
+                const subCheck = getDirectChildrenOfNode(rowUniqueId);
+                const hasSubItems = (subCheck.subLocations.length + subCheck.equipments.length) > 0;
+                const itemKey = `${tabName}::${index}`;
+                const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
 
-                    bodyHtml += `
-                        <tr class="main-item-row hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('${tabName}', ${index})">
-                            <td class="px-3 py-3 text-center" onclick="event.stopPropagation()">
-                                <input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}>
-                            </td>
-                            <td class="px-3 py-3 font-semibold text-slate-400 text-center">${cleanVal(row[0]) || (index + 1)}</td>`;
-                    activeColIndices.forEach(idx => {
-                        if (idx !== 0) {
-                            let val = cleanVal(row[idx]) || '-';
-                            if (idx === 15 && val === '-') val = getLocationPath(row[14]) || getLocationName(row[14]) || '-';
-                            if (idx === 2) {
-                                bodyHtml += `<td class="px-3 py-3 text-slate-200 font-medium min-w-[220px] max-w-[300px] whitespace-normal break-words leading-snug">${val}</td>`;
-                            } else {
-                                bodyHtml += `<td class="px-3 py-3 text-slate-300 whitespace-nowrap" title="${val}">${val}</td>`;
-                            }
-                        }
-                    });
-                    bodyHtml += `
-                            <td class="px-3 py-3 text-right whitespace-nowrap" onclick="event.stopPropagation()">
-                                ${buildUnifiedActionMenuHtml(tabName, index, {
-                                    canOpenFolder: (hasSubItems || tabName === 'Container'),
-                                    folderTargetId: rowUniqueId,
-                                    canMove: true,
-                                    dropdownUniqueId: `row-dropdown-${tabName}-${index}`
-                                })}
-                            </td>
-                        </tr>`;
+                bodyHtml += `
+                    <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('${tabName}', ${index})">
+                        <td class="px-3 py-3 text-center align-top" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
+                        <td class="px-3 py-3 font-semibold text-slate-400 text-center align-top">${cleanVal(row[0]) || (index + 1)}</td>`;
+                activeColIndices.forEach(idx => {
+                    if (idx !== 0) {
+                        let val = cleanVal(row[idx]) || '-';
+                        if (idx === 15 && val === '-') val = getLocationPath(row[14]) || getLocationName(row[14]) || '-';
+                        bodyHtml += `<td class="px-3 py-3 text-slate-300 align-top">${val}</td>`;
+                    }
                 });
-            }
-            document.getElementById("table-body").innerHTML = bodyHtml;
+                bodyHtml += `
+                        <td class="px-3 py-3 text-right whitespace-nowrap align-top" onclick="event.stopPropagation()">
+                            ${buildUnifiedActionMenuHtml(tabName, index, { canOpenFolder: hasSubItems, folderTargetId: rowUniqueId, canMove: true })}
+                        </td>
+                    </tr>`;
+            });
+            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="${activeColIndices.length + 3}" class="px-4 py-8 text-center text-slate-500 italic">No records in [${tabName}].</td></tr>`;
             document.getElementById("current-table-title").innerText = `Management: ${tabName.replace(/_/g, ' ')}`;
             document.getElementById("record-count").innerText = `${rows.length} records`;
             updateBulkActionBar();
         }
 
-        // --- WINDOWS EXPLORER RIGHT PANE: FOLDER CONTENTS VIEW ---
         function renderLocationCombinedTable(locId) {
             document.getElementById("current-table-title").innerHTML = buildLocationBreadcrumbHtml(locId);
-
             const { subLocations, equipments } = getDirectChildrenOfNode(locId);
 
             document.getElementById("table-head").innerHTML = `
                 <tr>
-                    <th class="px-3 py-3 w-10 text-center">
-                        <input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500">
-                    </th>
+                    <th class="px-3 py-3 w-10 text-center"><input type="checkbox" id="master-select-cb" onchange="toggleSelectAllInTable(this)" class="rounded bg-slate-900 border-slate-700 text-amber-500"></th>
                     <th class="px-3 py-3 w-12 text-center">No.</th>
                     <th class="px-3 py-3 min-w-[250px] max-w-[340px]">Name (Folder / Equipment)</th>
                     <th class="px-3 py-3">Code / Serial No</th>
@@ -1591,9 +1636,7 @@
                     <th class="px-3 py-3 text-right">Actions</th>
                 </tr>`;
 
-            let bodyHtml = "";
-            let rowNum = 0;
-
+            let bodyHtml = "", rowNum = 0;
             subLocations.forEach(({ row, rowIndex }) => {
                 rowNum++;
                 const subId = getNodePrimaryId(row, rowIndex);
@@ -1604,29 +1647,14 @@
                 const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
 
                 bodyHtml += `
-                    <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer select-none bg-slate-800/20" onclick="filterByTreeNode('${subId.replace(/'/g, "\'")}')">
-                        <td class="px-3 py-3 text-center align-middle" onclick="event.stopPropagation()">
-                            <input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}>
-                        </td>
+                    <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer bg-slate-800/20" onclick="filterByTreeNode('${subId.replace(/'/g, "\'")}')">
+                        <td class="px-3 py-3 text-center align-middle" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
                         <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
-                        <td class="px-3 py-3 text-amber-200 font-semibold min-w-[250px] max-w-[340px] whitespace-normal break-words align-middle">
-                            <div class="flex items-center gap-2">
-                                ${getLocationIconHtml(row, false)}
-                                <span>${subName}</span>
-                                <span class="text-[10px] text-slate-400 font-normal">(${countText})</span>
-                            </div>
-                        </td>
-                        <td class="px-3 py-3 text-amber-300 font-mono whitespace-nowrap align-middle">${subId}</td>
-                        <td class="px-3 py-3 text-slate-400 whitespace-nowrap align-middle"><span class="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded text-[11px]">${cleanVal(row[5]) || 'Sub-Location'}</span></td>
-                        <td class="px-3 py-3 text-emerald-400 whitespace-nowrap align-middle">${cleanVal(row[26]) || 'Active'}</td>
-                        <td class="px-3 py-3 text-right whitespace-nowrap align-middle" onclick="event.stopPropagation()">
-                            ${buildUnifiedActionMenuHtml('Locations', rowIndex, {
-                                canOpenFolder: true,
-                                folderTargetId: subId,
-                                canMove: true,
-                                dropdownUniqueId: `row-dropdown-subloc-${rowIndex}`
-                            })}
-                        </td>
+                        <td class="px-3 py-3 text-amber-200 font-semibold"><div class="flex items-center gap-2">${getLocationIconHtml(row, false)}<span>${subName}</span> <span class="text-[10px] text-slate-400 font-normal">(${countText})</span></div></td>
+                        <td class="px-3 py-3 text-amber-300 font-mono align-middle">${subId}</td>
+                        <td class="px-3 py-3 text-slate-400 align-middle"><span class="bg-amber-500/10 text-amber-300 border border-amber-500/20 px-2 py-0.5 rounded text-[11px]">${cleanVal(row[5]) || 'Sub-Location'}</span></td>
+                        <td class="px-3 py-3 text-emerald-400 align-middle">${cleanVal(row[26]) || 'Active'}</td>
+                        <td class="px-3 py-3 text-right whitespace-nowrap align-middle" onclick="event.stopPropagation()">${buildUnifiedActionMenuHtml('Locations', rowIndex, { canOpenFolder: true, folderTargetId: subId, canMove: true })}</td>
                     </tr>`;
             });
 
@@ -1634,65 +1662,41 @@
                 rowNum++;
                 const kidsCheck = getDirectChildrenOfNode(item.id);
                 const hasInside = (kidsCheck.subLocations.length + kidsCheck.equipments.length) > 0;
-                const rowAction = hasInside
-                    ? `filterByTreeNode('${item.id.replace(/'/g, "\'")}')`
-                    : `openDetailModalByIndex('${item.category}', ${item.rowIndex})`;
-
+                const rowAction = hasInside ? `filterByTreeNode('${item.id.replace(/'/g, "\'")}')` : `openDetailModalByIndex('${item.category}', ${item.rowIndex})`;
                 const itemKey = `${item.category}::${item.rowIndex}`;
                 const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
 
                 bodyHtml += `
                     <tr class="hover:bg-slate-800/50 border-b border-slate-800/80 transition cursor-pointer" onclick="${rowAction}">
-                        <td class="px-3 py-3 text-center align-middle" onclick="event.stopPropagation()">
-                            <input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500 focus:ring-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}>
-                        </td>
+                        <td class="px-3 py-3 text-center align-middle" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
                         <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
-                        <td class="px-3 py-3 text-slate-200 font-medium min-w-[250px] max-w-[340px] whitespace-normal break-words leading-snug align-middle">
-                            <div class="flex items-center gap-2">
-                                ${item.customIconHtml ? `<span class="shrink-0 inline-flex items-center">${item.customIconHtml}</span>` : `<i class="${item.icon} text-sm shrink-0"></i>`}
-                                <span>${item.name}</span>
-                                ${hasInside ? `<span class="text-[10px] text-amber-300 font-normal">(${kidsCheck.subLocations.length + kidsCheck.equipments.length} items)</span>` : ''}
-                            </div>
-                        </td>
-                        <td class="px-3 py-3 text-sky-300 font-mono whitespace-nowrap align-middle">${item.serialNo || item.code || item.id || '-'}</td>
-                        <td class="px-3 py-3 text-slate-400 whitespace-nowrap align-middle"><span class="bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${item.categoryLabel}</span></td>
-                        <td class="px-3 py-3 text-emerald-400 whitespace-nowrap align-middle">${item.status}</td>
-                        <td class="px-3 py-3 text-right whitespace-nowrap align-middle" onclick="event.stopPropagation()">
-                            ${buildUnifiedActionMenuHtml(item.category, item.rowIndex, {
-                                canOpenFolder: hasInside,
-                                folderTargetId: item.id,
-                                canMove: true,
-                                dropdownUniqueId: `row-dropdown-comb-${item.category}-${item.rowIndex}`
-                            })}
-                        </td>
+                        <td class="px-3 py-3 text-slate-200 font-medium"><div class="flex items-center gap-2"><i class="${item.icon} text-sm"></i><span>${item.name}</span></div></td>
+                        <td class="px-3 py-3 text-sky-300 font-mono align-middle">${item.serialNo || item.code || item.id || '-'}</td>
+                        <td class="px-3 py-3 text-slate-400 align-middle"><span class="bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${item.categoryLabel}</span></td>
+                        <td class="px-3 py-3 text-emerald-400 align-middle">${item.status}</td>
+                        <td class="px-3 py-3 text-right whitespace-nowrap align-middle" onclick="event.stopPropagation()">${buildUnifiedActionMenuHtml(item.category, item.rowIndex, { canOpenFolder: hasInside, folderTargetId: item.id, canMove: true })}</td>
                     </tr>`;
             });
-
-            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">This folder is currently empty.</td></tr>`;
+            document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500 italic">Thư mục này hiện đang trống.</td></tr>`;
             document.getElementById("record-count").innerText = `${subLocations.length} folders, ${equipments.length} items`;
             updateBulkActionBar();
         }
 
-        // --- CASCADING LOCATION NODES ---
         function getAllLocationNodes() {
             let nodes = [];
             (appData["Locations"] || []).forEach((l, idx) => {
                 const id = normKey(l[1]) || normKey(l[3]) || normKey(l[2]) || `LOC_ROW_${idx + 1}`;
                 const name = cleanVal(l[2]) || id;
                 const parentId = normKey(l[14]);
-                if (id && !nodes.some(n => n.id.toLowerCase() === id.toLowerCase())) {
-                    nodes.push({ id, name, parentId, type: cleanVal(l[5]) || 'Location', isLocation: true });
-                }
+                if (id && !nodes.some(n => n.id.toLowerCase() === id.toLowerCase())) nodes.push({ id, name, parentId, type: cleanVal(l[5]) || 'Location', isLocation: true });
             });
             ['Container', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment'].forEach(cat => {
-                (appData[cat] || []).forEach((item, idx) => {
+                (appData[cat] || []).forEach((item) => {
                     const realCodeOrSn = normKey(item[1]) || normKey(item[3]);
                     if (!realCodeOrSn) return;
                     const name = cleanVal(item[2]) || realCodeOrSn;
                     const parentId = normKey(item[14]);
-                    if (!nodes.some(n => n.id.toLowerCase() === realCodeOrSn.toLowerCase())) {
-                        nodes.push({ id: realCodeOrSn, name: `[${cat}] ${name}`, parentId, type: cat, isLocation: false });
-                    }
+                    if (!nodes.some(n => n.id.toLowerCase() === realCodeOrSn.toLowerCase())) nodes.push({ id: realCodeOrSn, name: `[${cat}] ${name}`, parentId, type: cat, isLocation: false });
                 });
             });
             return nodes;
@@ -1702,14 +1706,10 @@
             isBulkMoveMode = false;
             const row = (appData[tabName] || [])[rowIndex];
             if (!row) return;
-            
             movingItemContext = { tabName, rowIndex, selectedTargetId: cleanVal(row[14]) };
-            const itemName = cleanVal(row[2]) || 'Unnamed Item';
-            const serial = cleanVal(row[3]) ? ` (SN: ${cleanVal(row[3])})` : '';
+            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-accent"></i> Move Equipment Location`;
+            document.getElementById("move-item-id").value = cleanVal(row[2]) || 'Item';
 
-            document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-accent"></i> Move Location`;
-            document.getElementById("move-item-id").value = `${itemName}${serial}`;
-            
             const container = document.getElementById("cascading-location-container");
             container.innerHTML = "";
             renderCascadingDropdownLevel(0, "");
@@ -1721,108 +1721,54 @@
 
         function renderCascadingDropdownLevel(level, parentId) {
             const container = document.getElementById("cascading-location-container");
-            Array.from(container.children).forEach(child => {
-                if (parseInt(child.dataset.level, 10) >= level) child.remove();
-            });
+            Array.from(container.children).forEach(child => { if (parseInt(child.dataset.level, 10) >= level) child.remove(); });
 
             const allNodes = getAllLocationNodes();
-            const children = level === 0 
-                ? allNodes.filter(n => n.isLocation && (!n.parentId || !allNodes.some(p => p.id.toLowerCase() === n.parentId.toLowerCase())))
-                : allNodes.filter(n => n.parentId && n.parentId.toLowerCase() === parentId.toLowerCase());
-
+            const children = level === 0 ? allNodes.filter(n => n.isLocation && (!n.parentId || !allNodes.some(p => p.id.toLowerCase() === n.parentId.toLowerCase()))) : allNodes.filter(n => n.parentId && n.parentId.toLowerCase() === parentId.toLowerCase());
             if (children.length === 0) return;
 
             const wrapper = document.createElement("div");
             wrapper.dataset.level = level;
-            const levelLabels = ["Level 1 (Base / Main Site):", "Level 2 (Container / Sub-location):", "Level 3 (Rack / Area):", "Level 4 (Toolbox / Compartment):"];
-            const labelText = levelLabels[level] || `Level ${level + 1}:`;
+            let optionsHtml = `<option value="">-- Select location --</option>`;
+            children.forEach(c => { optionsHtml += `<option value="${c.id}">${c.id} - ${c.name}</option>`; });
 
-            let optionsHtml = `<option value="">-- Select ${level === 0 ? 'root location' : 'sub-location'} --</option>`;
-            children.forEach(c => {
-                optionsHtml += `<option value="${c.id}">${c.id} - ${c.name}</option>`;
-            });
-
-            wrapper.innerHTML = `
-                <label class="block text-[11px] text-slate-400 mb-1">${labelText}</label>
-                <select onchange="handleCascadingChange(${level}, this.value, '${parentId.replace(/'/g, "\'")}')" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-accent">
-                    ${optionsHtml}
-                </select>
-            `;
+            wrapper.innerHTML = `<label class="block text-[11px] text-slate-400 mb-1">Level ${level + 1}:</label><select onchange="handleCascadingChange(${level}, this.value, '${parentId.replace(/'/g, "\'")}')" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">${optionsHtml}</select>`;
             container.appendChild(wrapper);
         }
 
         function handleCascadingChange(level, selectedVal, fallbackParentId) {
-            if (selectedVal) {
-                movingItemContext.selectedTargetId = selectedVal;
-                renderCascadingDropdownLevel(level + 1, selectedVal);
-            } else {
-                movingItemContext.selectedTargetId = fallbackParentId || "";
-                const container = document.getElementById("cascading-location-container");
-                Array.from(container.children).forEach(child => {
-                    if (parseInt(child.dataset.level, 10) > level) child.remove();
-                });
-            }
+            if (selectedVal) { movingItemContext.selectedTargetId = selectedVal; renderCascadingDropdownLevel(level + 1, selectedVal); }
+            else { movingItemContext.selectedTargetId = fallbackParentId || ""; }
             updateMovePreviewPath();
         }
 
         function updateMovePreviewPath() {
-            const targetId = movingItemContext.selectedTargetId;
-            const previewEl = document.getElementById("move-preview-path");
-            if (!targetId) {
-                previewEl.innerText = "Not selected";
-            } else {
-                previewEl.innerText = `${getLocationPath(targetId)} (ID: ${targetId})`;
-            }
+            document.getElementById("move-preview-path").innerText = movingItemContext.selectedTargetId ? `${getLocationPath(movingItemContext.selectedTargetId)}` : "Not selected";
         }
 
-        function closeMoveModal() {
-            document.getElementById("move-modal").classList.remove("flex");
-            document.getElementById("move-modal").classList.add("hidden");
-        }
+        function closeMoveModal() { document.getElementById("move-modal").classList.remove("flex"); document.getElementById("move-modal").classList.add("hidden"); }
 
         function confirmMoveItem() {
             const { selectedTargetId } = movingItemContext;
-            if (!selectedTargetId) {
-                alert("Please select a target location first!");
-                return;
-            }
-
-            const today = new Date().toISOString().slice(0, 10);
+            if (!selectedTargetId) { alert("Please select a destination!"); return; }
             const targetPath = getLocationPath(selectedTargetId);
 
             if (isBulkMoveMode) {
-                let movedCount = 0;
                 selectedItemKeys.forEach(key => {
                     const [tabName, rIdxStr] = key.split("::");
                     const rIdx = parseInt(rIdxStr, 10);
                     const row = (appData[tabName] || [])[rIdx];
                     if (row) {
-                        row[14] = selectedTargetId;
-                        row[15] = targetPath;
-                        const oldLog = cleanVal(row[27]);
-                        const moveNote = `[${today}] Bulk moved to ${targetPath}`;
-                        row[27] = oldLog ? `${oldLog} | ${moveNote}` : moveNote;
-                        
+                        row[14] = selectedTargetId; row[15] = targetPath;
                         syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rIdx));
-                        movedCount++;
                     }
                 });
-                alert(`Successfully moved ${movedCount} items to: ${targetPath}`);
                 clearSelection();
             } else {
                 const { tabName, rowIndex } = movingItemContext;
                 const row = (appData[tabName] || [])[rowIndex];
-                if (!row) return;
-
-                row[14] = selectedTargetId;
-                row[15] = targetPath;
-                const oldLog = cleanVal(row[27]);
-                const moveNote = `[${today}] Moved to ${targetPath}`;
-                row[27] = oldLog ? `${oldLog} | ${moveNote}` : moveNote;
-
-                syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rowIndex));
+                if (row) { row[14] = selectedTargetId; row[15] = targetPath; syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rowIndex)); }
             }
-
             saveDataLocal();
             closeMoveModal();
         }
@@ -1841,7 +1787,7 @@
         function openAddModal() {
             editingRowIndex = null;
             document.getElementById("modal-title").innerText = "Add New Equipment / Location";
-            document.getElementById("submit-btn").innerText = t('btn_save');
+            document.getElementById("submit-btn").innerText = "Save";
             document.getElementById("form-target-tab").disabled = false;
             document.getElementById("form-target-tab").value = currentActiveTab === "Paper_Work" ? "Locations" : currentActiveTab;
             document.getElementById("equipment-modal").classList.remove("hidden");
@@ -1849,45 +1795,31 @@
             renderFormFields();
         }
 
-        function copyItemByIndex(tabName, rowIndex) {
-            const sourceRow = (appData[tabName] || [])[rowIndex];
-            if (!sourceRow) return;
-
-            editingRowIndex = null;
-            const clonedRow = [...sourceRow];
-            while (clonedRow.length < UNIFIED_HEADERS.length) clonedRow.push("");
-
-            clonedRow[0] = String((appData[tabName] || []).length + 1);
-            const oldSerial = cleanVal(clonedRow[3]);
-            clonedRow[3] = "";
-
-            const sourceName = cleanVal(sourceRow[2]) || cleanVal(sourceRow[1]) || tabName;
-            document.getElementById("modal-title").innerHTML = `<i class="fa-solid fa-copy text-purple-400 mr-1.5"></i> Duplicate [${tabName.replace(/_/g, ' ')}]: ${sourceName}`;
-            document.getElementById("submit-btn").innerText = t('btn_save');
-            document.getElementById("form-target-tab").value = tabName;
-            document.getElementById("form-target-tab").disabled = true;
-
-            document.getElementById("equipment-modal").classList.remove("hidden");
-            document.getElementById("equipment-modal").classList.add("flex");
-            renderFormFields(clonedRow);
-
-            const snInput = document.querySelector('input[name="f3"]');
-            if (snInput) {
-                snInput.placeholder = oldSerial ? `Enter new Serial Number (Original: ${oldSerial})` : "Enter new Serial Number...";
-                snInput.classList.add("border-purple-500", "ring-2", "ring-purple-500/40", "bg-purple-950/20");
-                setTimeout(() => snInput.focus(), 80);
-            }
-        }
-
         function openEditModalByIndex(tabName, rowIndex) {
             editingRowIndex = rowIndex;
             document.getElementById("modal-title").innerText = `Edit [${tabName}]`;
-            document.getElementById("submit-btn").innerText = t('btn_save');
+            document.getElementById("submit-btn").innerText = "Update";
             document.getElementById("form-target-tab").value = tabName;
             document.getElementById("form-target-tab").disabled = true;
             document.getElementById("equipment-modal").classList.remove("hidden");
             document.getElementById("equipment-modal").classList.add("flex");
             renderFormFields((appData[tabName] || [])[rowIndex]);
+        }
+
+        function copyItemByIndex(tabName, rowIndex) {
+            const sourceRow = (appData[tabName] || [])[rowIndex];
+            if (!sourceRow) return;
+            editingRowIndex = null;
+            const clonedRow = [...sourceRow];
+            while (clonedRow.length < UNIFIED_HEADERS.length) clonedRow.push("");
+            clonedRow[3] = "";
+            document.getElementById("modal-title").innerText = `Duplicate Item`;
+            document.getElementById("submit-btn").innerText = "Save Copy";
+            document.getElementById("form-target-tab").value = tabName;
+            document.getElementById("form-target-tab").disabled = true;
+            document.getElementById("equipment-modal").classList.remove("hidden");
+            document.getElementById("equipment-modal").classList.add("flex");
+            renderFormFields(clonedRow);
         }
 
         function closeModal() { document.getElementById("equipment-modal").classList.remove("flex"); document.getElementById("equipment-modal").classList.add("hidden"); }
@@ -1919,18 +1851,12 @@
             UNIFIED_HEADERS.forEach((headerName, idx) => {
                 if (idx !== 1) {
                     let val = cleanVal(row[idx]);
-                    if (val && val !== '-' && val !== 'N/A') {
-                        contentHtml += `<div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50"><span class="text-slate-400 block text-[10px] uppercase">${headerName}</span><span class="text-slate-200 font-semibold mt-0.5 block break-words">${val}</span></div>`;
-                    }
+                    if (val && val !== '-') contentHtml += `<div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50"><span class="text-slate-400 block text-[10px] uppercase">${headerName}</span><span class="text-slate-200 font-semibold mt-0.5 block break-words">${val}</span></div>`;
                 }
             });
             contentHtml += `</div></div>`;
             document.getElementById("detail-modal-content").innerHTML = contentHtml;
-            
-            const moveBtn = document.getElementById("detail-move-btn");
-            moveBtn.classList.remove("hidden");
-            moveBtn.onclick = () => { closeDetailModal(); openMoveModal(tabName, rowIndex); };
-            
+            document.getElementById("detail-move-btn").onclick = () => { closeDetailModal(); openMoveModal(tabName, rowIndex); };
             document.getElementById("detail-edit-btn").onclick = () => { closeDetailModal(); openEditModalByIndex(tabName, rowIndex); };
             document.getElementById("detail-modal").classList.remove("hidden");
             document.getElementById("detail-modal").classList.add("flex");
@@ -1949,6 +1875,7 @@
                 document.getElementById("pw-remarks").value = cleanVal(row[7]);
             } else {
                 document.getElementById("pw-doc-name").value = "";
+                document.getElementById("pw-file-name").value = "";
                 document.getElementById("pw-drive-link").value = "";
                 document.getElementById("pw-remarks").value = "";
             }
@@ -1968,13 +1895,16 @@
                 document.getElementById("pw-doc-name").value.trim(),
                 document.getElementById("pw-category").value,
                 document.getElementById("pw-file-name").value.trim() || document.getElementById("pw-doc-name").value.trim(),
-                links.downloadUrl,
-                links.previewUrl,
-                new Date().toISOString().slice(0, 10),
+                links.downloadUrl, links.previewUrl, new Date().toISOString().slice(0, 10),
                 document.getElementById("pw-remarks").value.trim()
             ];
-            if (editIdx >= 0) appData["Paper_Work"][editIdx] = rowData;
-            else appData["Paper_Work"].push(rowData);
+            if (editIdx >= 0) {
+                appData["Paper_Work"][editIdx] = rowData;
+                syncToGoogleSheet("update", "Paper_Work", rowData, String(rowData[0]));
+            } else {
+                appData["Paper_Work"].push(rowData);
+                syncToGoogleSheet("append", "Paper_Work", rowData);
+            }
             saveDataLocal();
             closePaperworkModal();
             renderTable("Paper_Work");
@@ -1984,7 +1914,6 @@
             const row = (appData["Paper_Work"] || [])[index];
             if (!row) return;
             const links = parseGoogleDriveLinks(cleanVal(row[5]) || cleanVal(row[4]));
-            if (!links.previewUrl) { alert("Invalid Google Drive link!"); return; }
             document.getElementById("viewer-doc-title").innerText = cleanVal(row[1]);
             document.getElementById("viewer-iframe").src = links.previewUrl;
             document.getElementById("viewer-download-btn").href = links.downloadUrl || "#";
@@ -2000,11 +1929,7 @@
         }
 
         function execWordCmd(command, value = null) { document.execCommand(command, false, value); document.getElementById("word-editor-area").focus(); }
-
-        function insertTemplateBlock() {
-            document.execCommand('insertHTML', false, `<br><h2 style="color: #0369a1;">NEW PROJECT</h2><ul><li><b>Contract No:</b> ...</li><li><b>Supervisor:</b> ...</li></ul><br>`);
-        }
-
+        function insertTemplateBlock() { document.execCommand('insertHTML', false, `<br><h2 style="color: #0369a1;">DỰ ÁN MỚI</h2><ul><li><b>Số Hợp Đồng:</b> ...</li></ul><br>`); }
         function openHelpModal() {
             let savedContent = "";
             if (appData["Paper_Work_Help"]?.[0]) savedContent = Array.isArray(appData["Paper_Work_Help"][0]) ? appData["Paper_Work_Help"][0][0] : appData["Paper_Work_Help"][0];
@@ -2012,9 +1937,7 @@
             document.getElementById("pw-help-modal").classList.remove("hidden");
             document.getElementById("pw-help-modal").classList.add("flex");
         }
-
-        function closeHelpModal() { document.getElementById("pw-help-modal").classList.remove("flex"); document.getElementById("pw-help-modal").classList.add("hidden"); }
-
+        function closeHelpModal() { document.getElementById("pw-help-modal").classList.remove("hidden"); document.getElementById("pw-help-modal").classList.add("hidden"); }
         function saveHelpWordDocument() {
             const htmlContent = document.getElementById("word-editor-area").innerHTML;
             localStorage.setItem("amsito_help_word_doc", htmlContent);
@@ -2024,7 +1947,6 @@
             const badge = document.getElementById("word-save-status");
             if (badge) { badge.classList.remove("hidden"); setTimeout(() => badge.classList.add("hidden"), 2500); }
         }
-
         function downloadHelpAsWordDoc() {
             const blob = new Blob(['\ufeff', "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'><head><meta charset='utf-8'></head><body>" + document.getElementById("word-editor-area").innerHTML + "</body></html>"], { type: 'application/msword' });
             const link = document.createElement('a');
@@ -2034,97 +1956,37 @@
         }
 
         function deleteItemByIndex(tabName, rowIndex) {
-            if (!confirm(t('confirm_delete'))) return;
+            if (!confirm("Are you sure you want to delete this record?")) return;
             const row = (appData[tabName] || [])[rowIndex];
             const rowKey = getRowUniqueKey(row, rowIndex);
             appData[tabName].splice(rowIndex, 1);
             syncToGoogleSheet("delete", tabName, row, rowKey);
             saveDataLocal();
-            if (currentFilteredLocId) {
-                renderLocationCombinedTable(currentFilteredLocId);
-            } else {
-                renderTable(currentActiveTab);
-            }
+            if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
+            else renderTable(currentActiveTab);
         }
 
         function exportJSON() {
-            const backupPayload = {
-                appData: appData,
-                syncQueue: syncQueue,
-                exportDate: new Date().toISOString()
-            };
+            const backupPayload = { appData: appData, syncQueue: syncQueue, exportDate: new Date().toISOString() };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupPayload, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `amsito_master_offline_${new Date().toISOString().slice(0,10)}.json`);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if (imported && imported.appData) {
-                        appData = imported.appData;
-                        if (imported.syncQueue) syncQueue = imported.syncQueue;
-                        saveDataLocal();
-                        alert("Data imported successfully!");
-                    } else {
-                        alert("Invalid JSON format!");
-                    }
-                } catch (err) {
-                    alert("Error reading JSON file!");
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = "";
+            const dl = document.createElement('a');
+            dl.setAttribute("href", dataStr);
+            dl.setAttribute("download", `amsito_master_${new Date().toISOString().slice(0,10)}.json`);
+            dl.click();
         }
 
         function initSidebarResizer() {
             const resizer = document.getElementById("sidebar-resizer");
             const sidebar = document.getElementById("sidebar-aside");
             if (!resizer || !sidebar) return;
-
-            function applySidebarWidth() {
-                if (window.innerWidth >= 1024) {
-                    const savedWidth = localStorage.getItem("amsito_sidebar_width");
-                    sidebar.style.width = (savedWidth ? savedWidth : 360) + "px";
-                } else {
-                    sidebar.style.width = "";
-                }
-            }
-
-            applySidebarWidth();
-            window.addEventListener("resize", applySidebarWidth);
-
             let isResizing = false;
-            resizer.addEventListener("mousedown", (e) => {
-                isResizing = true;
-                document.body.style.cursor = "col-resize";
-                document.body.style.userSelect = "none";
-            });
-
+            resizer.addEventListener("mousedown", () => { isResizing = true; document.body.style.cursor = "col-resize"; });
             document.addEventListener("mousemove", (e) => {
                 if (!isResizing) return;
-                const rect = sidebar.getBoundingClientRect();
-                let newWidth = e.clientX - rect.left;
-                if (newWidth < 270) newWidth = 270;
-                if (newWidth > 650) newWidth = 650;
-                sidebar.style.width = newWidth + "px";
+                let newWidth = e.clientX - sidebar.getBoundingClientRect().left;
+                if (newWidth >= 270 && newWidth <= 650) sidebar.style.width = newWidth + "px";
             });
-
-            document.addEventListener("mouseup", () => {
-                if (isResizing) {
-                    isResizing = false;
-                    document.body.style.cursor = "";
-                    document.body.style.userSelect = "";
-                    localStorage.setItem("amsito_sidebar_width", parseInt(sidebar.style.width, 10));
-                }
-            });
+            document.addEventListener("mouseup", () => { isResizing = false; document.body.style.cursor = ""; });
         }
 
         window.onload = function() {
