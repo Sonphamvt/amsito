@@ -740,6 +740,42 @@ function formatDisplayDate(v) {
     }
     return s;
 }
+function renderExpiryCellHtml(rawVal) {
+    const formatted = formatDisplayDate(rawVal);
+    if (!formatted || formatted === '-') return '-';
+
+    let targetDate = null;
+    const rawStr = cleanVal(rawVal);
+    if (/^\d{4}-\d{2}-\d{2}/.test(rawStr)) {
+        targetDate = new Date(rawStr);
+    } else {
+        const parts = formatted.split(/[-/ ]/);
+        if (parts.length === 3) {
+            const months = { JAN:0, FEB:1, MAR:2, APR:3, MAY:4, JUN:5, JUL:6, AUG:7, SEP:8, OCT:9, NOV:10, DEC:11 };
+            const d = parseInt(parts[0], 10);
+            const mStr = parts[1].toUpperCase().slice(0, 3);
+            const y = parseInt(parts[2], 10);
+            if (!isNaN(d) && months[mStr] !== undefined && !isNaN(y)) {
+                targetDate = new Date(y < 100 ? 2000 + y : y, months[mStr], d);
+            }
+        }
+    }
+
+    if (!targetDate || isNaN(targetDate.getTime())) return formatted;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    targetDate.setHours(0, 0, 0, 0);
+    const diffDays = Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) {
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-rose-500/20 border border-rose-500/50 text-rose-300 font-semibold whitespace-nowrap" title="Quá hạn ${Math.abs(diffDays)} ngày"><i class="fa-solid fa-triangle-exclamation text-rose-400"></i> ${formatted}</span>`;
+    } else if (diffDays <= 30) {
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-amber-500/20 border border-amber-500/50 text-amber-300 font-semibold whitespace-nowrap" title="Còn ${diffDays} ngày"><i class="fa-solid fa-clock text-amber-400"></i> ${formatted}</span>`;
+    } else {
+        return `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 whitespace-nowrap">${formatted}</span>`;
+    }
+}
 
         // Fixed Unique Key Resolution: Prioritize actual Code / Serial Number over row STT
         function getRowUniqueKey(row, rowIndex) {
@@ -1841,14 +1877,16 @@ function formatDisplayDate(v) {
                     <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="${rowClickAction}">
                         <td class="px-3 py-3 text-center align-top" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
                         <td class="px-3 py-3 font-semibold text-slate-400 text-center align-top">${displayIdx + 1}</td>`;
+                const EXPIRY_COL_INDICES = [18, 20, 21, 23, 25];
                 activeColIndices.forEach(idx => {
                     if (idx !== 0) {
-                        let val = formatDisplayDate(row[idx]) || '-';
-if (idx === 15 && val === '-') {
-    const locStr = getLocationPath(row[14]) || getLocationName(row[14]);
-    val = (locStr && locStr !== "Unknown Location (N/A)") ? locStr : '-';
-}
-                        if (idx === 15 && val === '-') val = getLocationPath(row[14]) || getLocationName(row[14]) || '-';
+                        let val = EXPIRY_COL_INDICES.includes(idx)
+                            ? renderExpiryCellHtml(row[idx])
+                            : (formatDisplayDate(row[idx]) || '-');
+                        if (idx === 15 && val === '-') {
+                            const locStr = getLocationPath(row[14]) || getLocationName(row[14]);
+                            val = (locStr && locStr !== "Unknown Location (N/A)") ? locStr : '-';
+                        }
                         if (idx === 2 && tabName === "Container") {
                             val = `<div class="flex items-center gap-2 font-semibold text-amber-200"><i class="fa-solid fa-box text-amber-400"></i><span>${val}</span>${totalInside > 0 ? `<span class="text-[10px] bg-slate-800 text-sky-300 border border-slate-700 px-1.5 py-0.2 rounded font-normal">${totalInside} items</span>` : ''}</div>`;
                         }
