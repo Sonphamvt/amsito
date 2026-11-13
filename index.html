@@ -533,6 +533,17 @@
                     <option value="H1">Tiêu đề lớn</option>
                     <option value="H2">Tiêu đề vừa</option>
                 </select>
+<select onchange="setWordFontSize(this.value); this.value='';" class="bg-slate-800 border border-slate-700 text-slate-200 rounded px-2 py-1 text-xs focus:outline-none cursor-pointer" title="Chọn cỡ chữ">
+    <option value="" selected disabled>Cỡ chữ</option>
+    <option value="12px">12 px</option>
+    <option value="13px">13 px</option>
+    <option value="14px">14 px (Chuẩn)</option>
+    <option value="16px">16 px</option>
+    <option value="18px">18 px</option>
+    <option value="20px">20 px</option>
+    <option value="24px">24 px</option>
+    <option value="28px">28 px</option>
+</select>
                 <div class="h-4 w-[1px] bg-slate-700 mx-1"></div>
                 <button type="button" onclick="execWordCmd('bold')" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center font-bold">B</button>
                 <button type="button" onclick="execWordCmd('italic')" class="w-7 h-7 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center italic font-serif">I</button>
@@ -568,10 +579,10 @@
         ];
 
         const DEFAULT_HELP_WORD_CONTENT = `
-            <h1 style="color: #0f172a; border-bottom: 2px solid #0ea5e9; padding-bottom: 6px;">THÔNG TIN THAM KHẢO ĐIỀN TIMESHEET & JOB REPORT</h1>
-            <p style="color: #475569; font-size: 13px;"><i>(Trang soạn thảo văn bản: Ông có thể gõ, sửa, format tùy ý và bấm <b>Lưu Văn Bản</b>).</i></p>
+            <h1 style="color: #0f172a;style="font-size: 12px; border-bottom: 2px solid #0ea5e9; padding-bottom: 6px;">THÔNG TIN THAM KHẢO ĐIỀN TIMESHEET & JOB REPORT</h1>
+            <p style="color: #475569; font-size: 8px;"><i>(Trang soạn thảo văn bản: Bạn có thể gõ, sửa, format tùy ý và bấm <b>Lưu Văn Bản</b>).</i></p>
             <br>
-            <h2 style="color: #0369a1;">1. CLIENT: HOANG LONG HOAN VU JOC</h2>
+            <h2 style="color: #0369a1;style="font-size: 8px;">1. CLIENT: xxx</h2>
             <ul>
                 <li><b>Contract No:</b> HLHV-PRD-20-071 - Hợp đồng AMSITO ký với Production cung cấp dịch vụ Slickline</li>
                 <li><b>Contract No:</b> HLHV-PRD-25-022 - Hợp đồng AMSITO ký với Production cung cấp dịch vụ Pressure Survey</li> 
@@ -2277,6 +2288,19 @@ if (idx === 15 && val === '-') {
 
         function execWordCmd(command, value = null) { document.execCommand(command, false, value); document.getElementById("word-editor-area").focus(); }
         function insertTemplateBlock() { document.execCommand('insertHTML', false, `<br><h2 style="color: #0369a1;">DỰ ÁN MỚI</h2><ul><li><b>Số Hợp Đồng:</b> ...</li></ul><br>`); }
+function setWordFontSize(sizePx) {
+    if (!sizePx) return;
+    const editor = document.getElementById("word-editor-area");
+    if (!editor) return;
+    editor.focus();
+    document.execCommand("fontSize", false, "7");
+    editor.querySelectorAll('font[size="7"]').forEach(el => {
+        const span = document.createElement("span");
+        span.style.fontSize = sizePx;
+        span.innerHTML = el.innerHTML;
+        el.replaceWith(span);
+    });
+}
         function openHelpModal() {
             let savedContent = "";
             if (appData["Paper_Work_Help"]?.[0]) savedContent = Array.isArray(appData["Paper_Work_Help"][0]) ? appData["Paper_Work_Help"][0][0] : appData["Paper_Work_Help"][0];
