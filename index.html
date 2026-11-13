@@ -722,6 +722,19 @@
             if (s === "" || s === "NaN" || s === "None") return "";
             return s;
         }
+// 1. Thêm hàm này ngay dưới hàm cleanVal(v)
+function formatDisplayDate(v) {
+    const s = cleanVal(v);
+    if (!s) return "";
+    // Nhận diện chuỗi ngày ISO từ Google Sheet (VD: 2026-08-25T07:00:00.000Z)
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)) {
+        const d = new Date(s);
+        if (!isNaN(d.getTime())) {
+            return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase().replace(/ /g, '-');
+        }
+    }
+    return s;
+}
 
         // Fixed Unique Key Resolution: Prioritize actual Code / Serial Number over row STT
         function getRowUniqueKey(row, rowIndex) {
@@ -1825,7 +1838,11 @@
                         <td class="px-3 py-3 font-semibold text-slate-400 text-center align-top">${displayIdx + 1}</td>`;
                 activeColIndices.forEach(idx => {
                     if (idx !== 0) {
-                        let val = cleanVal(row[idx]) || '-';
+                        let val = formatDisplayDate(row[idx]) || '-';
+if (idx === 15 && val === '-') {
+    const locStr = getLocationPath(row[14]) || getLocationName(row[14]);
+    val = (locStr && locStr !== "Unknown Location (N/A)") ? locStr : '-';
+}
                         if (idx === 15 && val === '-') val = getLocationPath(row[14]) || getLocationName(row[14]) || '-';
                         if (idx === 2 && tabName === "Container") {
                             val = `<div class="flex items-center gap-2 font-semibold text-amber-200"><i class="fa-solid fa-box text-amber-400"></i><span>${val}</span>${totalInside > 0 ? `<span class="text-[10px] bg-slate-800 text-sky-300 border border-slate-700 px-1.5 py-0.2 rounded font-normal">${totalInside} items</span>` : ''}</div>`;
