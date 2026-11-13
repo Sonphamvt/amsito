@@ -48,17 +48,17 @@
     <!-- Header -->
     <header class="bg-cardbg border-b border-slate-700 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
         <div class="flex items-center space-x-3.5 w-full md:w-auto">
-            <!-- Corrected Amsito Logo (Correct spacing between i and s) -->
-            <div class="bg-white px-3 py-1.5 rounded-lg border border-slate-600/60 shadow-sm shrink-0 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 140" class="h-8 md:h-9 w-auto block select-none" aria-label="amsito.">
+            <!-- Corrected Amsito Logo (Balanced even letter spacing across a-m-s-i-t-o) -->
+            <div class="bg-white px-3.5 py-1.5 rounded-lg border border-slate-600/60 shadow-sm shrink-0 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 455 140" class="h-8 md:h-9 w-auto block select-none" aria-label="amsito.">
                     <g transform="translate(26, 0) skewX(-12)">
-                        <text x="0" y="102" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="104" fill="#dc2626" letter-spacing="-2">ams</text>
-                        <rect x="226" y="42" width="21" height="60" fill="#dc2626"/>
-                        <text x="256" y="102" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="104" fill="#dc2626" letter-spacing="-2">to</text>
-                        <circle cx="236.5" cy="21" rx="12" ry="13" r="12.5" fill="#1e293b"/>
+                        <text x="0" y="102" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="104" fill="#dc2626" letter-spacing="1">ams</text>
+                        <rect x="236" y="42" width="21" height="60" fill="#dc2626"/>
+                        <circle cx="246.5" cy="21" r="12" fill="#1e293b"/>
+                        <text x="272" y="102" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="104" fill="#dc2626" letter-spacing="1">to</text>
                     </g>
-                    <circle cx="412" cy="76" r="6.5" fill="#dc2626"/>
-                    <line x1="412" y1="82.5" x2="412" y2="132" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+                    <circle cx="436" cy="76" r="6.5" fill="#dc2626"/>
+                    <line x1="436" y1="82.5" x2="436" y2="132" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
                 </svg>
             </div>
             <div>
@@ -292,9 +292,9 @@
                                 <th class="p-2 border-r border-slate-300 text-center w-24">MAX PULL<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
                                 <th class="p-2 border-r border-slate-300 text-center w-24">WIRE CUT-OFF<br><span class="text-[9px] lowercase font-normal text-slate-600">(metres)</span></th>
                                 <th class="p-2 border-r border-slate-300 text-center w-24">WIRE ON DRUM<br><span class="text-[9px] lowercase font-normal text-slate-600">(metres)</span></th>
-                                <th class="p-2 border-r border-slate-300 text-center w-20">1st Pull Test<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
-                                <th class="p-2 border-r border-slate-300 text-center w-20">2nd Pull Test<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
-                                <th class="p-2 border-r border-slate-300 text-center w-20">3rd Pull Test<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-20">1ST<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-20">2ND<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
+                                <th class="p-2 border-r border-slate-300 text-center w-20">3RD<br><span class="text-[9px] lowercase font-normal text-slate-600">(lbs)</span></th>
                                 <th class="p-2 border-r border-slate-300 min-w-[150px]">COMMENTS<br><span class="text-[9px] lowercase font-normal text-slate-600">(CO2, H2S, brine, etc.)</span></th>
                                 <th class="p-2 text-center w-10 no-print">ACT</th>
                             </tr>
@@ -531,7 +531,7 @@
 
     <!-- Script Logic -->
     <script>
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzV_xcNwxfF2eHJHtQF9S7W-QNXoxQEBJGJxj8fDgcVZsZcU-J-Vtm7TnXeKk-tWPV52Q/exec";
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxeNtKAwvLEdFOgyYi5zMIaVGqf_vGWI0CT0TNwSuIaGeSssEt5jM9uDwRYWPpJB6-BDA/exec";
 
         const UNIFIED_HEADERS = [
             'STT / Item No', 'Asset ID / Code', 'Asset Name / Description', 'Serial Number', 'Part Number / Model', 
@@ -545,11 +545,24 @@
             <h1 style="color: #0f172a; border-bottom: 2px solid #0ea5e9; padding-bottom: 6px;">THÔNG TIN THAM KHẢO ĐIỀN TIMESHEET & JOB REPORT</h1>
             <p style="color: #475569; font-size: 13px;"><i>(Trang soạn thảo văn bản: Ông có thể gõ, sửa, format tùy ý và bấm <b>Lưu Văn Bản</b>).</i></p>
             <br>
-            <h2 style="color: #0369a1;">1. KHÁCH HÀNG: CUU LONG JOC</h2>
+            <h2 style="color: #0369a1;">1. CLIENT: HOANG LONG HOAN VU JOC</h2>
             <ul>
-                <li><b>Số Hợp Đồng:</b> CLJOC-SL-2026-001</li>
-                <li><b>Giám Sát:</b> Mr. Nguyen Van A</li>
+                <li><b>Contract No:</b> HLHV-PRD-20-071 - Hợp đồng AMSITO ký với Production cung cấp dịch vụ Slickline</li>
+		<li><b>Contract No:</b> HLHV-PRD-25-022 - Hợp đồng AMSITO ký với Production cung cấp dịch vụ Pressure Survey</li> 
+		<li><b>Contract No:</b> HLHV-DRL-25-087 - Hợp đồng AMSITO ký với Khoan cung cấp dịch vụ Slickline</li>
+		<li><b>Contract No:</b> HLHV-DRL-25-110 - Hợp đồng AMSITO ký với Khoan cung cấp dịch vụ Pressure Survey</li> 
+		
+                <li><b>WH Supervisor:</b> Mr. Lâm, xxx Hoàn, xxx Thao, xxx Kiên, xxx Đức, xxx Chính</li>
+		
+		<li><b>Senior Completion Engineer:</b> Mr. Đoàn Quang Hiệp</li>
             </ul>
+            <h2 style="color: #0369a1;">2. CLIENT: JVPC</h2>
+            <ul>
+                <li><b>Contract No:</b> xxxx - Hợp đồng ....</li>
+		<li><b>Contract No:</b> xxxx - Hợp đồng ....</li> 
+		<li><b>Petroleum Engineer:</b> Mr. Nghiêm Bảo Long, Nguyễn Thanh Hải, Nguyễn Mậu Đăng, Lê Hữu Nam,...</li>
+            </ul>
+
         `;
 
         let currentLang = localStorage.getItem("amsito_ui_lang") || "en";
@@ -771,7 +784,86 @@
             return new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-');
         }
 
-        // --- WIRE LOG SYSTEM INTEGRATION ---
+        // --- WIRE LOG SYSTEM INTEGRATION (Header-Mapped, Auto-Calc & No-Duplicate Sync) ---
+        const WIRE_LOG_DEFAULT_HEADERS = [
+            'LogID', 'WireID', 'DateSpooled', 'WireSize', 'WireType', 'Location',
+            'CertNo', 'UnitNo', 'LogDate', 'WellName', 'MaxDepth', 'MaxPull',
+            'CutOff', 'WireOnDrum', 'PullTest', 'PullTest_2nd', 'PullTest_3rd', 'Comments'
+        ];
+
+        function getWireLogColMap() {
+            const rawRows = appData["Wire_Logs"] || [];
+            let headers = WIRE_LOG_DEFAULT_HEADERS;
+            if (rawRows.length > 0 && (String(rawRows[0][0]).trim() === 'LogID' || String(rawRows[0][9]).trim() === 'WellName')) {
+                headers = rawRows[0].map(h => String(h || '').trim());
+            }
+
+            const findCol = (names, fallbackIdx) => {
+                for (let name of names) {
+                    const idx = headers.findIndex(h => h.toLowerCase() === name.toLowerCase());
+                    if (idx !== -1) return idx;
+                }
+                return fallbackIdx;
+            };
+
+            const pt1Idx = findCol(['PullTest', '1st', 'PullTest_1st'], 14);
+            return {
+                totalCols: Math.max(headers.length, 18),
+                LogID: findCol(['LogID'], 0),
+                WireID: findCol(['WireID'], 1),
+                DateSpooled: findCol(['DateSpooled'], 2),
+                WireSize: findCol(['WireSize'], 3),
+                WireType: findCol(['WireType'], 4),
+                Location: findCol(['Location'], 5),
+                CertNo: findCol(['CertNo'], 6),
+                UnitNo: findCol(['UnitNo'], 7),
+                LogDate: findCol(['LogDate', 'Date'], 8),
+                WellName: findCol(['WellName'], 9),
+                MaxDepth: findCol(['MaxDepth'], 10),
+                MaxPull: findCol(['MaxPull'], 11),
+                CutOff: findCol(['CutOff'], 12),
+                WireOnDrum: findCol(['WireOnDrum'], 13),
+                PullTest1: pt1Idx,
+                PullTest2: findCol(['PullTest_2nd', '2nd'], pt1Idx + 1),
+                PullTest3: findCol(['PullTest_3rd', '3rd'], pt1Idx + 2),
+                Comments: findCol(['Comments'], 17)
+            };
+        }
+
+        function recalcWireOnDrum() {
+            const rows = document.querySelectorAll("#wl-table-body .wl-row");
+            let runningWireOnDrum = null;
+
+            const parseNum = (val) => {
+                const num = parseFloat(String(val || "").replace(/[^0-9.-]/g, ""));
+                return isNaN(num) ? null : num;
+            };
+
+            rows.forEach((row, idx) => {
+                const cutOffInput = row.querySelector(".wl-cutoff");
+                const onDrumInput = row.querySelector(".wl-ondrum");
+                if (!cutOffInput || !onDrumInput) return;
+
+                const cutOffVal = parseNum(cutOffInput.value);
+                const currentDrumVal = parseNum(onDrumInput.value);
+
+                if (idx === 0) {
+                    if (currentDrumVal !== null) {
+                        runningWireOnDrum = currentDrumVal;
+                    }
+                } else {
+                    if (runningWireOnDrum !== null) {
+                        const cut = cutOffVal !== null ? cutOffVal : 0;
+                        const newDrum = Math.round((runningWireOnDrum - cut) * 100) / 100;
+                        onDrumInput.value = newDrum;
+                        runningWireOnDrum = newDrum;
+                    } else if (currentDrumVal !== null) {
+                        runningWireOnDrum = currentDrumVal;
+                    }
+                }
+            });
+        }
+
         function openWireLogModal(wireIndex) {
             const wireRow = (appData["Wires"] || [])[wireIndex];
             if (!wireRow) return;
@@ -799,92 +891,110 @@
 
         function getWireLogsByCert(certNo) {
             const safeCert = normKey(certNo).toLowerCase();
+            const col = getWireLogColMap();
             const list = appData["Wire_Logs"] || [];
-            return list.filter(l => 
-                normKey(l[1]).toLowerCase() === safeCert || 
-                normKey(l[4]).toLowerCase() === safeCert || 
-                normKey(l[3]).toLowerCase() === safeCert
-            );
+            const seenIds = new Set();
+            const matched = [];
+            for (let i = list.length - 1; i >= 0; i--) {
+                const l = list[i];
+                if (!l || cleanVal(l[col.LogID]) === 'LogID' || cleanVal(l[col.PullTest1]) === '1st') continue;
+                const cCert = normKey(l[col.CertNo]).toLowerCase();
+                const cWire = normKey(l[col.WireID]).toLowerCase();
+                const isMatch = (cCert && cCert === safeCert) || (cWire && cWire === safeCert) || (safeCert.includes(cCert) && cCert !== "");
+                if (!isMatch) continue;
+                const lid = cleanVal(l[col.LogID]);
+                if (lid) {
+                    if (seenIds.has(lid)) continue;
+                    seenIds.add(lid);
+                }
+                matched.unshift(l);
+            }
+            return matched;
+        }
+
+        function formatWireLogDate(val) {
+            const s = cleanVal(val);
+            if (!s) return getTodayFormatted();
+            if (/^\d{4}-\d{2}-\d{2}T/.test(s)) {
+                const d = new Date(s);
+                if (!isNaN(d.getTime())) {
+                    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-');
+                }
+            }
+            return s;
+        }
+
+        function buildWireLogRowHtml(dataObj = {}, isExisting = false) {
+            const defaultDate = getTodayFormatted();
+            const formattedDate = dataObj.date ? formatWireLogDate(dataObj.date) : defaultDate;
+            const logId = dataObj.logId || "";
+            const existingFlag = isExisting ? "1" : "0";
+            return `
+                <tr class="wl-row" data-log-id="${logId}" data-is-existing="${existingFlag}">
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-date w-full bg-transparent border-b border-slate-300 font-medium text-center focus:bg-amber-50" value="${formattedDate}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-well w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value="${dataObj.well || ''}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-depth w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${dataObj.depth || ''}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pull w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${dataObj.pull || ''}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" oninput="recalcWireOnDrum()" class="wl-cutoff w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${dataObj.cutoff || ''}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" oninput="recalcWireOnDrum()" class="wl-ondrum w-full bg-transparent border-b border-slate-300 text-center font-bold text-sky-700 focus:bg-amber-50" value="${dataObj.ondrum || ''}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt1 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${dataObj.pt1 || ''}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt2 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${dataObj.pt2 || ''}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt3 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${dataObj.pt3 || ''}"></td>
+                    <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-comments w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value="${dataObj.comments || ''}"></td>
+                    <td class="p-1.5 text-center no-print"><button type="button" onclick="removeWireLogRow(this, '${logId}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
+                </tr>`;
         }
 
         function renderWireLogEntries(certNo) {
             const tbody = document.getElementById("wl-table-body");
             const logs = getWireLogsByCert(certNo);
+            const col = getWireLogColMap();
 
-            let html = "";
-            const defaultDate = getTodayFormatted();
             if (logs.length === 0) {
-                html = `
-                    <tr class="wl-row" data-log-id="">
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-date w-full bg-transparent border-b border-slate-300 font-medium text-center focus:bg-amber-50" value="${defaultDate}"></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-well w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value=""></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-depth w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pull w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-cutoff w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-ondrum w-full bg-transparent border-b border-slate-300 text-center font-bold text-sky-700 focus:bg-amber-50" value="7850"></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt1 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt2 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt3 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                        <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-comments w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value="AMS-02-SC08"></td>
-                        <td class="p-1.5 text-center no-print"><button onclick="removeWireLogRow(this, '')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
-                    </tr>`;
+                const initLen = activeWireContext.wireRow ? cleanVal(activeWireContext.wireRow[11]) : "7850";
+                const initLoc = activeWireContext.wireRow ? cleanVal(activeWireContext.wireRow[15]) : "";
+                tbody.innerHTML = buildWireLogRowHtml({ ondrum: initLen || "7850", comments: initLoc }, false);
             } else {
-                logs.forEach(log => {
-                    const logId = cleanVal(log[0]);
-                    html += `
-                        <tr class="wl-row" data-log-id="${logId}">
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-date w-full bg-transparent border-b border-slate-300 font-medium text-center focus:bg-amber-50" value="${cleanVal(log[6]) || defaultDate}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-well w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value="${cleanVal(log[7])}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-depth w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[8])}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pull w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[9])}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-cutoff w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[10])}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-ondrum w-full bg-transparent border-b border-slate-300 text-center font-bold text-sky-700 focus:bg-amber-50" value="${cleanVal(log[11])}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt1 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[12])}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt2 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[13])}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt3 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value="${cleanVal(log[14])}"></td>
-                            <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-comments w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value="${cleanVal(log[15])}"></td>
-                            <td class="p-1.5 text-center no-print"><button onclick="removeWireLogRow(this, '${logId}')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
-                        </tr>`;
-                });
+                tbody.innerHTML = logs.map((log, i) => {
+                    const existingLogId = cleanVal(log[col.LogID]);
+                    return buildWireLogRowHtml({
+                        logId: existingLogId || `WL_LEGACY_${i}`,
+                        date: cleanVal(log[col.LogDate]),
+                        well: cleanVal(log[col.WellName]),
+                        depth: cleanVal(log[col.MaxDepth]),
+                        pull: cleanVal(log[col.MaxPull]),
+                        cutoff: cleanVal(log[col.CutOff]),
+                        ondrum: cleanVal(log[col.WireOnDrum]),
+                        pt1: cleanVal(log[col.PullTest1]),
+                        pt2: cleanVal(log[col.PullTest2]),
+                        pt3: cleanVal(log[col.PullTest3]),
+                        comments: cleanVal(log[col.Comments])
+                    }, Boolean(existingLogId));
+                }).join("");
             }
-            tbody.innerHTML = html;
+            recalcWireOnDrum();
         }
 
         function addWireLogRow() {
             const tbody = document.getElementById("wl-table-body");
-            const tr = document.createElement("tr");
-            tr.className = "wl-row";
-            tr.dataset.logId = "";
-            const defaultDate = getTodayFormatted();
-            
-            tr.innerHTML = `
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-date w-full bg-transparent border-b border-slate-300 font-medium text-center focus:bg-amber-50" value="${defaultDate}"></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-well w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-depth w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pull w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-cutoff w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-ondrum w-full bg-transparent border-b border-slate-300 text-center font-bold text-sky-700 focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt1 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt2 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-pt3 w-full bg-transparent border-b border-slate-300 text-center font-medium focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 border-r border-slate-300"><input type="text" class="wl-comments w-full bg-transparent border-b border-slate-300 font-medium focus:bg-amber-50" value=""></td>
-                <td class="p-1.5 text-center no-print"><button onclick="removeWireLogRow(this, '')" class="text-rose-500 hover:text-rose-700"><i class="fa-solid fa-trash-can"></i></button></td>
-            `;
-            tbody.appendChild(tr);
+            tbody.insertAdjacentHTML("beforeend", buildWireLogRowHtml({}, false));
+            recalcWireOnDrum();
         }
 
         function removeWireLogRow(btn, logId) {
             const row = btn.closest("tr");
-            if (logId) {
-                // If it's an existing synced log, send delete action to Google Sheet
-                const foundLog = (appData["Wire_Logs"] || []).find(l => cleanVal(l[0]) === logId);
+            const col = getWireLogColMap();
+            const targetId = logId || row?.dataset?.logId || "";
+            if (targetId && row?.dataset?.isExisting === "1") {
+                const foundLog = (appData["Wire_Logs"] || []).find(l => cleanVal(l[col.LogID]) === targetId);
                 if (foundLog) {
-                    syncToGoogleSheet("delete", "Wire_Logs", foundLog, logId);
+                    syncToGoogleSheet("delete", "Wire_Logs", foundLog, targetId);
                 }
-                appData["Wire_Logs"] = (appData["Wire_Logs"] || []).filter(l => cleanVal(l[0]) !== logId);
+                appData["Wire_Logs"] = (appData["Wire_Logs"] || []).filter(l => cleanVal(l[col.LogID]) !== targetId);
                 saveDataLocal();
             }
             if (row) row.remove();
+            recalcWireOnDrum();
         }
 
         function saveWireLogData() {
@@ -895,40 +1005,54 @@
 
             if (!certNo) { alert("Certificate No is required!"); return; }
 
+            recalcWireOnDrum();
+            const col = getWireLogColMap();
+            const wireId = activeWireContext.wireRow ? (cleanVal(activeWireContext.wireRow[1]) || certNo) : certNo;
+            const sizeMatch = wireType.match(/(\d+\.\d+\s*"?)/);
+            const wireSize = (activeWireContext.wireRow && cleanVal(activeWireContext.wireRow[7])) || (sizeMatch ? sizeMatch[1].trim() : "");
+            const location = (activeWireContext.wireRow && cleanVal(activeWireContext.wireRow[15])) || unitNo;
+
             const rows = document.querySelectorAll("#wl-table-body .wl-row");
+            const baseTs = Date.now();
             rows.forEach((row, idx) => {
+                const isExisting = row.dataset.isExisting === "1";
                 let logId = row.dataset.logId;
-                if (!logId) {
-                    logId = `WL_${Date.now()}_${idx}`;
+                if (!logId || logId.startsWith("WL_LEGACY_")) {
+                    logId = `WL_${baseTs}_${idx}`;
                     row.dataset.logId = logId;
                 }
 
-                const date = row.querySelector(".wl-date")?.value || "";
-                const well = row.querySelector(".wl-well")?.value || "";
-                const depth = row.querySelector(".wl-depth")?.value || "";
-                const pull = row.querySelector(".wl-pull")?.value || "";
-                const cutoff = row.querySelector(".wl-cutoff")?.value || "";
-                const ondrum = row.querySelector(".wl-ondrum")?.value || "";
-                const pt1 = row.querySelector(".wl-pt1")?.value || "";
-                const pt2 = row.querySelector(".wl-pt2")?.value || "";
-                const pt3 = row.querySelector(".wl-pt3")?.value || "";
-                const comments = row.querySelector(".wl-comments")?.value || "";
+                let logRecord = new Array(col.totalCols).fill("");
+                logRecord[col.LogID] = logId;
+                logRecord[col.WireID] = wireId;
+                logRecord[col.DateSpooled] = dateSpooled;
+                logRecord[col.WireSize] = wireSize;
+                logRecord[col.WireType] = wireType;
+                logRecord[col.Location] = location;
+                logRecord[col.CertNo] = certNo;
+                logRecord[col.UnitNo] = unitNo;
+                logRecord[col.LogDate] = formatWireLogDate(row.querySelector(".wl-date")?.value || "");
+                logRecord[col.WellName] = row.querySelector(".wl-well")?.value || "";
+                logRecord[col.MaxDepth] = row.querySelector(".wl-depth")?.value || "";
+                logRecord[col.MaxPull] = row.querySelector(".wl-pull")?.value || "";
+                logRecord[col.CutOff] = row.querySelector(".wl-cutoff")?.value || "";
+                logRecord[col.WireOnDrum] = row.querySelector(".wl-ondrum")?.value || "";
+                logRecord[col.PullTest1] = row.querySelector(".wl-pt1")?.value || "";
+                logRecord[col.PullTest2] = row.querySelector(".wl-pt2")?.value || "";
+                logRecord[col.PullTest3] = row.querySelector(".wl-pt3")?.value || "";
+                logRecord[col.Comments] = row.querySelector(".wl-comments")?.value || "";
 
-                const logRecord = [
-                    logId, certNo, dateSpooled, wireType, certNo, unitNo,
-                    date, well, depth, pull, cutoff, ondrum, pt1, pt2, pt3, comments
-                ];
-                
-                // Update local appData
-                appData["Wire_Logs"] = (appData["Wire_Logs"] || []).filter(l => cleanVal(l[0]) !== logId);
+                appData["Wire_Logs"] = (appData["Wire_Logs"] || []).filter(l => cleanVal(l[col.LogID]) !== logId);
                 appData["Wire_Logs"].push(logRecord);
 
-                syncToGoogleSheet("append", "Wire_Logs", logRecord, logId);
+                const syncAction = isExisting ? "update" : "append";
+                row.dataset.isExisting = "1";
+                syncToGoogleSheet(syncAction, "Wire_Logs", logRecord, logId);
             });
 
             saveDataLocal();
             closeWireLogModal();
-            alert("Wire Log saved successfully!");
+            alert("Wire Log saved & synced accurately!");
         }
 
         // --- OFFLINE SYNC & NETWORK ---
@@ -1258,9 +1382,17 @@
             const code = cleanVal(row?.[1]).toLowerCase();
             const combined = `${name} ${type} ${code}`;
 
-            if (combined.includes("rig") || combined.includes("jackup") || combined.includes("drilling")) return `<i class="fa-solid fa-rig text-amber-400 text-xs mr-1.5 shrink-0"></i>`;
-            if (combined.includes("platform") || combined.includes("nulq") || combined.includes("whp")) return `<i class="fa-solid fa-oil-well text-sky-400 text-xs mr-1.5 shrink-0"></i>`;
-            if (isRoot || combined.includes("warehouse") || combined.includes("base") || combined.includes("kho")) return `<i class="fa-solid fa-warehouse text-emerald-400 text-xs mr-1.5 shrink-0"></i>`;
+            // Giàn khoan (Drilling Rig / Jackup): Tháp khoan lưới tam giác + chân đế
+            if (combined.includes("rig") || combined.includes("jackup") || combined.includes("drilling") || combined.includes("khoan")) {
+                return `<span class="inline-flex items-center mr-1.5 shrink-0" title="Drilling Rig"><svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L8.5 14h7L12 2z" fill="currentColor" fill-opacity="0.22"/><path d="M9.7 10h4.6M10.8 6h2.4"/><path d="M4 14h16v3H4z" fill="currentColor" fill-opacity="0.35"/><path d="M6 17v5M18 17v5M12 17v5"/><path d="M2 22h20"/></svg></span>`;
+            }
+            // Giàn khai thác (Offshore Production Platform / WHP / CPP / NULQ): Sàn giàn + cẩu/tháp khai thác trên biển
+            if (combined.includes("platform") || combined.includes("nulq") || combined.includes("whp") || combined.includes("cpp") || combined.includes("msp") || combined.includes("bk") || combined.includes("khai thác") || combined.includes("offshore")) {
+                return `<span class="inline-flex items-center mr-1.5 shrink-0" title="Production Platform"><svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="4" rx="0.5" fill="currentColor" fill-opacity="0.35"/><path d="M6 10V6h4v4"/><path d="M14 10l4-6h2"/><path d="M16 7v3"/><path d="M6 14v6M18 14v6M6 17l12 3M18 17l-12 3" stroke-opacity="0.85"/><path d="M2 20c2-1 4-1 6 0s4 1 6 0 4-1 6 0" stroke="#38bdf8"/></svg></span>`;
+            }
+            if (isRoot || combined.includes("warehouse") || combined.includes("base") || combined.includes("kho")) {
+                return `<i class="fa-solid fa-warehouse text-emerald-400 text-xs mr-1.5 shrink-0"></i>`;
+            }
             return `<i class="fa-solid fa-folder text-amber-400 text-xs mr-1.5 shrink-0"></i>`;
         }
 
