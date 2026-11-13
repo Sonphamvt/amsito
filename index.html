@@ -33,6 +33,12 @@
         #word-editor-area table { border-collapse: collapse; width: 100%; margin: 0.75rem 0; }
         #word-editor-area td, #word-editor-area th { border: 1px solid #94a3b8; padding: 6px 10px; }
         
+        /* Custom sleek scrollbar for searchable dropdowns */
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+
         @media print {
             body * { visibility: hidden; }
             #wire-log-modal, #wire-log-modal * { visibility: visible; }
@@ -48,17 +54,27 @@
     <!-- Header -->
     <header class="bg-cardbg border-b border-slate-700 px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
         <div class="flex items-center space-x-3.5 w-full md:w-auto">
-            <!-- Corrected Amsito Logo (Balanced even letter spacing across a-m-s-i-t-o) -->
+            <!-- Precision Vector Logo amsito. (Locked aspect ratio & integrated black dot on 'i') -->
             <div class="bg-white px-3.5 py-1.5 rounded-lg border border-slate-600/60 shadow-sm shrink-0 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 455 140" class="h-8 md:h-9 w-auto block select-none" aria-label="amsito.">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 435 135" preserveAspectRatio="xMidYMid meet" class="h-8 md:h-9 w-auto block select-none" aria-label="amsito.">
                     <g transform="translate(26, 0) skewX(-12)">
-                        <text x="0" y="102" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="104" fill="#dc2626" letter-spacing="1">ams</text>
-                        <rect x="236" y="42" width="21" height="60" fill="#dc2626"/>
-                        <circle cx="246.5" cy="21" r="12" fill="#1e293b"/>
-                        <text x="272" y="102" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="104" fill="#dc2626" letter-spacing="1">to</text>
+                        <!-- 'a' -->
+                        <path fill="#dc2626" d="M 11 54 C 15 41 28 36 44 36 C 63 36 74 44 74 61 L 74 102 L 55 102 L 55 94 C 49 100 41 104 30 104 C 15 104 6 95 6 83 C 6 69 17 63 38 61 L 54 59 L 54 57 C 54 51 49 48 41 48 C 33 48 28 51 26 57 Z M 54 70 L 40 72 C 29 73 25 77 25 82 C 25 88 30 91 37 91 C 47 91 54 85 54 76 Z"/>
+                        <!-- 'm' -->
+                        <path fill="#dc2626" d="M 92 38 L 111 38 L 111 46 C 116 40 123 36 132 36 C 142 36 149 40 153 47 C 159 40 167 36 177 36 C 192 36 201 45 201 62 L 201 102 L 181 102 L 181 65 C 181 55 176 51 169 51 C 161 51 156 56 156 66 L 156 102 L 136 102 L 136 65 C 136 55 132 51 124 51 C 116 51 112 56 112 66 L 112 102 L 92 102 Z"/>
+                        <!-- 's' -->
+                        <path fill="#dc2626" d="M 216 82 L 234 80 C 236 87 242 91 251 91 C 259 91 264 88 264 83 C 264 79 260 77 252 75 L 239 73 C 224 70 218 63 218 54 C 218 43 229 36 248 36 C 266 36 277 43 279 55 L 261 57 C 259 51 255 48 247 48 C 240 48 236 51 236 54 C 236 58 240 60 247 61 L 260 63 C 276 66 283 72 283 82 C 283 95 270 104 250 104 C 230 104 218 96 216 82 Z"/>
+                        <!-- 'i' stem + fixed black dot -->
+                        <rect x="299" y="38" width="20" height="64" rx="1" fill="#dc2626"/>
+                        <circle cx="309" cy="19" r="11" fill="#1e293b"/>
+                        <!-- 't' -->
+                        <path fill="#dc2626" d="M 332 38 L 342 38 L 342 20 L 362 20 L 362 38 L 375 38 L 375 51 L 362 51 L 362 81 C 362 87 365 89 371 89 L 375 89 L 375 102 C 371 103 367 103 363 103 C 348 103 342 97 342 83 L 342 51 L 332 51 Z"/>
+                        <!-- 'o' -->
+                        <path fill="#dc2626" fill-rule="evenodd" d="M 417 36 C 438 36 452 50 452 70 C 452 90 438 104 417 104 C 396 104 382 90 382 70 C 382 50 396 36 417 36 Z M 417 51 C 407 51 401 58 401 70 C 401 82 407 89 417 89 C 427 89 433 82 433 70 C 433 58 427 51 417 51 Z" transform="translate(-38, 0)"/>
                     </g>
-                    <circle cx="436" cy="76" r="6.5" fill="#dc2626"/>
-                    <line x1="436" y1="82.5" x2="436" y2="132" stroke="#dc2626" stroke-width="3.5" stroke-linecap="round"/>
+                    <!-- Trailing red dot & vertical line -->
+                    <circle cx="418" cy="77" r="6" fill="#dc2626"/>
+                    <line x1="418" y1="83" x2="418" y2="128" stroke="#dc2626" stroke-width="3.2" stroke-linecap="round"/>
                 </svg>
             </div>
             <div>
@@ -67,7 +83,7 @@
             </div>
         </div>
         
-        <div class="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto justify-between sm:justify-end">
+        <div class="flex flex-wrap items-center gap-2 md:gap-2.5 w-full md:w-auto justify-between sm:justify-end">
             <!-- Language Switcher -->
             <div class="flex items-center bg-slate-900/90 border border-slate-700 rounded-lg p-1 gap-1" title="Switch Language">
                 <button type="button" onclick="setLanguage('en')" id="btn-lang-en" class="px-2 py-1 rounded flex items-center gap-1.5 text-xs font-semibold transition border border-sky-500 bg-sky-500/20 text-white" title="English">
@@ -87,10 +103,14 @@
             <button onclick="initData()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-rotate"></i> <span data-i18n="btn_sync">Sync</span>
             </button>
-            <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-medium text-xs md:text-sm flex items-center gap-1.5 transition shadow-md">
-                <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add Equipment</span>
+            <button onclick="openAddModal()" class="bg-accent hover:bg-sky-600 text-white px-3 py-1.5 md:px-3.5 md:py-2 rounded-lg font-medium text-xs md:text-sm flex items-center gap-1.5 transition shadow-md">
+                <i class="fa-solid fa-plus"></i> <span data-i18n="btn_add">Add</span>
             </button>
-            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition">
+            <button onclick="triggerImportJSON()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition shadow-sm" title="Import JSON Backup">
+                <i class="fa-solid fa-upload"></i> <span data-i18n="btn_import">Import</span>
+            </button>
+            <input type="file" id="import-json-input" accept=".json,application/json" class="hidden" onchange="handleImportJSONFile(event)">
+            <button onclick="exportJSON()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 md:py-2 rounded-lg text-xs md:text-sm flex items-center gap-1.5 transition" title="Export JSON Backup">
                 <i class="fa-solid fa-download"></i> <span data-i18n="btn_backup">Export</span>
             </button>
         </div>
@@ -117,7 +137,7 @@
                 <button onclick="expandAllTree(false)" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2 py-1 rounded-lg text-xs border border-slate-700" title="Collapse All"><i class="fa-solid fa-angles-up"></i></button>
             </div>
 
-            <div id="tree-container" class="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs select-none"></div>
+            <div id="tree-container" class="flex-1 overflow-y-auto space-y-1.5 pr-1 text-xs select-none custom-scroll"></div>
         </aside>
 
         <!-- Resizer -->
@@ -128,7 +148,7 @@
         <!-- Content Area: Tables & Detail View -->
         <section class="w-full flex-1 min-w-0 flex flex-col gap-4 md:gap-6">
             
-            <!-- Filter Tabs with Restored Custom Icons -->
+            <!-- Filter Tabs -->
             <div class="bg-cardbg border border-slate-700/60 rounded-xl p-3 shadow-md relative">
                 <div class="flex flex-wrap gap-1.5 items-center justify-start" id="tab-buttons">
                     <button onclick="switchTab('Locations')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-accent text-white transition" data-tab="Locations">
@@ -141,7 +161,7 @@
                         <i class="fa-solid fa-box mr-1 text-amber-400"></i> <span data-i18n="tab_container">Containers</span>
                     </button>
                     
-                    <!-- Dropdown: Unit, Mast & Power Pack with Custom SVG Icons -->
+                    <!-- Dropdown: Unit, Mast & Power Pack -->
                     <div class="relative inline-block text-left">
                         <button onclick="toggleDropdown(event, 'dropdown-unit-mast')" id="btn-group-unit-mast" class="tab-dropdown-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1">
                             <span class="mr-1 inline-flex items-center"><svg class="w-4 h-4 inline-block text-teal-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V3.5M12 5V3.5M21 5V3.5"/><rect x="2.5" y="5" width="19" height="14" rx="1"/><rect x="2.5" y="5" width="7.5" height="14" fill="currentColor" fill-opacity="0.3"/><rect x="4" y="7" width="4.5" height="4.5" rx="0.5" fill="#0f172a" stroke-width="1.2"/><circle cx="14.5" cy="12.5" r="3.5" fill="currentColor" fill-opacity="0.22"/><circle cx="14.5" cy="12.5" r="1.2"/><path d="M18 12.5h3.5M19.5 8.5v8"/><path d="M1.5 19h21"/></svg></span> Unit & Mast <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
@@ -168,9 +188,16 @@
                         <i class="fa-solid fa-shield-halved mr-1 text-purple-400"></i> <span data-i18n="tab_pce">PCE Packages</span>
                     </button>
 
-                    <button onclick="switchTab('Mechanical_Tools')" class="tab-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition" data-tab="Mechanical_Tools">
-                        <i class="fa-solid fa-wrench mr-1"></i> <span data-i18n="tab_mech">Mechanical Tools</span>
-                    </button>
+                    <!-- Dropdown: Mechanical Tools & Spare Part -->
+                    <div class="relative inline-block text-left">
+                        <button onclick="toggleDropdown(event, 'dropdown-mech-spare')" id="btn-group-mech-spare" class="tab-dropdown-btn px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition flex items-center gap-1">
+                            <i class="fa-solid fa-wrench text-slate-300"></i> <span data-i18n="tab_mech">Mechanical & Spare</span> <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
+                        </button>
+                        <div id="dropdown-mech-spare" class="hidden absolute left-0 mt-1 w-52 bg-slate-900 border border-slate-700 rounded-xl shadow-xl z-30 py-1 divide-y divide-slate-800">
+                            <button onclick="switchTab('Mechanical_Tools'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-wrench text-slate-300"></i> Mechanical Tools</button>
+                            <button onclick="switchTab('SparePart'); hideAllDropdowns()" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-accent hover:text-white flex items-center gap-2"><i class="fa-solid fa-gears text-amber-400"></i> Spare Part</button>
+                        </div>
+                    </div>
 
                     <!-- Dropdown: Logging -->
                     <div class="relative inline-block text-left">
@@ -212,7 +239,7 @@
                     </div>
                 </div>
 
-                <div class="w-full overflow-x-auto overflow-y-auto max-h-[62vh]">
+                <div class="w-full overflow-x-auto overflow-y-auto max-h-[62vh] custom-scroll">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead id="table-head" class="bg-slate-900/90 text-slate-400 uppercase font-medium border-b border-slate-700 sticky top-0 z-10 whitespace-nowrap"></thead>
                         <tbody id="table-body" class="divide-y divide-slate-800"></tbody>
@@ -223,7 +250,7 @@
         </section>
     </main>
 
-    <!-- Wire Log Modal (Updated 3 Pull Test Columns & Fully Synced Deletion) -->
+    <!-- Wire Log Modal -->
     <div id="wire-log-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center z-50 p-3 md:p-6">
         <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-6xl h-[92vh] flex flex-col overflow-hidden shadow-2xl">
             <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center no-print">
@@ -332,7 +359,7 @@
                 <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <form id="dynamic-form" onsubmit="handleFormSubmit(event)" autocomplete="off" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+            <form id="dynamic-form" onsubmit="handleFormSubmit(event)" autocomplete="off" class="p-6 space-y-4 max-h-[75vh] overflow-y-auto custom-scroll">
                 <div>
                     <label class="block text-xs font-medium text-slate-300 mb-1">Target Group</label>
                     <select id="form-target-tab" onchange="renderFormFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-accent"></select>
@@ -355,7 +382,7 @@
                 </h3>
                 <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto" id="detail-modal-content"></div>
+            <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto custom-scroll" id="detail-modal-content"></div>
             <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
                 <button type="button" onclick="closeDetailModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Close</button>
                 <button type="button" id="detail-move-btn" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-medium transition shadow-md"><i class="fa-solid fa-right-left mr-1"></i> Move</button>
@@ -364,10 +391,10 @@
         </div>
     </div>
 
-    <!-- Move Item Modal -->
+    <!-- Move Item Modal (Enhanced with Searchable Scrollable Combobox) -->
     <div id="move-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl">
-            <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 flex justify-between items-center">
+        <div class="bg-cardbg border border-slate-700 rounded-2xl w-full max-w-lg overflow-visible shadow-2xl">
+            <div class="px-6 py-4 bg-slate-800 border-b border-slate-700 rounded-t-2xl flex justify-between items-center">
                 <h3 id="move-modal-header" class="font-bold text-base text-white flex items-center gap-2">
                     <i class="fa-solid fa-right-left text-accent"></i> Move Equipment Location
                 </h3>
@@ -379,9 +406,12 @@
                     <input type="text" id="move-item-id" readonly class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-sky-400 font-semibold cursor-not-allowed">
                 </div>
                 <div class="space-y-3 bg-slate-900/50 p-3.5 rounded-xl border border-slate-700/70">
-                    <label class="block text-xs font-semibold text-amber-300">
-                        <i class="fa-solid fa-sitemap mr-1"></i> Select destination location hierarchy:
-                    </label>
+                    <div class="flex items-center justify-between">
+                        <label class="block text-xs font-semibold text-amber-300">
+                            <i class="fa-solid fa-sitemap mr-1"></i> Select destination location hierarchy:
+                        </label>
+                        <span class="text-[10px] text-slate-400">Type to filter or scroll</span>
+                    </div>
                     <div id="cascading-location-container" class="space-y-2.5"></div>
                     <div class="pt-2 border-t border-slate-800">
                         <span class="text-[11px] text-slate-400 block">Destination path:</span>
@@ -389,7 +419,7 @@
                     </div>
                 </div>
             </div>
-            <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 flex justify-end gap-3">
+            <div class="px-6 py-3 bg-slate-800/80 border-t border-slate-700 rounded-b-2xl flex justify-end gap-3">
                 <button type="button" onclick="closeMoveModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs font-medium transition">Cancel</button>
                 <button type="button" onclick="confirmMoveItem()" class="px-4 py-2 bg-accent hover:bg-sky-600 text-white rounded-lg text-xs font-medium transition shadow-md">Confirm Move</button>
             </div>
@@ -531,7 +561,9 @@
 
     <!-- Script Logic -->
     <script>
-        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbxeNtKAwvLEdFOgyYi5zMIaVGqf_vGWI0CT0TNwSuIaGeSssEt5jM9uDwRYWPpJB6-BDA/exec";
+        const GOOGLE_SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzmtv9lQ7Gg54lbha8VzFwv6seNukm_eJ_mLbG_he_25CjIb4UU-YxlljXzLjfviVmz-A/exec";
+
+        const UNIT_SVG_ICON = `<svg class="w-4 h-4 inline-block text-teal-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5V3.5M12 5V3.5M21 5V3.5"/><rect x="2.5" y="5" width="19" height="14" rx="1"/><rect x="2.5" y="5" width="7.5" height="14" fill="currentColor" fill-opacity="0.3"/><rect x="4" y="7" width="4.5" height="4.5" rx="0.5" fill="#0f172a" stroke-width="1.2"/><circle cx="14.5" cy="12.5" r="3.5" fill="currentColor" fill-opacity="0.22"/><circle cx="14.5" cy="12.5" r="1.2"/><path d="M18 12.5h3.5M19.5 8.5v8"/><path d="M1.5 19h21"/></svg>`;
 
         const UNIFIED_HEADERS = [
             'STT / Item No', 'Asset ID / Code', 'Asset Name / Description', 'Serial Number', 'Part Number / Model', 
@@ -548,21 +580,18 @@
             <h2 style="color: #0369a1;">1. CLIENT: HOANG LONG HOAN VU JOC</h2>
             <ul>
                 <li><b>Contract No:</b> HLHV-PRD-20-071 - Hợp đồng AMSITO ký với Production cung cấp dịch vụ Slickline</li>
-		<li><b>Contract No:</b> HLHV-PRD-25-022 - Hợp đồng AMSITO ký với Production cung cấp dịch vụ Pressure Survey</li> 
-		<li><b>Contract No:</b> HLHV-DRL-25-087 - Hợp đồng AMSITO ký với Khoan cung cấp dịch vụ Slickline</li>
-		<li><b>Contract No:</b> HLHV-DRL-25-110 - Hợp đồng AMSITO ký với Khoan cung cấp dịch vụ Pressure Survey</li> 
-		
+                <li><b>Contract No:</b> HLHV-PRD-25-022 - Hợp đồng AMSITO ký với Production cung cấp dịch vụ Pressure Survey</li> 
+                <li><b>Contract No:</b> HLHV-DRL-25-087 - Hợp đồng AMSITO ký với Khoan cung cấp dịch vụ Slickline</li>
+                <li><b>Contract No:</b> HLHV-DRL-25-110 - Hợp đồng AMSITO ký với Khoan cung cấp dịch vụ Pressure Survey</li> 
                 <li><b>WH Supervisor:</b> Mr. Lâm, xxx Hoàn, xxx Thao, xxx Kiên, xxx Đức, xxx Chính</li>
-		
-		<li><b>Senior Completion Engineer:</b> Mr. Đoàn Quang Hiệp</li>
+                <li><b>Senior Completion Engineer:</b> Mr. Đoàn Quang Hiệp</li>
             </ul>
             <h2 style="color: #0369a1;">2. CLIENT: JVPC</h2>
             <ul>
                 <li><b>Contract No:</b> xxxx - Hợp đồng ....</li>
-		<li><b>Contract No:</b> xxxx - Hợp đồng ....</li> 
-		<li><b>Petroleum Engineer:</b> Mr. Nghiêm Bảo Long, Nguyễn Thanh Hải, Nguyễn Mậu Đăng, Lê Hữu Nam,...</li>
+                <li><b>Contract No:</b> xxxx - Hợp đồng ....</li> 
+                <li><b>Petroleum Engineer:</b> Mr. Nghiêm Bảo Long, Nguyễn Thanh Hải, Nguyễn Mậu Đăng, Lê Hữu Nam,...</li>
             </ul>
-
         `;
 
         let currentLang = localStorage.getItem("amsito_ui_lang") || "en";
@@ -571,7 +600,8 @@
             en: {
                 subtitle: "Asset & Maintenance Management System",
                 btn_sync: "Sync",
-                btn_add: "Add Equipment",
+                btn_add: "Add",
+                btn_import: "Import",
                 btn_backup: "Export",
                 sidebar_title: "LOCATIONS & HIERARCHY",
                 search_tree: "Search tree...",
@@ -580,7 +610,7 @@
                 tab_slickline: "Slickline Tools",
                 tab_container: "Containers",
                 tab_pce: "PCE Packages",
-                tab_mech: "Mechanical Tools",
+                tab_mech: "Mechanical & Spare",
                 tab_paperwork: "Paper Work",
                 filtered_by: "Filtered by Location",
                 status_connected: "Connected",
@@ -602,8 +632,9 @@
             vi: {
                 subtitle: "Hệ Thống Quản Lý Tài Sản & Bảo Trì",
                 btn_sync: "Đồng bộ",
-                btn_add: "Thêm Thiết Bị",
-                btn_backup: "Xuất dữ liệu",
+                btn_add: "Thêm",
+                btn_import: "Nhập file",
+                btn_backup: "Xuất file",
                 sidebar_title: "VỊ TRÍ & PHÂN CẤP KHO",
                 search_tree: "Tìm cây thư mục...",
                 filter_table: "Lọc trong bảng...",
@@ -611,7 +642,7 @@
                 tab_slickline: "Dụng Cụ Slickline",
                 tab_container: "Container & Hộp",
                 tab_pce: "Cụm PCE",
-                tab_mech: "Dụng Cụ Cơ Khí",
+                tab_mech: "Cơ Khí & Spare Part",
                 tab_paperwork: "Hồ Sơ & Giấy Tờ",
                 filtered_by: "Đang lọc theo vị trí",
                 status_connected: "Đã kết nối",
@@ -641,6 +672,15 @@
             localStorage.setItem("amsito_ui_lang", currentLang);
             document.documentElement.lang = currentLang;
 
+            document.querySelectorAll("[data-i18n]").forEach(el => {
+                const key = el.getAttribute("data-i18n");
+                if (I18N[currentLang][key]) el.innerText = I18N[currentLang][key];
+            });
+            document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+                const key = el.getAttribute("data-i18n-placeholder");
+                if (I18N[currentLang][key]) el.placeholder = I18N[currentLang][key];
+            });
+
             const btnEn = document.getElementById("btn-lang-en");
             const btnVi = document.getElementById("btn-lang-vi");
             if (btnEn && btnVi) {
@@ -660,7 +700,7 @@
         let appData = {
             "Locations": [], "MPLT": [], "PPS_Gauge": [], "ART": [], "Cement": [], "Battery": [], "MPI_LT": [], 
             "Container": [], "Unit": [], "Mast": [], "Power Pack": [], "Slickline_Tools": [], "Drums": [], 
-            "Wires": [], "PCE_Equipment": [], "Mechanical_Tools": [], "Other": [], "Paper_Work": [], "Paper_Work_Help": [],
+            "Wires": [], "PCE_Equipment": [], "Mechanical_Tools": [], "SparePart": [], "Other": [], "Paper_Work": [], "Paper_Work_Help": [],
             "Wire_Logs": []
         };
 
@@ -683,9 +723,10 @@
             return s;
         }
 
+        // Fixed Unique Key Resolution: Prioritize actual Code / Serial Number over row STT
         function getRowUniqueKey(row, rowIndex) {
             if (!row || !Array.isArray(row)) return String(rowIndex + 1);
-            return cleanVal(row[0]) || cleanVal(row[1]) || cleanVal(row[3]) || String(rowIndex + 1);
+            return cleanVal(row[1]) || cleanVal(row[3]) || cleanVal(row[2]) || cleanVal(row[0]) || String(rowIndex + 1);
         }
 
         function parseGoogleDriveLinks(rawUrl) {
@@ -708,19 +749,20 @@
         function toggleDropdown(event, dropdownId) {
             event.stopPropagation();
             const el = document.getElementById(dropdownId);
-            document.querySelectorAll("[id^='dropdown-'], [id^='row-dropdown-']").forEach(d => { if (d.id !== dropdownId) d.classList.add("hidden"); });
+            document.querySelectorAll("[id^='dropdown-'], [id^='row-dropdown-'], [id^='cascade-list-']").forEach(d => { if (d.id !== dropdownId) d.classList.add("hidden"); });
             el.classList.toggle("hidden");
         }
 
         function toggleRowActionDropdown(event, dropdownId) {
             event.stopPropagation();
             const el = document.getElementById(dropdownId);
-            document.querySelectorAll("[id^='dropdown-'], [id^='row-dropdown-']").forEach(d => { if (d.id !== dropdownId) d.classList.add("hidden"); });
+            document.querySelectorAll("[id^='dropdown-'], [id^='row-dropdown-'], [id^='cascade-list-']").forEach(d => { if (d.id !== dropdownId) d.classList.add("hidden"); });
             el.classList.toggle("hidden");
         }
 
         function hideAllDropdowns(event) {
-            document.querySelectorAll("[id^='dropdown-'], [id^='row-dropdown-']").forEach(d => d.classList.add("hidden"));
+            if (event && event.target && event.target.closest(".searchable-cascade-wrapper")) return;
+            document.querySelectorAll("[id^='dropdown-'], [id^='row-dropdown-'], [id^='cascade-list-']").forEach(d => d.classList.add("hidden"));
         }
 
         function normKey(v) { return cleanVal(v).replace(/\s+/g, ' ').trim(); }
@@ -784,7 +826,7 @@
             return new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }).toUpperCase().replace(/ /g, '-');
         }
 
-        // --- WIRE LOG SYSTEM INTEGRATION (Header-Mapped, Auto-Calc & No-Duplicate Sync) ---
+        // --- WIRE LOG SYSTEM INTEGRATION ---
         const WIRE_LOG_DEFAULT_HEADERS = [
             'LogID', 'WireID', 'DateSpooled', 'WireSize', 'WireType', 'Location',
             'CertNo', 'UnitNo', 'LogDate', 'WellName', 'MaxDepth', 'MaxPull',
@@ -848,9 +890,7 @@
                 const currentDrumVal = parseNum(onDrumInput.value);
 
                 if (idx === 0) {
-                    if (currentDrumVal !== null) {
-                        runningWireOnDrum = currentDrumVal;
-                    }
+                    if (currentDrumVal !== null) runningWireOnDrum = currentDrumVal;
                 } else {
                     if (runningWireOnDrum !== null) {
                         const cut = cutOffVal !== null ? cutOffVal : 0;
@@ -986,9 +1026,10 @@
             const col = getWireLogColMap();
             const targetId = logId || row?.dataset?.logId || "";
             if (targetId && row?.dataset?.isExisting === "1") {
-                const foundLog = (appData["Wire_Logs"] || []).find(l => cleanVal(l[col.LogID]) === targetId);
-                if (foundLog) {
-                    syncToGoogleSheet("delete", "Wire_Logs", foundLog, targetId);
+                const foundIdx = (appData["Wire_Logs"] || []).findIndex(l => cleanVal(l[col.LogID]) === targetId);
+                if (foundIdx !== -1) {
+                    const foundLog = appData["Wire_Logs"][foundIdx];
+                    syncToGoogleSheet("delete", "Wire_Logs", foundLog, targetId, foundIdx);
                 }
                 appData["Wire_Logs"] = (appData["Wire_Logs"] || []).filter(l => cleanVal(l[col.LogID]) !== targetId);
                 saveDataLocal();
@@ -1042,12 +1083,13 @@
                 logRecord[col.PullTest3] = row.querySelector(".wl-pt3")?.value || "";
                 logRecord[col.Comments] = row.querySelector(".wl-comments")?.value || "";
 
+                const existingIdx = (appData["Wire_Logs"] || []).findIndex(l => cleanVal(l[col.LogID]) === logId);
                 appData["Wire_Logs"] = (appData["Wire_Logs"] || []).filter(l => cleanVal(l[col.LogID]) !== logId);
                 appData["Wire_Logs"].push(logRecord);
 
                 const syncAction = isExisting ? "update" : "append";
                 row.dataset.isExisting = "1";
-                syncToGoogleSheet(syncAction, "Wire_Logs", logRecord, logId);
+                syncToGoogleSheet(syncAction, "Wire_Logs", logRecord, logId, existingIdx);
             });
 
             saveDataLocal();
@@ -1055,11 +1097,17 @@
             alert("Wire Log saved & synced accurately!");
         }
 
-        // --- OFFLINE SYNC & NETWORK ---
-        function addToSyncQueue(action, sheetName, rowData, itemId = null) {
+        // --- OFFLINE SYNC & GOOGLE SHEET NETWORK SYNC ---
+        function addToSyncQueue(action, sheetName, rowData, itemId = null, rowIndex = null, matchKeys = null) {
             const queueItem = {
                 id: Date.now() + "_" + Math.random().toString(36).substr(2, 4),
-                action: action, sheetName: sheetName, row: rowData, itemId: itemId, timestamp: new Date().toISOString()
+                action: action,
+                sheetName: sheetName,
+                row: rowData,
+                itemId: itemId,
+                rowIndex: rowIndex,
+                matchKeys: matchKeys,
+                timestamp: new Date().toISOString()
             };
             syncQueue.push(queueItem);
             localStorage.setItem("amsito_sync_queue", JSON.stringify(syncQueue));
@@ -1075,10 +1123,20 @@
             for (let i = 0; i < syncQueue.length; i++) {
                 const item = syncQueue[i];
                 try {
+                    const payload = {
+                        action: item.action,
+                        sheetName: item.sheetName,
+                        row: item.row,
+                        id: item.itemId,
+                        rowIndex: item.rowIndex,
+                        sheetRowNumber: (typeof item.rowIndex === "number" && item.rowIndex >= 0) ? item.rowIndex + 2 : null,
+                        matchKeys: item.matchKeys
+                    };
                     await fetch(GOOGLE_SHEET_API_URL, {
-                        method: "POST", mode: "no-cors",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ action: item.action, sheetName: item.sheetName, row: item.row, id: item.itemId })
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify(payload)
                     });
                     remainingQueue = remainingQueue.filter(q => q.id !== item.id);
                     localStorage.setItem("amsito_sync_queue", JSON.stringify(remainingQueue));
@@ -1094,11 +1152,11 @@
             const indicator = document.getElementById("sync-status");
             if (!indicator) return;
             if (syncQueue.length > 0) {
-                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> Offline Queue (${syncQueue.length})`;
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> ${t('status_pending')} (${syncQueue.length})`;
                 indicator.className = "text-xs px-2.5 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/20 rounded-full flex items-center gap-1.5 cursor-pointer";
                 indicator.onclick = processSyncQueue;
             } else {
-                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Connected`;
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> ${t('status_connected')}`;
                 indicator.className = "text-xs px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full flex items-center gap-1.5";
                 indicator.onclick = null;
             }
@@ -1111,13 +1169,14 @@
 
             if (navigator.onLine && GOOGLE_SHEET_API_URL && GOOGLE_SHEET_API_URL.startsWith("http")) {
                 try {
-                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> Loading Sheets...`;
-                    const response = await fetch(GOOGLE_SHEET_API_URL);
+                    indicator.innerHTML = `<i class="fa-solid fa-rotate fa-spin text-amber-400"></i> ${t('status_loading')}`;
+                    const response = await fetch(GOOGLE_SHEET_API_URL + "?t=" + Date.now());
                     const data = await response.json();
                     if (data && typeof data === "object") {
                         if (data._headers) delete data._headers;
                         if (data["Power_Pack"] && !data["Power Pack"]) data["Power Pack"] = data["Power_Pack"];
                         if (data["Slickline_Toolstrings"] && !data["Slickline_Tools"]) data["Slickline_Tools"] = data["Slickline_Toolstrings"];
+                        if (data["Spare_Part"] && !data["SparePart"]) data["SparePart"] = data["Spare_Part"];
                         if (data["Containers_Units"] && (!data["Container"] || data["Container"].length === 0)) data["Container"] = data["Containers_Units"];
                         if (data["Wire_logs"] && (!data["Wire_Logs"] || data["Wire_Logs"].length === 0)) data["Wire_Logs"] = data["Wire_logs"];
                         delete data["Containers_Units"];
@@ -1156,9 +1215,20 @@
             renderTree();
         }
 
-        async function syncToGoogleSheet(action, sheetName, rowData, itemId = null) {
-            addToSyncQueue(action, sheetName, rowData, itemId);
-            if (navigator.onLine) processSyncQueue();
+        function buildRowMatchKeys(row) {
+            if (!row || !Array.isArray(row)) return {};
+            return {
+                stt: cleanVal(row[0]),
+                assetId: cleanVal(row[1]),
+                assetName: cleanVal(row[2]),
+                serialNumber: cleanVal(row[3])
+            };
+        }
+
+        async function syncToGoogleSheet(action, sheetName, rowData, itemId = null, rowIndex = null, oldRowSnapshot = null) {
+            const matchKeys = buildRowMatchKeys(oldRowSnapshot || rowData);
+            addToSyncQueue(action, sheetName, rowData, itemId, rowIndex, matchKeys);
+            if (navigator.onLine) await processSyncQueue();
         }
 
         function toggleSelectItem(key, isChecked) {
@@ -1181,7 +1251,7 @@
             if (!bar) return;
             if (selectedItemKeys.size > 0) {
                 bar.classList.remove("hidden");
-                if (countEl) countEl.innerHTML = `<i class="fa-solid fa-check-double"></i> ${selectedItemKeys.size} selected`;
+                if (countEl) countEl.innerHTML = `<i class="fa-solid fa-check-double"></i> ${selectedItemKeys.size} ${t('bulk_selected')}`;
             } else {
                 bar.classList.add("hidden");
             }
@@ -1340,21 +1410,22 @@
             });
 
             const equipmentCategories = [
-                { key: 'Container', label: 'Container / Box', icon: 'fa-solid fa-box text-amber-400', color: 'text-amber-300', isFolderLike: true },
-                { key: 'Unit', label: 'Unit', icon: 'fa-solid fa-truck-monster text-sky-400', color: 'text-sky-300', isFolderLike: true },
-                { key: 'Mast', label: 'Mast / Basket', icon: 'fa-solid fa-tower-cell text-emerald-400', color: 'text-emerald-300', isFolderLike: true },
-                { key: 'Power Pack', label: 'Power Pack', icon: 'fa-solid fa-car-battery text-amber-400', color: 'text-amber-300', isFolderLike: true },
-                { key: 'PCE_Equipment', label: 'PCE Equipment', icon: 'fa-solid fa-shield-halved text-purple-400', color: 'text-purple-300', isFolderLike: true },
-                { key: 'Drums', label: 'Drum', icon: 'fa-solid fa-dharmachakra text-amber-400', color: 'text-amber-300', isFolderLike: false },
-                { key: 'Wires', label: 'Wire', icon: 'fa-solid fa-circle-notch text-sky-400', color: 'text-sky-300', isFolderLike: false },
-                { key: 'Slickline_Tools', label: 'Slickline Tool', icon: 'fa-solid fa-screwdriver-wrench text-sky-300', color: 'text-sky-200', isFolderLike: false },
-                { key: 'Mechanical_Tools', label: 'Mechanical Tool', icon: 'fa-solid fa-wrench text-slate-300', color: 'text-slate-200', isFolderLike: false },
-                { key: 'MPLT', label: 'MPLT', icon: 'fa-solid fa-chart-line text-cyan-400', color: 'text-cyan-300', isFolderLike: false },
-                { key: 'PPS_Gauge', label: 'PPS Gauge', icon: 'fa-solid fa-gauge text-sky-400', color: 'text-sky-300', isFolderLike: false },
-                { key: 'Battery', label: 'Battery', icon: 'fa-solid fa-battery-full text-emerald-400', color: 'text-emerald-300', isFolderLike: false },
-                { key: 'ART', label: 'ART', icon: 'fa-solid fa-bolt text-amber-400', color: 'text-amber-300', isFolderLike: false },
-                { key: 'Cement', label: 'Cement Dump', icon: 'fa-solid fa-fill-drip text-rose-400', color: 'text-rose-300', isFolderLike: false },
-                { key: 'Other', label: 'Other', icon: 'fa-solid fa-box-archive text-slate-400', color: 'text-slate-300', isFolderLike: false }
+                { key: 'Container', label: 'Container / Box', iconHtml: `<i class="fa-solid fa-box text-amber-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-box text-amber-400 text-sm"></i>`, color: 'text-amber-300', isFolderLike: true },
+                { key: 'Unit', label: 'Unit', iconHtml: `<span class="mr-1.5 mt-0.5 shrink-0 inline-flex items-center">${UNIT_SVG_ICON}</span>`, tableIconHtml: UNIT_SVG_ICON, color: 'text-teal-300', isFolderLike: true },
+                { key: 'Mast', label: 'Mast / Basket', iconHtml: `<i class="fa-solid fa-tower-cell text-emerald-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-tower-cell text-emerald-400 text-sm"></i>`, color: 'text-emerald-300', isFolderLike: true },
+                { key: 'Power Pack', label: 'Power Pack', iconHtml: `<i class="fa-solid fa-car-battery text-amber-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-car-battery text-amber-400 text-sm"></i>`, color: 'text-amber-300', isFolderLike: true },
+                { key: 'PCE_Equipment', label: 'PCE Equipment', iconHtml: `<i class="fa-solid fa-shield-halved text-purple-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-shield-halved text-purple-400 text-sm"></i>`, color: 'text-purple-300', isFolderLike: true },
+                { key: 'Drums', label: 'Drum', iconHtml: `<i class="fa-solid fa-dharmachakra text-amber-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-dharmachakra text-amber-400 text-sm"></i>`, color: 'text-amber-300', isFolderLike: false },
+                { key: 'Wires', label: 'Wire', iconHtml: `<i class="fa-solid fa-circle-notch text-sky-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-circle-notch text-sky-400 text-sm"></i>`, color: 'text-sky-300', isFolderLike: false },
+                { key: 'Slickline_Tools', label: 'Slickline Tool', iconHtml: `<i class="fa-solid fa-screwdriver-wrench text-sky-300 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-screwdriver-wrench text-sky-300 text-sm"></i>`, color: 'text-sky-200', isFolderLike: false },
+                { key: 'Mechanical_Tools', label: 'Mechanical Tool', iconHtml: `<i class="fa-solid fa-wrench text-slate-300 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-wrench text-slate-300 text-sm"></i>`, color: 'text-slate-200', isFolderLike: false },
+                { key: 'SparePart', label: 'Spare Part', iconHtml: `<i class="fa-solid fa-gears text-amber-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-gears text-amber-400 text-sm"></i>`, color: 'text-amber-200', isFolderLike: false },
+                { key: 'MPLT', label: 'MPLT', iconHtml: `<i class="fa-solid fa-chart-line text-cyan-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-chart-line text-cyan-400 text-sm"></i>`, color: 'text-cyan-300', isFolderLike: false },
+                { key: 'PPS_Gauge', label: 'PPS Gauge', iconHtml: `<i class="fa-solid fa-gauge text-sky-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-gauge text-sky-400 text-sm"></i>`, color: 'text-sky-300', isFolderLike: false },
+                { key: 'Battery', label: 'Battery', iconHtml: `<i class="fa-solid fa-battery-full text-emerald-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-battery-full text-emerald-400 text-sm"></i>`, color: 'text-emerald-300', isFolderLike: false },
+                { key: 'ART', label: 'ART', iconHtml: `<i class="fa-solid fa-bolt text-amber-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-bolt text-amber-400 text-sm"></i>`, color: 'text-amber-300', isFolderLike: false },
+                { key: 'Cement', label: 'Cement Dump', iconHtml: `<i class="fa-solid fa-fill-drip text-rose-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-fill-drip text-rose-400 text-sm"></i>`, color: 'text-rose-300', isFolderLike: false },
+                { key: 'Other', label: 'Other', iconHtml: `<i class="fa-solid fa-box-archive text-slate-400 text-[11px] mr-1.5 mt-1 shrink-0"></i>`, tableIconHtml: `<i class="fa-solid fa-box-archive text-slate-400 text-sm"></i>`, color: 'text-slate-300', isFolderLike: false }
             ];
 
             let equipments = [];
@@ -1367,7 +1438,7 @@
                         equipments.push({
                             row: item, rowIndex: rIdx, id: selfId, code: normKey(item[1]), serialNo: normKey(item[3]),
                             name: cleanVal(item[2]) || cat.label, category: cat.key, categoryLabel: cat.label,
-                            icon: cat.icon, textColor: cat.color, isFolderLike: cat.isFolderLike, status: cleanVal(item[26]) || 'Active'
+                            iconHtml: cat.iconHtml, tableIconHtml: cat.tableIconHtml, textColor: cat.color, isFolderLike: cat.isFolderLike, status: cleanVal(item[26]) || 'Active'
                         });
                     }
                 });
@@ -1382,11 +1453,9 @@
             const code = cleanVal(row?.[1]).toLowerCase();
             const combined = `${name} ${type} ${code}`;
 
-            // Giàn khoan (Drilling Rig / Jackup): Tháp khoan lưới tam giác + chân đế
             if (combined.includes("rig") || combined.includes("jackup") || combined.includes("drilling") || combined.includes("khoan")) {
                 return `<span class="inline-flex items-center mr-1.5 shrink-0" title="Drilling Rig"><svg class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L8.5 14h7L12 2z" fill="currentColor" fill-opacity="0.22"/><path d="M9.7 10h4.6M10.8 6h2.4"/><path d="M4 14h16v3H4z" fill="currentColor" fill-opacity="0.35"/><path d="M6 17v5M18 17v5M12 17v5"/><path d="M2 22h20"/></svg></span>`;
             }
-            // Giàn khai thác (Offshore Production Platform / WHP / CPP / NULQ): Sàn giàn + cẩu/tháp khai thác trên biển
             if (combined.includes("platform") || combined.includes("nulq") || combined.includes("whp") || combined.includes("cpp") || combined.includes("msp") || combined.includes("bk") || combined.includes("khai thác") || combined.includes("offshore")) {
                 return `<span class="inline-flex items-center mr-1.5 shrink-0" title="Production Platform"><svg class="w-4 h-4 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="4" rx="0.5" fill="currentColor" fill-opacity="0.35"/><path d="M6 10V6h4v4"/><path d="M14 10l4-6h2"/><path d="M16 7v3"/><path d="M6 14v6M18 14v6M6 17l12 3M18 17l-12 3" stroke-opacity="0.85"/><path d="M2 20c2-1 4-1 6 0s4 1 6 0 4-1 6 0" stroke="#38bdf8"/></svg></span>`;
             }
@@ -1400,7 +1469,7 @@
             const container = document.getElementById("tree-container");
             const locs = appData["Locations"] || [];
             let totalNodes = locs.length;
-            ['Unit', 'Mast', 'Power Pack', 'Container', 'PCE_Equipment', 'Slickline_Tools', 'Drums', 'Wires', 'Mechanical_Tools', 'PPS_Gauge', 'Battery', 'ART', 'Cement', 'MPLT', 'Other'].forEach(t => {
+            ['Unit', 'Mast', 'Power Pack', 'Container', 'PCE_Equipment', 'Slickline_Tools', 'Drums', 'Wires', 'Mechanical_Tools', 'SparePart', 'PPS_Gauge', 'Battery', 'ART', 'Cement', 'MPLT', 'Other'].forEach(t => {
                 totalNodes += (appData[t] || []).length;
             });
 
@@ -1430,7 +1499,7 @@
 
                     html += `
                         <div class="tree-node-item" data-loc-id="${locId}">
-                            <div title="${displayLabel.replace(/"/g, '&quot;')}" data-loc-id="${locId}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 text-slate-200 bg-slate-800/40 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')">
+                            <div title="${displayLabel.replace(/"/g, '&quot;')}" data-loc-id="${locId}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 text-slate-200 bg-slate-800/40 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${locId.replace(/'/g, "\\'")}')">
                                 <div class="flex items-start min-w-0 flex-1">
                                     <span class="mt-0.5 shrink-0">${chevronHtml}</span>
                                     <span class="mt-0.5 shrink-0">${getLocationIconHtml(child, false)}</span>
@@ -1452,10 +1521,10 @@
 
                     html += `
                         <div class="tree-node-item" data-loc-id="${eq.id}">
-                            <div title="${eqTitle.replace(/"/g, '&quot;')}" data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\'")}')">
+                            <div title="${eqTitle.replace(/"/g, '&quot;')}" data-loc-id="${eq.id}" data-is-root="0" class="tree-row-box flex items-start justify-between gap-1.5 ${eq.textColor} bg-slate-800/30 hover:bg-slate-700/70 border border-transparent px-1.5 py-1.5 rounded transition cursor-pointer" onclick="filterByTreeNode('${eq.id.replace(/'/g, "\\'")}')">
                                 <div class="flex items-start min-w-0 flex-1">
                                     <span onclick="toggleTreeNode(event, '${safeEqId}')" class="w-4 h-4 mt-0.5 inline-flex items-center justify-center rounded hover:bg-slate-600/70 shrink-0 mr-1"><i id="tree-icon-${safeEqId}" class="fa-solid fa-chevron-right text-slate-400 text-[10px]"></i></span>
-                                    <i class="${eq.icon} text-[11px] mr-1.5 mt-1 shrink-0"></i>
+                                    ${eq.iconHtml}
                                     <div class="whitespace-normal break-words leading-snug font-medium">${displayEqHtml}</div>
                                 </div>
                                 ${totalEqKids > 0 ? `<span class="text-[10px] text-slate-400 bg-slate-900/70 px-1.5 py-0.5 rounded ml-1 shrink-0 mt-0.5">${totalEqKids}</span>` : ''}
@@ -1483,7 +1552,7 @@
 
                 rootHtml += `
                     <div class="mb-1 tree-node-item" data-loc-id="${locId}">
-                        <div data-loc-id="${locId}" data-is-root="1" class="tree-row-box flex items-center justify-between text-white bg-slate-800/90 hover:bg-slate-700 px-2 py-1.5 rounded transition cursor-pointer font-semibold border border-slate-700/50" onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')">
+                        <div data-loc-id="${locId}" data-is-root="1" class="tree-row-box flex items-center justify-between text-white bg-slate-800/90 hover:bg-slate-700 px-2 py-1.5 rounded transition cursor-pointer font-semibold border border-slate-700/50" onclick="filterByTreeNode('${locId.replace(/'/g, "\\'")}')">
                             <div class="flex items-center truncate">
                                 ${chevronHtml}
                                 ${getLocationIconHtml(root, true)}
@@ -1545,7 +1614,7 @@
 
             const parentLocId = chain.length > 1 ? chain[chain.length - 2].id : null;
             const upBtn = parentLocId
-                ? `<button onclick="filterByTreeNode('${parentLocId.replace(/'/g, "\'")}')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition"><i class="fa-solid fa-arrow-up"></i></button>`
+                ? `<button onclick="filterByTreeNode('${parentLocId.replace(/'/g, "\\'")}')" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition"><i class="fa-solid fa-arrow-up"></i></button>`
                 : `<button onclick="resetTreeFilter()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-0.5 rounded text-[11px] mr-1.5 transition"><i class="fa-solid fa-arrow-up"></i></button>`;
 
             let partsHtml = `${upBtn}<button onclick="resetTreeFilter()" class="text-slate-400 hover:text-sky-400 transition font-medium"><i class="fa-solid fa-house text-[11px] mr-1"></i>Locations</button>`;
@@ -1553,7 +1622,7 @@
                 const isLast = idx === chain.length - 1;
                 partsHtml += ` <i class="fa-solid fa-chevron-right text-[9px] text-slate-600 mx-1"></i> `;
                 if (isLast) partsHtml += `<span class="text-white font-semibold">${node.name}</span>`;
-                else partsHtml += `<button onclick="filterByTreeNode('${node.id.replace(/'/g, "\'")}')" class="text-sky-400 hover:underline font-medium">${node.name}</button>`;
+                else partsHtml += `<button onclick="filterByTreeNode('${node.id.replace(/'/g, "\\'")}')" class="text-sky-400 hover:underline font-medium">${node.name}</button>`;
             });
             return `<div class="flex flex-wrap items-center gap-0.5 text-xs">${partsHtml}</div>`;
         }
@@ -1607,7 +1676,7 @@
                 const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
 
                 bodyHtml += `
-                    <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer select-none" onclick="filterByTreeNode('${locId.replace(/'/g, "\'")}')">
+                    <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer select-none" onclick="filterByTreeNode('${locId.replace(/'/g, "\\'")}')">
                         <td class="px-3 py-3 text-center" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
                         <td class="px-3 py-3 text-slate-400 text-center font-medium">${idx + 1}</td>
                         <td class="px-3 py-3 text-slate-100 font-semibold min-w-[240px] max-w-[340px]"><div class="flex items-center gap-2">${getLocationIconHtml(row, true)}<span>${locName}</span></div></td>
@@ -1706,9 +1775,25 @@
                 return;
             }
 
-            let rows = [...(appData[tabName] || [])];
+            let rawRows = appData[tabName] || [];
+            // For Container tab: display top-level containers/boxes only (hide child items like Sling/Shackles whose parent is another container)
+            let displayItems = rawRows.map((row, origIndex) => ({ row, origIndex }));
+            if (tabName === "Container") {
+                const containerIds = new Set();
+                rawRows.forEach((r, idx) => {
+                    const c1 = normKey(r[1]).toLowerCase();
+                    const c3 = normKey(r[3]).toLowerCase();
+                    if (c1) containerIds.add(c1);
+                    if (c3) containerIds.add(c3);
+                });
+                displayItems = displayItems.filter(({ row }) => {
+                    const parentId = normKey(row[14]).toLowerCase();
+                    return !parentId || !containerIds.has(parentId);
+                });
+            }
+
             let activeColIndices = [0, 2, 3, 15, 26, 28];
-            rows.forEach(r => {
+            displayItems.forEach(({ row: r }) => {
                 UNIFIED_HEADERS.forEach((_, c) => {
                     if (c !== 1 && cleanVal(r[c]) !== "" && cleanVal(r[c]) !== "-" && !activeColIndices.includes(c)) activeColIndices.push(c);
                 });
@@ -1723,33 +1808,40 @@
             document.getElementById("table-head").innerHTML = headHtml;
 
             let bodyHtml = "";
-            rows.forEach((row, index) => {
-                const rowUniqueId = getNodePrimaryId(row, index);
+            displayItems.forEach(({ row, origIndex }, displayIdx) => {
+                const rowUniqueId = getNodePrimaryId(row, origIndex);
                 const subCheck = getDirectChildrenOfNode(rowUniqueId);
-                const hasSubItems = (subCheck.subLocations.length + subCheck.equipments.length) > 0;
-                const itemKey = `${tabName}::${index}`;
+                const totalInside = subCheck.subLocations.length + subCheck.equipments.length;
+                const hasSubItems = totalInside > 0 || tabName === "Container";
+                const itemKey = `${tabName}::${origIndex}`;
                 const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
+                const rowClickAction = (tabName === "Container")
+                    ? `filterByTreeNode('${rowUniqueId.replace(/'/g, "\\'")}')`
+                    : `openDetailModalByIndex('${tabName}', ${origIndex})`;
 
                 bodyHtml += `
-                    <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="openDetailModalByIndex('${tabName}', ${index})">
+                    <tr class="hover:bg-slate-800/40 border-b border-slate-800 transition cursor-pointer" onclick="${rowClickAction}">
                         <td class="px-3 py-3 text-center align-top" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
-                        <td class="px-3 py-3 font-semibold text-slate-400 text-center align-top">${cleanVal(row[0]) || (index + 1)}</td>`;
+                        <td class="px-3 py-3 font-semibold text-slate-400 text-center align-top">${displayIdx + 1}</td>`;
                 activeColIndices.forEach(idx => {
                     if (idx !== 0) {
                         let val = cleanVal(row[idx]) || '-';
                         if (idx === 15 && val === '-') val = getLocationPath(row[14]) || getLocationName(row[14]) || '-';
+                        if (idx === 2 && tabName === "Container") {
+                            val = `<div class="flex items-center gap-2 font-semibold text-amber-200"><i class="fa-solid fa-box text-amber-400"></i><span>${val}</span>${totalInside > 0 ? `<span class="text-[10px] bg-slate-800 text-sky-300 border border-slate-700 px-1.5 py-0.2 rounded font-normal">${totalInside} items</span>` : ''}</div>`;
+                        }
                         bodyHtml += `<td class="px-3 py-3 text-slate-300 align-top">${val}</td>`;
                     }
                 });
                 bodyHtml += `
                         <td class="px-3 py-3 text-right whitespace-nowrap align-top" onclick="event.stopPropagation()">
-                            ${buildUnifiedActionMenuHtml(tabName, index, { canOpenFolder: hasSubItems, folderTargetId: rowUniqueId, canMove: true })}
+                            ${buildUnifiedActionMenuHtml(tabName, origIndex, { canOpenFolder: hasSubItems, folderTargetId: rowUniqueId, canMove: true })}
                         </td>
                     </tr>`;
             });
             document.getElementById("table-body").innerHTML = bodyHtml || `<tr><td colspan="${activeColIndices.length + 3}" class="px-4 py-8 text-center text-slate-500 italic">No records in [${tabName}].</td></tr>`;
             document.getElementById("current-table-title").innerText = `Management: ${tabName.replace(/_/g, ' ')}`;
-            document.getElementById("record-count").innerText = `${rows.length} records`;
+            document.getElementById("record-count").innerText = `${displayItems.length} records`;
             updateBulkActionBar();
         }
 
@@ -1779,7 +1871,7 @@
                 const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
 
                 bodyHtml += `
-                    <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer bg-slate-800/20" onclick="filterByTreeNode('${subId.replace(/'/g, "\'")}')">
+                    <tr class="hover:bg-sky-900/25 border-b border-slate-800/80 transition cursor-pointer bg-slate-800/20" onclick="filterByTreeNode('${subId.replace(/'/g, "\\'")}')">
                         <td class="px-3 py-3 text-center align-middle" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
                         <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
                         <td class="px-3 py-3 text-amber-200 font-semibold"><div class="flex items-center gap-2">${getLocationIconHtml(row, false)}<span>${subName}</span> <span class="text-[10px] text-slate-400 font-normal">(${countText})</span></div></td>
@@ -1794,7 +1886,7 @@
                 rowNum++;
                 const kidsCheck = getDirectChildrenOfNode(item.id);
                 const hasInside = (kidsCheck.subLocations.length + kidsCheck.equipments.length) > 0;
-                const rowAction = hasInside ? `filterByTreeNode('${item.id.replace(/'/g, "\'")}')` : `openDetailModalByIndex('${item.category}', ${item.rowIndex})`;
+                const rowAction = hasInside ? `filterByTreeNode('${item.id.replace(/'/g, "\\'")}')` : `openDetailModalByIndex('${item.category}', ${item.rowIndex})`;
                 const itemKey = `${item.category}::${item.rowIndex}`;
                 const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
 
@@ -1802,7 +1894,7 @@
                     <tr class="hover:bg-slate-800/50 border-b border-slate-800/80 transition cursor-pointer" onclick="${rowAction}">
                         <td class="px-3 py-3 text-center align-middle" onclick="event.stopPropagation()"><input type="checkbox" class="row-select-cb rounded bg-slate-900 border-slate-700 text-amber-500" value="${itemKey}" onchange="toggleSelectItem('${itemKey}', this.checked)" ${isChecked}></td>
                         <td class="px-3 py-3 text-slate-400 text-center align-middle">${rowNum}</td>
-                        <td class="px-3 py-3 text-slate-200 font-medium"><div class="flex items-center gap-2"><i class="${item.icon} text-sm"></i><span>${item.name}</span></div></td>
+                        <td class="px-3 py-3 text-slate-200 font-medium"><div class="flex items-center gap-2">${item.tableIconHtml}<span>${item.name}</span></div></td>
                         <td class="px-3 py-3 text-sky-300 font-mono align-middle">${item.serialNo || item.code || item.id || '-'}</td>
                         <td class="px-3 py-3 text-slate-400 align-middle"><span class="bg-slate-800 text-slate-300 border border-slate-700 px-2 py-0.5 rounded text-[11px]">${item.categoryLabel}</span></td>
                         <td class="px-3 py-3 text-emerald-400 align-middle">${item.status}</td>
@@ -1814,13 +1906,16 @@
             updateBulkActionBar();
         }
 
+        // --- SEARCHABLE & SCROLLABLE CASCADING DESTINATION PICKER ---
         function getAllLocationNodes() {
             let nodes = [];
             (appData["Locations"] || []).forEach((l, idx) => {
                 const id = normKey(l[1]) || normKey(l[3]) || normKey(l[2]) || `LOC_ROW_${idx + 1}`;
                 const name = cleanVal(l[2]) || id;
                 const parentId = normKey(l[14]);
-                if (id && !nodes.some(n => n.id.toLowerCase() === id.toLowerCase())) nodes.push({ id, name, parentId, type: cleanVal(l[5]) || 'Location', isLocation: true });
+                if (id && !nodes.some(n => n.id.toLowerCase() === id.toLowerCase())) {
+                    nodes.push({ id, name, parentId, type: cleanVal(l[5]) || 'Location', isLocation: true });
+                }
             });
             ['Container', 'Unit', 'Mast', 'Power Pack', 'PCE_Equipment'].forEach(cat => {
                 (appData[cat] || []).forEach((item) => {
@@ -1828,7 +1923,9 @@
                     if (!realCodeOrSn) return;
                     const name = cleanVal(item[2]) || realCodeOrSn;
                     const parentId = normKey(item[14]);
-                    if (!nodes.some(n => n.id.toLowerCase() === realCodeOrSn.toLowerCase())) nodes.push({ id: realCodeOrSn, name: `[${cat}] ${name}`, parentId, type: cat, isLocation: false });
+                    if (!nodes.some(n => n.id.toLowerCase() === realCodeOrSn.toLowerCase())) {
+                        nodes.push({ id: realCodeOrSn, name: `[${cat}] ${name}`, parentId, type: cat, isLocation: false });
+                    }
                 });
             });
             return nodes;
@@ -1840,7 +1937,7 @@
             if (!row) return;
             movingItemContext = { tabName, rowIndex, selectedTargetId: cleanVal(row[14]) };
             document.getElementById("move-modal-header").innerHTML = `<i class="fa-solid fa-right-left text-accent"></i> Move Equipment Location`;
-            document.getElementById("move-item-id").value = cleanVal(row[2]) || 'Item';
+            document.getElementById("move-item-id").value = cleanVal(row[2]) || getNodePrimaryId(row, rowIndex);
 
             const container = document.getElementById("cascading-location-container");
             container.innerHTML = "";
@@ -1853,24 +1950,110 @@
 
         function renderCascadingDropdownLevel(level, parentId) {
             const container = document.getElementById("cascading-location-container");
-            Array.from(container.children).forEach(child => { if (parseInt(child.dataset.level, 10) >= level) child.remove(); });
+            Array.from(container.children).forEach(child => {
+                if (parseInt(child.dataset.level, 10) >= level) child.remove();
+            });
 
             const allNodes = getAllLocationNodes();
-            const children = level === 0 ? allNodes.filter(n => n.isLocation && (!n.parentId || !allNodes.some(p => p.id.toLowerCase() === n.parentId.toLowerCase()))) : allNodes.filter(n => n.parentId && n.parentId.toLowerCase() === parentId.toLowerCase());
+            const children = level === 0
+                ? allNodes.filter(n => n.isLocation && (!n.parentId || !allNodes.some(p => p.id.toLowerCase() === n.parentId.toLowerCase())))
+                : allNodes.filter(n => n.parentId && n.parentId.toLowerCase() === parentId.toLowerCase());
+
             if (children.length === 0) return;
 
             const wrapper = document.createElement("div");
             wrapper.dataset.level = level;
-            let optionsHtml = `<option value="">-- Select location --</option>`;
-            children.forEach(c => { optionsHtml += `<option value="${c.id}">${c.id} - ${c.name}</option>`; });
+            wrapper.className = "searchable-cascade-wrapper relative";
 
-            wrapper.innerHTML = `<label class="block text-[11px] text-slate-400 mb-1">Level ${level + 1}:</label><select onchange="handleCascadingChange(${level}, this.value, '${parentId.replace(/'/g, "\'")}')" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white">${optionsHtml}</select>`;
+            const listId = `cascade-list-${level}`;
+            const inputId = `cascade-input-${level}`;
+            const safeParent = parentId.replace(/'/g, "\\'");
+
+            let optionsHtml = `<div data-val="" data-label="" onclick="selectCascadingOption(${level}, '', '', '${safeParent}')" class="cascade-opt px-3 py-2 text-xs text-slate-400 italic hover:bg-slate-800 cursor-pointer border-b border-slate-800/70">-- Clear selection at Level ${level + 1} --</div>`;
+            children.forEach(c => {
+                const labelText = `${c.id} - ${c.name}`;
+                const safeId = c.id.replace(/'/g, "\\'");
+                const safeLabel = labelText.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                optionsHtml += `<div data-val="${c.id.replace(/"/g, '&quot;')}" data-label="${safeLabel}" onclick="selectCascadingOption(${level}, '${safeId}', '${safeLabel}', '${safeParent}')" class="cascade-opt px-3 py-2 text-xs text-slate-100 hover:bg-sky-600 hover:text-white cursor-pointer flex items-center justify-between gap-2 transition">
+                    <span class="truncate">${labelText}</span>
+                    <span class="text-[10px] text-slate-400 shrink-0">${c.type}</span>
+                </div>`;
+            });
+
+            wrapper.innerHTML = `
+                <label class="block text-[11px] text-slate-400 mb-1">Level ${level + 1} (${children.length} destinations):</label>
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-[11px] pointer-events-none"></i>
+                    <input type="text" id="${inputId}" autocomplete="off"
+                        placeholder="Click to scroll or type to search (${children.length} items)..."
+                        onfocus="openCascadingList('${listId}')"
+                        onclick="event.stopPropagation(); openCascadingList('${listId}')"
+                        oninput="filterCascadingList('${listId}', this.value)"
+                        class="w-full bg-slate-900 border border-slate-700 focus:border-accent rounded-lg pl-8 pr-8 py-2 text-xs text-white focus:outline-none">
+                    <button type="button" onclick="event.stopPropagation(); toggleCascadingList('${listId}')" class="absolute right-2.5 top-2 text-slate-400 hover:text-white text-xs">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
+                <div id="${listId}" class="hidden absolute left-0 right-0 mt-1 max-h-60 overflow-y-auto custom-scroll bg-slate-950 border border-slate-600 rounded-xl shadow-2xl z-50 divide-y divide-slate-800/50">
+                    ${optionsHtml}
+                </div>
+            `;
             container.appendChild(wrapper);
         }
 
-        function handleCascadingChange(level, selectedVal, fallbackParentId) {
-            if (selectedVal) { movingItemContext.selectedTargetId = selectedVal; renderCascadingDropdownLevel(level + 1, selectedVal); }
-            else { movingItemContext.selectedTargetId = fallbackParentId || ""; }
+        function openCascadingList(listId) {
+            document.querySelectorAll("[id^='cascade-list-']").forEach(el => {
+                if (el.id !== listId) el.classList.add("hidden");
+            });
+            const listEl = document.getElementById(listId);
+            if (listEl) {
+                listEl.classList.remove("hidden");
+                listEl.querySelectorAll(".cascade-opt").forEach(opt => opt.style.display = "");
+            }
+        }
+
+        function toggleCascadingList(listId) {
+            const listEl = document.getElementById(listId);
+            if (!listEl) return;
+            const willOpen = listEl.classList.contains("hidden");
+            document.querySelectorAll("[id^='cascade-list-']").forEach(el => el.classList.add("hidden"));
+            if (willOpen) {
+                listEl.classList.remove("hidden");
+                listEl.querySelectorAll(".cascade-opt").forEach(opt => opt.style.display = "");
+            }
+        }
+
+        function filterCascadingList(listId, query) {
+            const listEl = document.getElementById(listId);
+            if (!listEl) return;
+            listEl.classList.remove("hidden");
+            const q = query.toLowerCase().trim();
+            listEl.querySelectorAll(".cascade-opt").forEach(opt => {
+                const label = (opt.dataset.label || "").toLowerCase();
+                if (!opt.dataset.val) {
+                    opt.style.display = q ? "none" : "";
+                } else {
+                    opt.style.display = !q || label.includes(q) ? "" : "none";
+                }
+            });
+        }
+
+        function selectCascadingOption(level, selectedVal, displayLabel, fallbackParentId) {
+            const inputEl = document.getElementById(`cascade-input-${level}`);
+            const listEl = document.getElementById(`cascade-list-${level}`);
+            if (inputEl) inputEl.value = displayLabel || "";
+            if (listEl) listEl.classList.add("hidden");
+
+            if (selectedVal) {
+                movingItemContext.selectedTargetId = selectedVal;
+                renderCascadingDropdownLevel(level + 1, selectedVal);
+            } else {
+                movingItemContext.selectedTargetId = fallbackParentId || "";
+                const container = document.getElementById("cascading-location-container");
+                Array.from(container.children).forEach(child => {
+                    if (parseInt(child.dataset.level, 10) > level) child.remove();
+                });
+            }
             updateMovePreviewPath();
         }
 
@@ -1878,12 +2061,16 @@
             document.getElementById("move-preview-path").innerText = movingItemContext.selectedTargetId ? `${getLocationPath(movingItemContext.selectedTargetId)}` : "Not selected";
         }
 
-        function closeMoveModal() { document.getElementById("move-modal").classList.remove("flex"); document.getElementById("move-modal").classList.add("hidden"); }
+        function closeMoveModal() {
+            document.getElementById("move-modal").classList.remove("flex");
+            document.getElementById("move-modal").classList.add("hidden");
+        }
 
         function confirmMoveItem() {
             const { selectedTargetId } = movingItemContext;
             if (!selectedTargetId) { alert("Please select a destination!"); return; }
             const targetPath = getLocationPath(selectedTargetId);
+            const dateStamp = new Date().toISOString().slice(0, 10);
 
             if (isBulkMoveMode) {
                 selectedItemKeys.forEach(key => {
@@ -1891,15 +2078,30 @@
                     const rIdx = parseInt(rIdxStr, 10);
                     const row = (appData[tabName] || [])[rIdx];
                     if (row) {
-                        row[14] = selectedTargetId; row[15] = targetPath;
-                        syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rIdx));
+                        const oldSnapshot = [...row];
+                        while (row.length < UNIFIED_HEADERS.length) row.push("");
+                        row[14] = selectedTargetId;
+                        row[15] = targetPath;
+                        const prevLog = cleanVal(row[27]);
+                        const moveNote = `[${dateStamp}] Bulk moved to ${targetPath}`;
+                        row[27] = prevLog ? `${prevLog} | ${moveNote}` : moveNote;
+                        syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rIdx), rIdx, oldSnapshot);
                     }
                 });
                 clearSelection();
             } else {
                 const { tabName, rowIndex } = movingItemContext;
                 const row = (appData[tabName] || [])[rowIndex];
-                if (row) { row[14] = selectedTargetId; row[15] = targetPath; syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rowIndex)); }
+                if (row) {
+                    const oldSnapshot = [...row];
+                    while (row.length < UNIFIED_HEADERS.length) row.push("");
+                    row[14] = selectedTargetId;
+                    row[15] = targetPath;
+                    const prevLog = cleanVal(row[27]);
+                    const moveNote = `[${dateStamp}] Moved to ${targetPath}`;
+                    row[27] = prevLog ? `${prevLog} | ${moveNote}` : moveNote;
+                    syncToGoogleSheet("update", tabName, row, getRowUniqueKey(row, rowIndex), rowIndex, oldSnapshot);
+                }
             }
             saveDataLocal();
             closeMoveModal();
@@ -1911,7 +2113,7 @@
             UNIFIED_HEADERS.forEach((headerName, idx) => {
                 if (idx === 1) return;
                 const val = rowData && rowData[idx] !== undefined ? rowData[idx] : "";
-                html += `<div><label class="block text-[11px] text-slate-300 mb-1">${headerName}</label><input type="text" name="f${idx}" value="${val}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>`;
+                html += `<div><label class="block text-[11px] text-slate-300 mb-1">${headerName}</label><input type="text" name="f${idx}" value="${String(val).replace(/"/g, '&quot;')}" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white"></div>`;
             });
             container.innerHTML = html;
         }
@@ -1960,17 +2162,18 @@
             event.preventDefault();
             const tab = document.getElementById("form-target-tab").value;
             if (!appData[tab]) appData[tab] = [];
+            const oldSnapshot = (editingRowIndex !== null && appData[tab][editingRowIndex]) ? [...appData[tab][editingRowIndex]] : null;
             let rowData = [];
             UNIFIED_HEADERS.forEach((_, idx) => {
-                if (idx === 1) rowData.push("");
+                if (idx === 1) rowData.push(oldSnapshot ? (oldSnapshot[1] || "") : "");
                 else rowData.push(document.querySelector(`input[name="f${idx}"]`)?.value || "");
             });
             if (editingRowIndex !== null) {
                 appData[tab][editingRowIndex] = rowData;
-                syncToGoogleSheet("update", tab, rowData, getRowUniqueKey(rowData, editingRowIndex));
+                syncToGoogleSheet("update", tab, rowData, getRowUniqueKey(oldSnapshot || rowData, editingRowIndex), editingRowIndex, oldSnapshot);
             } else {
                 appData[tab].push(rowData);
-                syncToGoogleSheet("append", tab, rowData);
+                syncToGoogleSheet("append", tab, rowData, getRowUniqueKey(rowData, appData[tab].length - 1), appData[tab].length - 1);
             }
             saveDataLocal();
             closeModal();
@@ -2022,6 +2225,7 @@
             if (!appData["Paper_Work"]) appData["Paper_Work"] = [];
             const editIdx = parseInt(document.getElementById("pw-edit-index").value, 10);
             const links = parseGoogleDriveLinks(document.getElementById("pw-drive-link").value.trim());
+            const oldSnapshot = (editIdx >= 0 && appData["Paper_Work"][editIdx]) ? [...appData["Paper_Work"][editIdx]] : null;
             const rowData = [
                 editIdx >= 0 ? cleanVal(appData["Paper_Work"][editIdx][0]) : appData["Paper_Work"].length + 1,
                 document.getElementById("pw-doc-name").value.trim(),
@@ -2032,10 +2236,10 @@
             ];
             if (editIdx >= 0) {
                 appData["Paper_Work"][editIdx] = rowData;
-                syncToGoogleSheet("update", "Paper_Work", rowData, String(rowData[0]));
+                syncToGoogleSheet("update", "Paper_Work", rowData, String(rowData[0]), editIdx, oldSnapshot);
             } else {
                 appData["Paper_Work"].push(rowData);
-                syncToGoogleSheet("append", "Paper_Work", rowData);
+                syncToGoogleSheet("append", "Paper_Work", rowData, String(rowData[0]), appData["Paper_Work"].length - 1);
             }
             saveDataLocal();
             closePaperworkModal();
@@ -2069,13 +2273,13 @@
             document.getElementById("pw-help-modal").classList.remove("hidden");
             document.getElementById("pw-help-modal").classList.add("flex");
         }
-        function closeHelpModal() { document.getElementById("pw-help-modal").classList.remove("hidden"); document.getElementById("pw-help-modal").classList.add("hidden"); }
+        function closeHelpModal() { document.getElementById("pw-help-modal").classList.remove("flex"); document.getElementById("pw-help-modal").classList.add("hidden"); }
         function saveHelpWordDocument() {
             const htmlContent = document.getElementById("word-editor-area").innerHTML;
             localStorage.setItem("amsito_help_word_doc", htmlContent);
             appData["Paper_Work_Help"] = [[htmlContent]];
             saveDataLocal();
-            syncToGoogleSheet("update", "Paper_Work_Help", [htmlContent], "1");
+            syncToGoogleSheet("update", "Paper_Work_Help", [htmlContent], "1", 0);
             const badge = document.getElementById("word-save-status");
             if (badge) { badge.classList.remove("hidden"); setTimeout(() => badge.classList.add("hidden"), 2500); }
         }
@@ -2088,11 +2292,12 @@
         }
 
         function deleteItemByIndex(tabName, rowIndex) {
-            if (!confirm("Are you sure you want to delete this record?")) return;
+            if (!confirm(t("confirm_delete"))) return;
             const row = (appData[tabName] || [])[rowIndex];
+            if (!row) return;
             const rowKey = getRowUniqueKey(row, rowIndex);
             appData[tabName].splice(rowIndex, 1);
-            syncToGoogleSheet("delete", tabName, row, rowKey);
+            syncToGoogleSheet("delete", tabName, row, rowKey, rowIndex, row);
             saveDataLocal();
             if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
             else renderTable(currentActiveTab);
@@ -2105,6 +2310,54 @@
             dl.setAttribute("href", dataStr);
             dl.setAttribute("download", `amsito_master_${new Date().toISOString().slice(0,10)}.json`);
             dl.click();
+        }
+
+        function triggerImportJSON() {
+            const input = document.getElementById("import-json-input");
+            if (input) {
+                input.value = "";
+                input.click();
+            }
+        }
+
+        function handleImportJSONFile(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    const importedAppData = parsed.appData ? parsed.appData : parsed;
+                    if (!importedAppData || typeof importedAppData !== "object" || (!importedAppData["Locations"] && !importedAppData["Container"] && !importedAppData["Slickline_Tools"])) {
+                        alert("File JSON không hợp lệ hoặc không đúng định dạng backup của hệ thống AMSITO!");
+                        return;
+                    }
+                    if (!confirm(`Xác nhận khôi phục dữ liệu từ file "${file.name}"?\nDữ liệu hiện tại trên web sẽ được cập nhật theo bản backup này.`)) {
+                        return;
+                    }
+                    appData = { ...appData, ...importedAppData };
+                    localStorage.setItem("slickline_master_std29_v4", JSON.stringify({ appData }));
+
+                    // Sync restored sheets to Google Sheet if online
+                    if (navigator.onLine && GOOGLE_SHEET_API_URL) {
+                        for (const sheetName of Object.keys(importedAppData)) {
+                            if (sheetName === "_headers") continue;
+                            addToSyncQueue("replace_all", sheetName, importedAppData[sheetName], sheetName);
+                        }
+                        processSyncQueue();
+                    }
+
+                    populateFormTabSelect();
+                    clearSelection();
+                    if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
+                    else renderTable(currentActiveTab);
+                    renderTree();
+                    alert("Đã Import dữ liệu thành công!");
+                } catch (err) {
+                    alert("Lỗi đọc file JSON: " + err.message);
+                }
+            };
+            reader.readAsText(file);
         }
 
         function initSidebarResizer() {
