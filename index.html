@@ -731,7 +731,19 @@
 function formatDisplayDate(v) {
     const s = cleanVal(v);
     if (!s) return "";
-    // Nhận diện chuỗi ngày ISO từ Google Sheet (VD: 2026-08-25T07:00:00.000Z)
+
+    // 1. Quy đổi số seri ngày của Excel / Google Sheets (VD: 46197 -> 24-JUN-2026)
+    if (/^\d{5}(\.\d+)?$/.test(s)) {
+        const serial = parseFloat(s);
+        if (serial > 20000 && serial < 90000) {
+            const d = new Date(Math.round((serial - 25569) * 86400 * 1000));
+            if (!isNaN(d.getTime())) {
+                return d.toLocaleDateString('en-GB', { timeZone: 'UTC', day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase().replace(/ /g, '-');
+            }
+        }
+    }
+
+    // 2. Quy đổi chuỗi ngày ISO từ Google Sheet (VD: 2026-08-25T07:00:00.000Z)
     if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)) {
         const d = new Date(s);
         if (!isNaN(d.getTime())) {
@@ -740,6 +752,7 @@ function formatDisplayDate(v) {
     }
     return s;
 }
+
 function renderExpiryCellHtml(rawVal) {
     const formatted = formatDisplayDate(rawVal);
     if (!formatted || formatted === '-') return '-';
@@ -1215,7 +1228,93 @@ function renderExpiryCellHtml(rawVal) {
                 indicator.onclick = null;
             }
         }
+        const MPI_SYNC_COLS = [17, 18, 19, 20, 21, 22, 23, 25]; // MPI Date/Exp, LT Date/Exp, Pressure Exp, Calib Date/Exp, Expiry Date
+        const EQUIPMENT_TABS_WITH_MPI = ["Unit", "Mast", "Power Pack", "Container", "PCE_Equipment", "Slickline_Tools", "Drums", "Wires", "Mechanical_Tools", "MPLT", "PPS_Gauge", "ART", "Cement", "Other"];
 
+        function findMatchingMpiRow(eqRow) {
+            const mpiList = appData["MPI_LT"] || [];
+            const sn = normKey(eqRow[3]).toLowerCase();
+            const code = normKey(eqRow[1]).toLowerCase();
+            if (!sn && !code) return null;
+            return mpiList.find(m => {
+                const mSn = normKey(m[3]).toLowerCase();
+                const mCode = normKey(m[1]).toLowerCase();
+                return (sn && sn !== "-" && mSn === sn) || (code && code !== "-" && mCode === code);
+            }) || null;
+        }
+
+        // Kéo dữ liệu từ MPI_LT đắp sang các tab thiết bị khi tải dữ liệu
+        function applyMpiDataToAllEquipments() {
+            const mpiList = appData["MPI_LT"] || [];
+            if (mpiList.length === 0) return;
+            EQUIPMENT_TABS_WITH_MPI.forEach(tab => {
+                (appData[tab] || []).forEach(row => {
+                    const mpiRow = findMatchingMpiRow(row);
+                    if (mpiRow) {
+                        while (row.length < UNIFIED_HEADERS.length) row.push("");
+                        MPI_SYNC_COLS.forEach(colIdx => {
+                            if (cleanVal(mpiRow[colIdx])) row[colIdx] = mpiRow[colIdx];
+                        });
+                    }
+                });
+            });
+        }
+
+        // Đồng bộ 2 chiều ngay khi bấm Save/Update ở form chỉnh sửa
+        function syncMpiTwoWayOnSave(editedTab, savedRow) {
+            const sn = normKey(savedRow[3]).toLowerCase();
+            const code = normKey(savedRow[1]).toLowerCase();
+            if ((!sn || sn === "-") && (!code || code === "-")) return;
+
+            if (editedTab === "MPI_LT") {
+                // Sửa bên MPI_LT -> tự cập nhật sang tất cả tab thiết bị trùng Serial/Code
+                EQUIPMENT_TABS_WITH_MPI.forEach(tab => {
+                    (appData[tab] || []).forEach((row, rIdx) => {
+                        const rSn = normKey(row[3]).toLowerCase();
+                        const rCode = normKey(row[1]).toLowerCase();
+                        if ((sn && rSn === sn) || (code && rCode === code)) {
+                            const oldSnap = [...row];
+                            while (row.length < UNIFIED_HEADERS.length) row.push("");
+                            let changed = false;
+                            MPI_SYNC_COLS.forEach(c => {
+                                if (cleanVal(row[c]) !== cleanVal(savedRow[c])) {
+                                    row[c] = savedRow[c];
+                                    changed = true;
+                                }
+                            });
+                            if (changed) syncToGoogleSheet("update", tab, row, getRowUniqueKey(row, rIdx), rIdx, oldSnap);
+                        }
+                    });
+                });
+            } else if (EQUIPMENT_TABS_WITH_MPI.includes(editedTab)) {
+                // Sửa bên Unit/Mast/PCE... -> tự cập nhật ngược lại sang MPI_LT (hoặc tự tạo mới nếu chưa có)
+                if (!appData["MPI_LT"]) appData["MPI_LT"] = [];
+                const mpiIdx = appData["MPI_LT"].findIndex(m => {
+                    const mSn = normKey(m[3]).toLowerCase();
+                    const mCode = normKey(m[1]).toLowerCase();
+                    return (sn && mSn === sn) || (code && mCode === code);
+                });
+                const hasAnyMpiVal = MPI_SYNC_COLS.some(c => cleanVal(savedRow[c]) !== "");
+                if (mpiIdx !== -1) {
+                    const mpiRow = appData["MPI_LT"][mpiIdx];
+                    const oldSnap = [...mpiRow];
+                    while (mpiRow.length < UNIFIED_HEADERS.length) mpiRow.push("");
+                    let changed = false;
+                    MPI_SYNC_COLS.forEach(c => {
+                        if (cleanVal(mpiRow[c]) !== cleanVal(savedRow[c])) {
+                            mpiRow[c] = savedRow[c];
+                            changed = true;
+                        }
+                    });
+                    if (changed) syncToGoogleSheet("update", "MPI_LT", mpiRow, getRowUniqueKey(mpiRow, mpiIdx), mpiIdx, oldSnap);
+                } else if (hasAnyMpiVal) {
+                    const newMpiRow = [...savedRow];
+                    newMpiRow[0] = appData["MPI_LT"].length + 1;
+                    appData["MPI_LT"].push(newMpiRow);
+                    syncToGoogleSheet("append", "MPI_LT", newMpiRow, getRowUniqueKey(newMpiRow, appData["MPI_LT"].length - 1), appData["MPI_LT"].length - 1);
+                }
+            }
+        }
         async function initData() {
             if (navigator.onLine && syncQueue.length > 0) await processSyncQueue();
             const indicator = document.getElementById("sync-status");
@@ -1253,7 +1352,7 @@ function renderExpiryCellHtml(rawVal) {
                     try { appData = { ...appData, ...(JSON.parse(saved).appData || JSON.parse(saved)) }; } catch (err) {}
                 }
             }
-
+            applyMpiDataToAllEquipments();
             updateSyncStatusUI();
             populateFormTabSelect();
             clearSelection();
@@ -1294,8 +1393,15 @@ function renderExpiryCellHtml(rawVal) {
         function toggleSelectAllInTable(masterCb) {
             const checkboxes = document.querySelectorAll(".row-select-cb");
             checkboxes.forEach(cb => {
-                cb.checked = masterCb.checked;
-                toggleSelectItem(cb.value, masterCb.checked);
+                const tr = cb.closest("tr");
+                const isVisible = tr && tr.style.display !== "none";
+                if (isVisible) {
+                    cb.checked = masterCb.checked;
+                    toggleSelectItem(cb.value, masterCb.checked);
+                } else if (!masterCb.checked) {
+                    cb.checked = false;
+                    toggleSelectItem(cb.value, false);
+                }
             });
         }
 
@@ -1636,9 +1742,41 @@ function renderExpiryCellHtml(rawVal) {
 
         function filterCurrentTable(query) {
             const q = query.toLowerCase().trim();
-            document.querySelectorAll("#table-body tr").forEach(tr => {
-                tr.style.display = !q || tr.innerText.toLowerCase().includes(q) ? "" : "none";
+            const rows = document.querySelectorAll("#table-body tr");
+            let visibleCount = 0;
+
+            rows.forEach(tr => {
+                // Bỏ qua dòng thông báo bảng trống (nếu có)
+                if (tr.children.length <= 1) return;
+
+                const isMatch = !q || tr.innerText.toLowerCase().includes(q);
+                tr.style.display = isMatch ? "" : "none";
+
+                if (isMatch) {
+                    visibleCount++;
+                    // Đánh lại số thứ tự 1, 2, 3... ở cột NO. (cột thứ 2 trong bảng)
+                    if (tr.children[1]) {
+                        tr.children[1].innerText = visibleCount;
+                    }
+                } else {
+                    const cb = tr.querySelector(".row-select-cb");
+                    if (cb && cb.checked) {
+                        cb.checked = false;
+                        selectedItemKeys.delete(cb.value);
+                    }
+                }
             });
+
+            // Cập nhật luôn bộ đếm tổng số dòng ở góc trên bên phải bảng
+            const countBadge = document.getElementById("record-count");
+            if (countBadge) {
+                const totalValidRows = Array.from(rows).filter(tr => tr.children.length > 1).length;
+                countBadge.innerText = q ? `${visibleCount} / ${totalValidRows} records` : `${totalValidRows} records`;
+            }
+
+            const masterCb = document.getElementById("master-select-cb");
+            if (masterCb) masterCb.checked = false;
+            updateBulkActionBar();
         }
 
         function buildLocationBreadcrumbHtml(locId) {
@@ -1830,19 +1968,19 @@ function renderExpiryCellHtml(rawVal) {
             }
 
             let rawRows = appData[tabName] || [];
-            // For Container tab: display top-level containers/boxes only (hide child items like Sling/Shackles whose parent is another container)
+            const HIERARCHY_PARENT_TABS = ["Container", "Unit", "Mast", "Power Pack", "PCE_Equipment"];
             let displayItems = rawRows.map((row, origIndex) => ({ row, origIndex }));
-            if (tabName === "Container") {
-                const containerIds = new Set();
-                rawRows.forEach((r, idx) => {
+            if (HIERARCHY_PARENT_TABS.includes(tabName)) {
+                const parentNodeIds = new Set();
+                rawRows.forEach((r) => {
                     const c1 = normKey(r[1]).toLowerCase();
                     const c3 = normKey(r[3]).toLowerCase();
-                    if (c1) containerIds.add(c1);
-                    if (c3) containerIds.add(c3);
+                    if (c1) parentNodeIds.add(c1);
+                    if (c3) parentNodeIds.add(c3);
                 });
                 displayItems = displayItems.filter(({ row }) => {
                     const parentId = normKey(row[14]).toLowerCase();
-                    return !parentId || !containerIds.has(parentId);
+                    return !parentId || !parentNodeIds.has(parentId);
                 });
             }
 
@@ -1866,10 +2004,10 @@ function renderExpiryCellHtml(rawVal) {
                 const rowUniqueId = getNodePrimaryId(row, origIndex);
                 const subCheck = getDirectChildrenOfNode(rowUniqueId);
                 const totalInside = subCheck.subLocations.length + subCheck.equipments.length;
-                const hasSubItems = totalInside > 0 || tabName === "Container";
+                const hasSubItems = totalInside > 0 || HIERARCHY_PARENT_TABS.includes(tabName);
                 const itemKey = `${tabName}::${origIndex}`;
                 const isChecked = selectedItemKeys.has(itemKey) ? "checked" : "";
-                const rowClickAction = (tabName === "Container")
+                const rowClickAction = (HIERARCHY_PARENT_TABS.includes(tabName) && totalInside > 0)
                     ? `filterByTreeNode('${rowUniqueId.replace(/'/g, "\\'")}')`
                     : `openDetailModalByIndex('${tabName}', ${origIndex})`;
 
@@ -2149,7 +2287,8 @@ function renderExpiryCellHtml(rawVal) {
                     }
                 });
                 clearSelection();
-            } else {
+            } 
+            else {
                 const { tabName, rowIndex } = movingItemContext;
                 const row = (appData[tabName] || [])[rowIndex];
                 if (row) {
@@ -2216,7 +2355,9 @@ function renderExpiryCellHtml(rawVal) {
             renderFormFields(clonedRow);
         }
 
-        function closeModal() { document.getElementById("equipment-modal").classList.remove("flex"); document.getElementById("equipment-modal").classList.add("hidden"); }
+        function closeModal() { 
+            document.getElementById("equipment-modal").classList.remove("flex"); document.getElementById("equipment-modal").classList.add("hidden"); 
+        }
 
         function handleFormSubmit(event) {
             event.preventDefault();
@@ -2235,6 +2376,7 @@ function renderExpiryCellHtml(rawVal) {
                 appData[tab].push(rowData);
                 syncToGoogleSheet("append", tab, rowData, getRowUniqueKey(rowData, appData[tab].length - 1), appData[tab].length - 1);
             }
+            syncMpiTwoWayOnSave(tab, rowData);
             saveDataLocal();
             closeModal();
         }
@@ -2257,7 +2399,9 @@ function renderExpiryCellHtml(rawVal) {
             document.getElementById("detail-modal").classList.add("flex");
         }
 
-        function closeDetailModal() { document.getElementById("detail-modal").classList.remove("flex"); document.getElementById("detail-modal").classList.add("hidden"); }
+        function closeDetailModal() { 
+            document.getElementById("detail-modal").classList.remove("flex"); document.getElementById("detail-modal").classList.add("hidden"); 
+        }
 
         function openPaperworkModal(editIndex = -1) {
             document.getElementById("pw-edit-index").value = editIndex;
@@ -2278,7 +2422,9 @@ function renderExpiryCellHtml(rawVal) {
             document.getElementById("paperwork-modal").classList.add("flex");
         }
 
-        function closePaperworkModal() { document.getElementById("paperwork-modal").classList.remove("flex"); document.getElementById("paperwork-modal").classList.add("hidden"); }
+        function closePaperworkModal() { 
+            document.getElementById("paperwork-modal").classList.remove("flex"); document.getElementById("paperwork-modal").classList.add("hidden"); 
+        }
 
         function handlePaperworkLinkSave(event) {
             event.preventDefault();
@@ -2326,7 +2472,7 @@ function renderExpiryCellHtml(rawVal) {
 
         function execWordCmd(command, value = null) { document.execCommand(command, false, value); document.getElementById("word-editor-area").focus(); }
         function insertTemplateBlock() { document.execCommand('insertHTML', false, `<br><h2 style="color: #0369a1;">DỰ ÁN MỚI</h2><ul><li><b>Số Hợp Đồng:</b> ...</li></ul><br>`); }
-function setWordFontSize(sizePx) {
+        function setWordFontSize(sizePx) {
     if (!sizePx) return;
     const editor = document.getElementById("word-editor-area");
     if (!editor) return;
