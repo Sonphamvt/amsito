@@ -2551,27 +2551,85 @@ function renderExpiryCellHtml(rawVal) {
                         alert("File JSON không hợp lệ hoặc không đúng định dạng backup của hệ thống AMSITO!");
                         return;
                     }
-                    if (!confirm(`Xác nhận khôi phục dữ liệu từ file "${file.name}"?\nDữ liệu hiện tại trên web sẽ được cập nhật theo bản backup này.`)) {
+                    if (!confirm(`Xác nhận GỘP (Merge) dữ liệu từ file "${file.name}"?\n- Dữ liệu hiện có trên Google Sheet sẽ được GIỮ NGUYÊN.\n- Chỉ cập nhật các mục có thay đổi và thêm mới các mục chưa có.`)) {
                         return;
                     }
-                    appData = { ...appData, ...importedAppData };
-                    localStorage.setItem("slickline_master_std29_v4", JSON.stringify({ appData }));
 
-                    // Sync restored sheets to Google Sheet if online
-                    if (navigator.onLine && GOOGLE_SHEET_API_URL) {
-                        for (const sheetName of Object.keys(importedAppData)) {
-                            if (sheetName === "_headers") continue;
-                            addToSyncQueue("replace_all", sheetName, importedAppData[sheetName], sheetName);
+                    let updatedCount = 0;
+                    let addedCount = 0;
+
+                    for (const sheetName of Object.keys(importedAppData)) {
+                        if (sheetName === "_headers" || !Array.isArray(importedAppData[sheetName])) continue;
+
+                        if (sheetName === "Paper_Work_Help") {
+                            const newHtml = importedAppData[sheetName]?.[0]?.[0];
+                            if (newHtml && newHtml !== appData["Paper_Work_Help"]?.[0]?.[0]) {
+                                appData["Paper_Work_Help"] = [[newHtml]];
+                                syncToGoogleSheet("update", "Paper_Work_Help", [newHtml], "1", 0);
+                                updatedCount++;
+                            }
+                            continue;
                         }
-                        processSyncQueue();
+
+                        if (!appData[sheetName]) appData[sheetName] = [];
+                        const currentRows = appData[sheetName];
+                        const incomingRows = importedAppData[sheetName];
+
+                        incomingRows.forEach((inRow) => {
+                            if (!Array.isArray(inRow) || inRow.every(cell => cleanVal(cell) === "")) return;
+
+                            const inCode = normKey(inRow[1]).toLowerCase();
+                            const inSn = normKey(inRow[3]).toLowerCase();
+                            const inName = normKey(inRow[2]).toLowerCase();
+
+                            // Tìm dòng tương ứng đang có trên hệ thống (khớp theo Asset ID, Serial Number hoặc Tên)
+                            const matchIdx = currentRows.findIndex(curRow => {
+                                const cCode = normKey(curRow[1]).toLowerCase();
+                                const cSn = normKey(curRow[3]).toLowerCase();
+                                const cName = normKey(curRow[2]).toLowerCase();
+                                if (inCode && inCode !== "-" && cCode === inCode) return true;
+                                if (inSn && inSn !== "-" && cSn === inSn) return true;
+                                if ((!inCode || inCode === "-") && (!inSn || inSn === "-") && inName && cName === inName) return true;
+                                return false;
+                            });
+
+                            if (matchIdx !== -1) {
+                                // Đã tồn tại -> Kiểm tra xem có ô nào khác nhau không, chỉ update nếu có thay đổi
+                                const oldRow = currentRows[matchIdx];
+                                const maxLen = Math.max(oldRow.length, inRow.length);
+                                let isDifferent = false;
+                                for (let c = 1; c < maxLen; c++) {
+                                    if (cleanVal(oldRow[c]) !== cleanVal(inRow[c])) {
+                                        isDifferent = true;
+                                        break;
+                                    }
+                                }
+                                if (isDifferent) {
+                                    const oldSnapshot = [...oldRow];
+                                    const mergedRow = [...inRow];
+                                    mergedRow[0] = oldRow[0] || (matchIdx + 1); // Giữ nguyên số STT cũ trên Sheet
+                                    currentRows[matchIdx] = mergedRow;
+                                    syncToGoogleSheet("update", sheetName, mergedRow, getRowUniqueKey(mergedRow, matchIdx), matchIdx, oldSnapshot);
+                                    updatedCount++;
+                                }
+                            } else {
+                                // Chưa từng có trên Google Sheet -> Thêm mới vào cuối bảng
+                                const newRow = [...inRow];
+                                newRow[0] = currentRows.length + 1;
+                                currentRows.push(newRow);
+                                syncToGoogleSheet("append", sheetName, newRow, getRowUniqueKey(newRow, currentRows.length - 1), currentRows.length - 1);
+                                addedCount++;
+                            }
+                        });
                     }
 
+                    localStorage.setItem("slickline_master_std29_v4", JSON.stringify({ appData }));
                     populateFormTabSelect();
                     clearSelection();
                     if (currentFilteredLocId) renderLocationCombinedTable(currentFilteredLocId);
                     else renderTable(currentActiveTab);
                     renderTree();
-                    alert("Đã Import dữ liệu thành công!");
+                    alert(`Gộp dữ liệu thành công!\n- Cập nhật: ${updatedCount} mục thay đổi\n- Thêm mới: ${addedCount} mục\n- Các dữ liệu cũ khác trên Google Sheet vẫn được giữ nguyên.`);
                 } catch (err) {
                     alert("Lỗi đọc file JSON: " + err.message);
                 }
